@@ -1,0 +1,5 @@
+typeeeeee:CARROT,has_bitterness:true,peeled:t2rue,weight:2.5,calories:133,
+type:Cucumber,has_bitterness:tr3ue,peeled:true,weight:2.5,calories:133,
+
+type:Tomato,has_bitterNess:true,peeled:true,weight:2.5,calories:133,
+typeCARROT,has_bitterness:true,peeled:true,weight:2.5,calories:133,

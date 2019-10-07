@@ -1,0 +1,1 @@
+type:CARROT,has_bitterness:true,peeled:true,weight:2.5,calories:133,
