@@ -17,10 +17,6 @@ public class CompletedTextRepository implements TextElementRepository<CompletedT
         this.texts = new LinkedList<>();
     }
 
-    public List<CompletedText> getData() {
-        return new LinkedList<>(texts);
-    }
-
     @Override
     public long create(CompletedTextComposite item, long parentId) {
         long id = IdCreator.getInstance().getUniqueId();
@@ -30,6 +26,7 @@ public class CompletedTextRepository implements TextElementRepository<CompletedT
         return id;
     }
 
+    @Override
     public void delete(long id) {
         for (CompletedText text : texts) {
             if (text.getId() == id) {
@@ -39,18 +36,37 @@ public class CompletedTextRepository implements TextElementRepository<CompletedT
         }
     }
 
+    @Override
     public List<CompletedTextComposite> compile() {
         List<CompletedTextComposite> completedTextComposites = new LinkedList<>();
 
         for (CompletedText text : texts) {
             long id = text.getId();
             ParentIdSpecification spec = new ParentIdSpecification(id);
-            List<TextLeaf> paragraphs = childRepo.findAllBy(spec);
+            List<TextLeaf> paragraphs = childRepo.find(spec);
             CompletedTextComposite composite = new CompletedTextComposite(paragraphs);
             completedTextComposites.add(composite);
         }
 
         return completedTextComposites;
+    }
+
+    @Override
+    public List<TextLeaf> find(ParentIdSpecification spec) {
+        List<TextLeaf> textComposites = new LinkedList<>();
+
+        for (CompletedText text : texts) {
+            if (!spec.isSatisfiedBy(text)) {
+                continue;
+            }
+            long id = text.getId();
+            ParentIdSpecification innerSpec = new ParentIdSpecification(id);
+            List<TextLeaf> paragraphs = childRepo.find(innerSpec);
+            CompletedTextComposite composite = new CompletedTextComposite(paragraphs);
+            textComposites.add(composite);
+        }
+
+        return textComposites;
     }
 
 }

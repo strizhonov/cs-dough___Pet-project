@@ -1,4 +1,4 @@
-package by.training.controller;
+package by.training.service;
 
 import by.training.model.SentenceComposite;
 

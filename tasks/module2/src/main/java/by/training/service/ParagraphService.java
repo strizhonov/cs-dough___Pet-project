@@ -1,35 +1,38 @@
 package by.training.service;
 
 import by.training.model.ParagraphComposite;
-import by.training.model.TextComposite;
+import by.training.model.SentenceComposite;
+import by.training.model.TextLeaf;
 import by.training.repository.ParagraphRepository;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class ParagraphService {
 
     private ParagraphRepository repository;
-    private SentenceService sentenceService;
+    private SentenceService childService;
 
     public ParagraphService(ParagraphRepository repository,
-                            SentenceService sentenceService) {
+                            SentenceService childService) {
         this.repository = repository;
-        this.sentenceService = sentenceService;
+        this.childService = childService;
     }
 
-    public long add(ParagraphComposite item, long parentId) {
-        return repository.create(item, parentId);
+    public void addAll(ParagraphComposite item, long parentId) {
+        long id = add(item, parentId);
+        for (TextLeaf leaf : item.getAll()) {
+            childService.addAll((SentenceComposite) leaf, id);
+        }
     }
-
-
     public List<ParagraphComposite> compile() {
         return repository.compile();
     }
 
-    public List<ParagraphComposite> sortChildren(Comparator<TextComposite> comparator) {
-        List<ParagraphComposite> paragraphs = compile();
-        paragraphs.sort(comparator);
-        return paragraphs;
+    public List<SentenceComposite> sortSentencesByWords(boolean asc) {
+        return childService.sort(asc);
+    }
+
+    private long add(ParagraphComposite item, long parentId) {
+        return repository.create(item, parentId);
     }
 }

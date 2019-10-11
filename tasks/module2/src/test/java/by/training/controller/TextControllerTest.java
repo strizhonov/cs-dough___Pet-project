@@ -26,11 +26,11 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @RunWith(JUnit4.class)
-public class CompletedTextControllerTest {
+public class TextControllerTest {
 
     private CompletedTextRepository completedTextRepository;
     private SentenceRepository sentenceRepository;
-    private CompletedTextController controller;
+    private TextController controller;
     private String text;
 
     @Before
@@ -52,11 +52,7 @@ public class CompletedTextControllerTest {
         ParagraphService paragraphService = new ParagraphService(paragraphRepository, sentenceService);
         CompletedTextService textService = new CompletedTextService(completedTextRepository, paragraphService);
 
-        WordController wordController = new WordController(wordService);
-        SentenceController sentenceController = new SentenceController(sentenceService, wordController);
-        ParagraphController paragraphController = new ParagraphController(paragraphService, sentenceController);
-
-        controller = new CompletedTextController(textService, paragraphController, paragraphParser,
+        controller = new TextController(textService, paragraphParser,
                 sentenceParser, wordParser, fileValidator, fileReader);
 
         text = "\tIt has survived not only five centuries, but also the leap into electronic " +
@@ -66,72 +62,51 @@ public class CompletedTextControllerTest {
     }
 
     @Test
-    public void addAll() {
-        CompletedTextComposite textComposite = controller.parse(text);
-        controller.addAll(textComposite, 0);
-        Assert.assertEquals(1, completedTextRepository.getData().size());
-        Assert.assertEquals(2, sentenceRepository.getData().size());
-    }
-
-    @Test
-    public void add() {
-        CompletedTextComposite textComposite = controller.parse(text);
-        controller.add(textComposite, 0);
-
-        Assert.assertEquals(1, completedTextRepository.getData().size());
-        Assert.assertEquals(0, sentenceRepository.getData().size());
-    }
-
-    @Test
-    public void compile() {
-        CompletedTextComposite textComposite = controller.parse(text);
-        controller.addAll(textComposite, 0);
-        List<CompletedTextComposite> texts = controller.compile();
-        int textLength = texts.get(0).getText().split(" ").length;
-        Assert.assertEquals(48, textLength);
-    }
-
-    @Test
-    public void sortAsc() {
-
-        CompletedTextComposite textComposite = controller.parse(text);
-        controller.addAll(textComposite, 0);
-
-        List<SentenceComposite> sentences = controller.sortSentencesByWords(true);
-        Assert.assertTrue(sentences.get(0).getText().length() < sentences.get(1).getText().length());
-
-    }
-    @Test
-    public void sortDesc() {
-
-        CompletedTextComposite textComposite = controller.parse(text);
-        controller.addAll(textComposite, 0);
-
-        List<SentenceComposite> sentences = controller.sortSentencesByWords(false);
-        Assert.assertTrue(sentences.get(0).getText().length() > sentences.get(1).getText().length());
-    }
-
-    @Test
-    public void pathCheck() throws URISyntaxException {
+    public void proceedFile() throws URISyntaxException, IOException {
         URI uri = this.getClass().getResource("/valid_text.txt").toURI();
         String path = Paths.get(uri).toString();
 
-        Assert.assertTrue(controller.isPathValid(path));
-    }
-
-    @Test
-    public void execute() throws URISyntaxException, IOException {
-        URI uri = this.getClass().getResource("/valid_text.txt").toURI();
-        String path = Paths.get(uri).toString();
-
-        String text = controller.read(path);
-        CompletedTextComposite textComposite = controller.parse(text);
-
-        controller.addAll(textComposite, 0);
+        controller.proceedFile(path);
 
         List<SentenceComposite> sentences = controller.sortSentencesByWords(true);
 
         Assert.assertTrue(sentences.get(0).getText().length() < sentences.get(5).getText().length());
 
+    }
+
+    @Test
+    public void compile() throws URISyntaxException, IOException {
+        URI uri = this.getClass().getResource("/valid_text.txt").toURI();
+        String path = Paths.get(uri).toString();
+
+        controller.proceedFile(path);
+        List<CompletedTextComposite> texts = controller.compile();
+        int textLength = texts.get(0).getText().split(" ").length;
+        Assert.assertEquals(120, textLength);
+    }
+
+    @Test
+    public void sortAsc() throws URISyntaxException, IOException {
+
+        URI uri = this.getClass().getResource("/valid_text.txt").toURI();
+        String path = Paths.get(uri).toString();
+
+        controller.proceedFile(path);
+
+        List<SentenceComposite> sentences = controller.sortSentencesByWords(true);
+        Assert.assertTrue(sentences.get(0).getText().length() < sentences.get(1).getText().length());
+
+    }
+
+    @Test
+    public void sortDesc() throws URISyntaxException, IOException{
+
+        URI uri = this.getClass().getResource("/valid_text.txt").toURI();
+        String path = Paths.get(uri).toString();
+
+        controller.proceedFile(path);
+
+        List<SentenceComposite> sentences = controller.sortSentencesByWords(false);
+        Assert.assertTrue(sentences.get(0).getText().length() > sentences.get(1).getText().length());
     }
 }

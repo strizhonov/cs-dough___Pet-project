@@ -11,10 +11,6 @@ public class WordRepository implements TextElementRepository<WordLeaf> {
 
     private List<Word> words = new LinkedList<>();
 
-    public List<Word> getData() {
-        return new LinkedList<>(words);
-    }
-
     @Override
     public long create(WordLeaf item, long parentId) {
         long id = IdCreator.getInstance().getUniqueId();
@@ -23,6 +19,7 @@ public class WordRepository implements TextElementRepository<WordLeaf> {
         return id;
     }
 
+    @Override
     public void delete(long id) {
         for (Word word : words) {
             if (word.getId() == id) {
@@ -32,7 +29,20 @@ public class WordRepository implements TextElementRepository<WordLeaf> {
         }
     }
 
-    public List<TextLeaf> findAllBy(ParentIdSpecification spec) {
+    @Override
+    public List<WordLeaf> compile() {
+        List<WordLeaf> wordLeaves = new LinkedList<>();
+
+        for (Word word : words) {
+            WordLeaf leaf = wordToLeaf(word);
+            wordLeaves.add(leaf);
+        }
+
+        return wordLeaves;
+    }
+
+    @Override
+    public List<TextLeaf> find(ParentIdSpecification spec) {
         List<TextLeaf> wordLeaves = new LinkedList<>();
 
         for (Word word : words) {

@@ -3,6 +3,7 @@ package by.training.repository;
 import by.training.entity.Paragraph;
 import by.training.model.ParagraphComposite;
 import by.training.model.TextLeaf;
+import by.training.model.WordLeaf;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +27,7 @@ public class ParagraphRepository implements TextElementRepository<ParagraphCompo
         return id;
     }
 
+    @Override
     public void delete(long id) {
         for (Paragraph paragraph : paragraphs) {
             if (paragraph.getId() == id) {
@@ -35,7 +37,23 @@ public class ParagraphRepository implements TextElementRepository<ParagraphCompo
         }
     }
 
-    public List<TextLeaf> findAllBy(ParentIdSpecification spec) {
+    @Override
+    public List<ParagraphComposite> compile() {
+        List<ParagraphComposite> paragraphsComposite = new LinkedList<>();
+
+        for (Paragraph paragraph : paragraphs) {
+            long id = paragraph.getId();
+            ParentIdSpecification spec = new ParentIdSpecification(id);
+            List<TextLeaf> sentences = childRepo.find(spec);
+            ParagraphComposite composite = new ParagraphComposite(sentences);
+            paragraphsComposite.add(composite);
+        }
+
+        return paragraphsComposite;
+    }
+
+    @Override
+    public List<TextLeaf> find(ParentIdSpecification spec) {
         List<TextLeaf> paragraphComposites = new LinkedList<>();
 
         for (Paragraph paragraph : paragraphs) {
@@ -44,26 +62,12 @@ public class ParagraphRepository implements TextElementRepository<ParagraphCompo
             }
             long id = paragraph.getId();
             ParentIdSpecification innerSpec = new ParentIdSpecification(id);
-            List<TextLeaf> sentences = childRepo.findAllBy(innerSpec);
+            List<TextLeaf> sentences = childRepo.find(innerSpec);
             ParagraphComposite composite = new ParagraphComposite(sentences);
             paragraphComposites.add(composite);
         }
 
         return paragraphComposites;
-    }
-
-    public List<ParagraphComposite> compile() {
-        List<ParagraphComposite> paragraphsComposite = new LinkedList<>();
-
-        for (Paragraph paragraph : paragraphs) {
-            long id = paragraph.getId();
-            ParentIdSpecification spec = new ParentIdSpecification(id);
-            List<TextLeaf> sentences = childRepo.findAllBy(spec);
-            ParagraphComposite composite = new ParagraphComposite(sentences);
-            paragraphsComposite.add(composite);
-        }
-
-        return paragraphsComposite;
     }
 
 }

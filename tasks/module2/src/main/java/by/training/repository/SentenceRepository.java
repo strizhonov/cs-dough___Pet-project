@@ -17,10 +17,6 @@ public class SentenceRepository implements TextElementRepository<SentenceComposi
         this.sentences = new LinkedList<>();
     }
 
-    public List<Sentence> getData() {
-        return new LinkedList<>(sentences);
-    }
-
     @Override
     public long create(SentenceComposite item, long parentId) {
         long id = IdCreator.getInstance().getUniqueId();
@@ -30,6 +26,7 @@ public class SentenceRepository implements TextElementRepository<SentenceComposi
         return id;
     }
 
+    @Override
     public void delete(long id) {
         for (Sentence sentence : sentences) {
             if (sentence.getId() == id) {
@@ -39,7 +36,23 @@ public class SentenceRepository implements TextElementRepository<SentenceComposi
         }
     }
 
-    public List<TextLeaf> findAllBy(ParentIdSpecification spec) {
+    @Override
+    public List<SentenceComposite> compile() {
+        List<SentenceComposite> sentenceComposite = new LinkedList<>();
+
+        for (Sentence sentence : sentences) {
+            long id = sentence.getId();
+            ParentIdSpecification spec = new ParentIdSpecification(id);
+            List<TextLeaf> words = childRepo.find(spec);
+            SentenceComposite composite = new SentenceComposite(words);
+            sentenceComposite.add(composite);
+        }
+
+        return sentenceComposite;
+    }
+
+    @Override
+    public List<TextLeaf> find(ParentIdSpecification spec) {
         List<TextLeaf> sentenceComposites = new LinkedList<>();
 
         for (Sentence sentence : sentences) {
@@ -48,26 +61,12 @@ public class SentenceRepository implements TextElementRepository<SentenceComposi
             }
             long id = sentence.getId();
             ParentIdSpecification innerSpec = new ParentIdSpecification(id);
-            List<TextLeaf> words = childRepo.findAllBy(innerSpec);
+            List<TextLeaf> words = childRepo.find(innerSpec);
             SentenceComposite composite = new SentenceComposite(words);
             sentenceComposites.add(composite);
         }
 
         return sentenceComposites;
-    }
-
-    public List<SentenceComposite> compile() {
-        List<SentenceComposite> sentenceComposite = new LinkedList<>();
-
-        for (Sentence sentence : sentences) {
-            long id = sentence.getId();
-            ParentIdSpecification spec = new ParentIdSpecification(id);
-            List<TextLeaf> words = childRepo.findAllBy(spec);
-            SentenceComposite composite = new SentenceComposite(words);
-            sentenceComposite.add(composite);
-        }
-
-        return sentenceComposite;
     }
 
 }
