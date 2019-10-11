@@ -78,7 +78,7 @@ public class CompletedTextController {
     }
 
     public List<SentenceComposite> sortSentencesByWords(boolean asc) {
-        return childController.sortChildren(asc);
+        return childController.sortSentencesByWords(asc);
     }
 
 

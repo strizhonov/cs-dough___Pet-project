@@ -1,6 +1,9 @@
 package by.training.controller;
 
 import by.training.builder.VegetableFactoryService;
+import by.training.entity.Vegetable;
+import by.training.parser.VegetableParamsParser;
+import by.training.repository.Repository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,8 +29,10 @@ public class VegetableControllerImplTest {
 
     @Before
     public void init() {
-        VegetableFactoryService factoryService = new VegetableFactoryService(new VegetableParamsParserImpl());
-        VegetableService service = new VegetableService(new VegetableRepository());
+        VegetableParamsParser parser = new VegetableParamsParserImpl();
+        VegetableFactoryService factoryService = new VegetableFactoryService(parser);
+        Repository<Vegetable> repository = new VegetableRepository();
+        VegetableService service = new VegetableService(repository);
         VegetableAttributesReader reader = new VegetableAttributesLineReader();
         vegetableControllerImpl = new VegetableControllerImpl(factoryService, service, reader);
     }

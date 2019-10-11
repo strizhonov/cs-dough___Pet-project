@@ -1,19 +1,19 @@
 package by.training.controller;
 
-import by.training.model.TextComposite;
+import by.training.model.SentenceComposite;
 
 import java.util.Comparator;
 
-public class LeafNumberComparator implements Comparator<TextComposite> {
+public class WordNumberComparator implements Comparator<SentenceComposite> {
 
     private boolean asc;
 
-    public LeafNumberComparator(boolean asc) {
+    public WordNumberComparator(boolean asc) {
         this.asc = asc;
     }
 
     @Override
-    public int compare(TextComposite o1, TextComposite o2) {
+    public int compare(SentenceComposite o1, SentenceComposite o2) {
         if (asc) {
             return Integer.compare(o1.getAll().size(), o2.getAll().size());
         } else {

@@ -1,7 +1,6 @@
 package by.training.controller;
 
 import by.training.model.SentenceComposite;
-import by.training.model.TextComposite;
 import by.training.model.TextLeaf;
 import by.training.model.WordLeaf;
 import by.training.service.SentenceService;
@@ -31,9 +30,9 @@ public class SentenceController {
         }
     }
 
-    public List<SentenceComposite> sortChildren(boolean asc) {
-        Comparator<TextComposite> comparator = new LeafNumberComparator(asc);
-        return service.sortChildren(comparator);
+    public List<SentenceComposite> sort(boolean asc) {
+        Comparator<SentenceComposite> comparator = new WordNumberComparator(asc);
+        return service.sort(comparator);
     }
 
 }

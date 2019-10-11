@@ -26,7 +26,7 @@ public class SentenceService {
         return repository.compile();
     }
 
-    public List<SentenceComposite> sortChildren(Comparator<TextComposite> comparator) {
+    public List<SentenceComposite> sort(Comparator<SentenceComposite> comparator) {
         List<SentenceComposite> sentences = compile();
         sentences.sort(comparator);
         return sentences;

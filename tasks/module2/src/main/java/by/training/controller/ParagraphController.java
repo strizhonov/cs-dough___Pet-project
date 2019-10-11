@@ -33,8 +33,8 @@ public class ParagraphController {
         return service.compile();
     }
 
-    public List<SentenceComposite> sortChildren(boolean asc) {
-        return childController.sortChildren(asc);
+    public List<SentenceComposite> sortSentencesByWords(boolean asc) {
+        return childController.sort(asc);
     }
 
 }
