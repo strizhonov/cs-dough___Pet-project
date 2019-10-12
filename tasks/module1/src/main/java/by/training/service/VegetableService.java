@@ -7,7 +7,7 @@ import by.training.repository.Specification;
 import java.util.Comparator;
 import java.util.List;
 
-public class VegetableService implements EntityService<Vegetable> {
+public class VegetableService {
 
     private Repository<Vegetable> repo;
 
@@ -15,21 +15,18 @@ public class VegetableService implements EntityService<Vegetable> {
         this.repo = repo;
     }
 
-    @Override
     public void addToRepo(Vegetable vegetable) {
         repo.add(vegetable);
     }
 
-    @Override
     public List<Vegetable> sort(Comparator<Vegetable> comparator) {
         List<Vegetable> sortedVegetables = repo.getData();
         sortedVegetables.sort(comparator);
         return sortedVegetables;
     }
 
-    @Override
     public List<Vegetable> findBy(Specification<Vegetable> spec) {
-        return repo.findBy(spec);
+        return repo.find(spec);
     }
 
     public double getSaladCalories() {
@@ -42,7 +39,6 @@ public class VegetableService implements EntityService<Vegetable> {
         return calories;
     }
 
-    @Override
     public List<Vegetable> getAll() {
         return repo.getData();
     }

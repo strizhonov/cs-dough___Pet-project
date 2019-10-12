@@ -28,7 +28,7 @@ public class VegetableRepository implements Repository<Vegetable> {
     }
 
     @Override
-    public List<Vegetable> findBy(Specification<Vegetable> spec) {
+    public List<Vegetable> find(Specification<Vegetable> spec) {
         List<Vegetable> found = new ArrayList<>();
 
         for (Vegetable vegetable : salad) {

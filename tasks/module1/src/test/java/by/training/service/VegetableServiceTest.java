@@ -1,20 +1,20 @@
 package by.training.service;
 
-import by.training.entity.*;
-import by.training.entity.Tomato;
-import by.training.entity.Leek;
+import by.training.controller.VegetableCaloriesComparator;
+import by.training.controller.VegetableWeightComparator;
 import by.training.entity.Carrot;
+import by.training.entity.Leek;
+import by.training.entity.Tomato;
+import by.training.entity.Vegetable;
+import by.training.repository.Specification;
+import by.training.repository.VegetableCaloriesHigherThanSpecification;
+import by.training.repository.VegetableCaloriesLowerThanSpecification;
+import by.training.repository.VegetableRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import by.training.controller.VegetableCaloriesComparator;
-import by.training.controller.VegetableWeightComparator;
-import by.training.repository.VegetableRepository;
-import by.training.repository.Specification;
-import by.training.repository.VegetableCaloriesHigherThanSpecification;
-import by.training.repository.VegetableCaloriesLowerThanSpecification;
 
 import java.util.Comparator;
 import java.util.List;
