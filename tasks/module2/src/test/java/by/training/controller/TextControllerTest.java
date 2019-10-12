@@ -33,10 +33,7 @@ import java.util.List;
 @RunWith(JUnit4.class)
 public class TextControllerTest {
 
-    private CompletedTextRepository completedTextRepository;
-    private SentenceRepository sentenceRepository;
     private TextController controller;
-    private String text;
 
     @Before
     public void init() {
@@ -48,9 +45,9 @@ public class TextControllerTest {
         FileReader fileReader = new FileReaderImpl();
 
         WordRepository wordRepository = new WordRepository();
-        sentenceRepository = new SentenceRepository(wordRepository);
+        SentenceRepository sentenceRepository = new SentenceRepository(wordRepository);
         ParagraphRepository paragraphRepository = new ParagraphRepository(sentenceRepository);
-        completedTextRepository = new CompletedTextRepository(paragraphRepository);
+        CompletedTextRepository completedTextRepository = new CompletedTextRepository(paragraphRepository);
 
         WordService wordService = new WordService(wordRepository);
         SentenceService sentenceService = new SentenceService(sentenceRepository, wordService);
@@ -60,10 +57,6 @@ public class TextControllerTest {
         controller = new TextController(textService, paragraphParser,
                 sentenceParser, wordParser, fileValidator, fileReader);
 
-        text = "\tIt has survived not only five centuries, but also the leap into electronic " +
-                "typesetting, remaining essentially unchanged. It was popularised in the with the " +
-                "release of Letraset sheets containing Lorem Ipsum passages, and more recently with " +
-                "desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. \n";
     }
 
     @Test
