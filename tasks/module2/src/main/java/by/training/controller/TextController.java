@@ -1,34 +1,45 @@
 package by.training.controller;
 
 import by.training.model.CompletedTextComposite;
-import by.training.model.SentenceComposite;
+import by.training.model.TextComposite;
 import by.training.parserchain.ParagraphParser;
 import by.training.parserchain.SentenceParser;
 import by.training.parserchain.WordParser;
 import by.training.reader.FileReader;
 import by.training.service.CompletedTextService;
+import by.training.service.ParagraphService;
+import by.training.service.SentenceService;
+import by.training.service.WordService;
 import by.training.validator.FileValidator;
 import by.training.validator.ValidationResult;
 
 import java.io.IOException;
-import java.util.List;
 
 public class TextController {
 
-    private CompletedTextService service;
+    private CompletedTextService completedTextService;
+    private ParagraphService paragraphService;
+    private SentenceService sentenceService;
+    private WordService wordService;
     private ParagraphParser paragraphParser;
     private SentenceParser sentenceParser;
     private WordParser wordParser;
     private FileValidator fileValidator;
     private FileReader fileReader;
 
-    public TextController(CompletedTextService service,
+    public TextController(CompletedTextService completedTextService,
+                          ParagraphService paragraphService,
+                          SentenceService sentenceService,
+                          WordService wordService,
                           ParagraphParser paragraphParser,
                           SentenceParser sentenceParser,
                           WordParser wordParser,
                           FileValidator fileValidator,
                           FileReader fileReader) {
-        this.service = service;
+        this.completedTextService = completedTextService;
+        this.paragraphService = paragraphService;
+        this.sentenceService = sentenceService;
+        this.wordService = wordService;
         this.paragraphParser = paragraphParser;
         this.sentenceParser = sentenceParser;
         this.wordParser = wordParser;
@@ -36,15 +47,7 @@ public class TextController {
         this.fileReader = fileReader;
     }
 
-    public List<CompletedTextComposite> compile() {
-        return service.compile();
-    }
-
-    public List<SentenceComposite> sortSentencesByWords(boolean asc) {
-        return service.sortSentencesByWords(asc);
-    }
-
-    public void proceedFile(String filePath) throws IOException {
+    public String proceedFile(String filePath) throws IOException {
         ValidationResult validationResult = fileValidator.validate(filePath);
         if (!validationResult.isValid()) {
             throw new IOException();
@@ -53,10 +56,20 @@ public class TextController {
         paragraphParser.linkWith(sentenceParser);
         sentenceParser.linkWith(wordParser);
 
-        String text = fileReader.read(filePath);
-        CompletedTextComposite composite = (CompletedTextComposite) paragraphParser.parse(text);
+        return fileReader.read(filePath);
+    }
 
-        service.addAll(composite, 0);
+    public CompletedTextComposite compile(String text) {
+        return (CompletedTextComposite) paragraphParser.parse(text);
+    }
+
+    public void save(CompletedTextComposite composite) {
+        composite.setService(completedTextService);
+        composite.setChildService(paragraphService);
+        composite.setSentenceService(sentenceService);
+        composite.setWordService(wordService);
+
+        composite.save(-1);
     }
 
 

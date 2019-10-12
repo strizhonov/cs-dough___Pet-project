@@ -1,17 +1,13 @@
 package by.training.controller;
 
 import by.training.model.CompletedTextComposite;
-import by.training.model.SentenceComposite;
-import by.training.model.TextComposite;
+import by.training.model.ParagraphComposite;
 import by.training.parserchain.ParagraphParser;
 import by.training.parserchain.SentenceParser;
 import by.training.parserchain.WordParser;
 import by.training.reader.FileReader;
 import by.training.reader.FileReaderImpl;
-import by.training.repository.CompletedTextRepository;
-import by.training.repository.ParagraphRepository;
-import by.training.repository.SentenceRepository;
-import by.training.repository.WordRepository;
+import by.training.repository.*;
 import by.training.service.CompletedTextService;
 import by.training.service.ParagraphService;
 import by.training.service.SentenceService;
@@ -27,14 +23,19 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.util.List;
 
-;
 
 @RunWith(JUnit4.class)
 public class TextControllerTest {
 
     private TextController controller;
+    private WordRepository wordRepository;
+    private SentenceRepository sentenceRepository;
+    private ParagraphRepository paragraphRepository;
+    private CompletedTextRepository completedTextRepository;
+    private ParagraphService paragraphService;
+    private WordService wordService;
+    private SentenceService sentenceService;
 
     @Before
     public void init() {
@@ -45,17 +46,17 @@ public class TextControllerTest {
         FileValidator fileValidator = new FileValidator();
         FileReader fileReader = new FileReaderImpl();
 
-        WordRepository wordRepository = new WordRepository();
-        SentenceRepository sentenceRepository = new SentenceRepository(wordRepository);
-        ParagraphRepository paragraphRepository = new ParagraphRepository(sentenceRepository);
-        CompletedTextRepository completedTextRepository = new CompletedTextRepository(paragraphRepository);
+        wordRepository = new WordRepository();
+        sentenceRepository = new SentenceRepository();
+        paragraphRepository = new ParagraphRepository();
+        completedTextRepository = new CompletedTextRepository();
 
-        WordService wordService = new WordService(wordRepository);
-        SentenceService sentenceService = new SentenceService(sentenceRepository, wordService);
-        ParagraphService paragraphService = new ParagraphService(paragraphRepository, sentenceService);
-        CompletedTextService textService = new CompletedTextService(completedTextRepository, paragraphService);
+        wordService = new WordService(wordRepository);
+        sentenceService = new SentenceService(sentenceRepository);
+        paragraphService = new ParagraphService(paragraphRepository);
+        CompletedTextService textService = new CompletedTextService(completedTextRepository);
 
-        controller = new TextController(textService, paragraphParser,
+        controller = new TextController(textService, paragraphService, sentenceService, wordService, paragraphParser,
                 sentenceParser, wordParser, fileValidator, fileReader);
 
     }
@@ -65,41 +66,56 @@ public class TextControllerTest {
         URI uri = this.getClass().getResource("/valid_text.txt").toURI();
         String path = Paths.get(uri).toString();
 
-        controller.proceedFile(path);
-
-        List<SentenceComposite> sentences = controller.sortSentencesByWords(true);
-
-        Assert.assertTrue(sentences.get(0).getText().length() < sentences.get(5).getText().length());
-
+        String text = controller.proceedFile(path);
+        int expectedLength = text.split(" ").length;
+        Assert.assertEquals(116, expectedLength);
     }
 
     @Test
-    public void compile() throws URISyntaxException, IOException {
+    public void save() throws URISyntaxException, IOException {
         URI uri = this.getClass().getResource("/valid_text.txt").toURI();
         String path = Paths.get(uri).toString();
 
-        controller.proceedFile(path);
-        List<CompletedTextComposite> texts = controller.compile();
-        int textLength = texts.get(0).getText().split(" ").length;
-        Assert.assertEquals(120, textLength);
+        String text = controller.proceedFile(path);
+
+        CompletedTextComposite composite = controller.compile(text);
+
+        controller.save(composite);
+
+        int texts = completedTextRepository.getData().size();
+        int paragraphs = paragraphRepository.getData().size();
+        int sentences = sentenceRepository.getData().size();
+        int words = wordRepository.getData().size();
+        Assert.assertEquals(1, texts);
+        Assert.assertEquals(4, paragraphs);
+        Assert.assertEquals(6, sentences);
+        Assert.assertEquals(119, words);
     }
 
     @Test
-    public void sortAsc() throws URISyntaxException, IOException {
-
+    public void sort() throws URISyntaxException, IOException {
         URI uri = this.getClass().getResource("/valid_text.txt").toURI();
         String path = Paths.get(uri).toString();
 
-        controller.proceedFile(path);
+        String text = controller.proceedFile(path);
 
-        List<CompletedTextComposite> texts = controller.compile();
-        CompletedTextComposite text = texts.get(0);
-        text.sortChildrenByLeavesCount(true);
-        int firstSentenceLength = text.getAll().get(0).getText().length();
-        int lastSentenceLength = text.getAll().get(3).getText().length();
-        Assert.assertTrue(firstSentenceLength < lastSentenceLength);
+        CompletedTextComposite composite = controller.compile(text);
 
+        controller.save(composite);
+
+        ParagraphComposite paragraphComposite = new ParagraphComposite();
+        paragraphComposite.setService(paragraphService);
+        paragraphComposite.setChildService(sentenceService);
+        paragraphComposite.setWordService(wordService);
+
+        ParentIdSpecification spec = new ParentIdSpecification(132);
+        paragraphComposite.load(spec);
+
+        paragraphComposite.sortChildrenByLeavesCount(false);
+        int firstSentenceLength = paragraphComposite.getAll().get(0).getText().split(" ").length;
+        int secondSentenceLength = paragraphComposite.getAll().get(1).getText().split(" ").length;
+
+        Assert.assertTrue(firstSentenceLength > secondSentenceLength);
     }
-
 
 }

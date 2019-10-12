@@ -1,18 +1,34 @@
 package by.training.service;
 
-import by.training.model.WordLeaf;
+import by.training.entity.BaseTextElement;
+import by.training.entity.Word;
 import by.training.repository.TextElementRepository;
+import by.training.repository.TextElementSpecification;
 
-public class WordService {
+import java.util.List;
+import java.util.Optional;
 
-    private TextElementRepository<WordLeaf> repository;
+public class WordService implements TextService<Word> {
 
-    public WordService(TextElementRepository<WordLeaf> repository) {
+    private TextElementRepository<Word> repository;
+
+    public WordService(TextElementRepository<Word> repository) {
         this.repository = repository;
     }
 
-    public long add(WordLeaf item, long parentId) {
-        return repository.create(item, parentId);
+    @Override
+    public long add(Word element) {
+        return repository.create(element);
+    }
+
+    @Override
+    public Optional<Word> get(long id) {
+        return repository.get(id);
+    }
+
+    @Override
+    public List<Word> find(TextElementSpecification<BaseTextElement> spec) {
+        return repository.find(spec);
     }
 
 }

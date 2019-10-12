@@ -2,11 +2,17 @@ package by.training.parserchain;
 
 import by.training.model.CompletedTextComposite;
 import by.training.model.TextComposite;
+import by.training.reader.FileReaderImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 
 @RunWith(JUnit4.class)
 public class ParserChainTest {
@@ -41,6 +47,32 @@ public class ParserChainTest {
         TextComposite composite = (CompletedTextComposite) paragraphParser.parse(text);
 
         Assert.assertEquals(text, composite.getText());
+
+    }
+
+    @Test
+    public void parseFile() throws URISyntaxException, IOException {
+        URI uri = this.getClass().getResource("/valid_text.txt").toURI();
+        String path = Paths.get(uri).toString();
+        String text = new FileReaderImpl().read(path);
+
+        ParagraphParser paragraphParser = new ParagraphParser();
+        SentenceParser sentenceParser = new SentenceParser();
+        WordParser wordParser = new WordParser();
+
+        paragraphParser.linkWith(sentenceParser);
+        sentenceParser.linkWith(wordParser);
+
+        TextComposite composite = (CompletedTextComposite) paragraphParser.parse(text);
+
+        String compositeText = composite.getText();
+
+        for (int i = 0; i < 3; i++) {
+            String[] expected = (text + " \n").split("\r\n\t");
+            String[] actual = compositeText.split("\\s\n\t");
+            Assert.assertEquals(expected[i], actual[i]);
+        }
+
 
     }
 

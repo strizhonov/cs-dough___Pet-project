@@ -1,7 +1,5 @@
 package by.training.repository;
 
-import by.training.entity.BaseTextElement;
-
-public interface TextElementSpecification<T extends BaseTextElement> {
+public interface TextElementSpecification<T> {
     boolean isSatisfiedBy(T entity);
 }

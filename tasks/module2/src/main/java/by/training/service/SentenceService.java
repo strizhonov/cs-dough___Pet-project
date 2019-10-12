@@ -1,38 +1,36 @@
 package by.training.service;
 
-import by.training.model.*;
+import by.training.entity.BaseTextElement;
+import by.training.entity.Sentence;
 import by.training.repository.TextElementRepository;
+import by.training.repository.TextElementSpecification;
 
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
-public class SentenceService {
+public class SentenceService implements TextService<Sentence> {
 
-    private TextElementRepository<SentenceComposite> repository;
-    private WordService childService;
+    private TextElementRepository<Sentence> repository;
 
-    public SentenceService(TextElementRepository<SentenceComposite> repository,
-                           WordService childService) {
+    public SentenceService(TextElementRepository<Sentence> repository) {
         this.repository = repository;
-        this.childService = childService;
+
     }
 
-    public void addAll(SentenceComposite item, long parentId) {
-        long id = add(item, parentId);
-        for (TextLeaf leaf : item.getAll()) {
-            childService.add((WordLeaf) leaf, id);
-        }
+    @Override
+    public long add(Sentence element) {
+        return repository.create(element);
     }
 
-    public List<SentenceComposite> sort(boolean asc) {
-        List<SentenceComposite> sentences = repository.compile();
-        Comparator<TextComposite> comparator = new LeavesNumberComparator(asc);
-        sentences.sort(comparator);
-        return sentences;
+    @Override
+    public Optional<Sentence> get(long id) {
+        return repository.get(id);
     }
 
-    private long add(SentenceComposite item, long parentId) {
-        return repository.create(item, parentId);
+    @Override
+    public List<Sentence> find(TextElementSpecification<BaseTextElement> spec) {
+        return repository.find(spec);
     }
+
 
 }

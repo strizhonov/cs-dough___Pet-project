@@ -1,30 +1,43 @@
 package by.training.repository;
 
+import by.training.entity.BaseTextElement;
 import by.training.entity.CompletedText;
-import by.training.model.CompletedTextComposite;
-import by.training.model.ParagraphComposite;
-import by.training.model.TextLeaf;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
-public class CompletedTextRepository implements TextElementRepository<CompletedTextComposite> {
+public class CompletedTextRepository implements TextElementRepository<CompletedText> {
 
-    private List<CompletedText> texts;
-    private TextElementRepository<ParagraphComposite> childRepo;
+    private List<CompletedText> texts = new LinkedList<>();
 
-    public CompletedTextRepository(TextElementRepository<ParagraphComposite> childRepo) {
-        this.childRepo = childRepo;
-        this.texts = new LinkedList<>();
+    public List<CompletedText> getData() {
+        return new LinkedList<>(texts);
     }
 
     @Override
-    public long create(CompletedTextComposite item, long parentId) {
+    public long create(CompletedText item) {
         long id = IdCreator.getInstance().getUniqueId();
-        String text = item.getText();
-        CompletedText completedText = new CompletedText(id, parentId, text);
-        texts.add(completedText);
+        item.setId(id);
+        texts.add(item);
         return id;
+    }
+
+    @Override
+    public Optional<CompletedText> get(long id) {
+        for (CompletedText text : texts) {
+            if (text.getId() == id) {
+                return Optional.of(text);
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public void update(CompletedText item) {
+        long id = item.getId();
+        delete(id);
+        create(item);
     }
 
     @Override
@@ -38,36 +51,17 @@ public class CompletedTextRepository implements TextElementRepository<CompletedT
     }
 
     @Override
-    public List<CompletedTextComposite> compile() {
-        List<CompletedTextComposite> completedTextComposites = new LinkedList<>();
-
-        for (CompletedText text : texts) {
-            long id = text.getId();
-            ParentIdSpecification spec = new ParentIdSpecification(id);
-            List<TextLeaf> paragraphs = childRepo.find(spec);
-            CompletedTextComposite composite = new CompletedTextComposite(paragraphs);
-            completedTextComposites.add(composite);
-        }
-
-        return completedTextComposites;
-    }
-
-    @Override
-    public List<TextLeaf> find(ParentIdSpecification spec) {
-        List<TextLeaf> textComposites = new LinkedList<>();
+    public List<CompletedText> find(TextElementSpecification<BaseTextElement> spec) {
+        List<CompletedText> found = new LinkedList<>();
 
         for (CompletedText text : texts) {
             if (!spec.isSatisfiedBy(text)) {
                 continue;
             }
-            long id = text.getId();
-            ParentIdSpecification innerSpec = new ParentIdSpecification(id);
-            List<TextLeaf> paragraphs = childRepo.find(innerSpec);
-            CompletedTextComposite composite = new CompletedTextComposite(paragraphs);
-            textComposites.add(composite);
+            found.add(text);
         }
 
-        return textComposites;
+        return found;
     }
 
 }

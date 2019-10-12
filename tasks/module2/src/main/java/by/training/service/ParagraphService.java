@@ -1,39 +1,33 @@
 package by.training.service;
 
-import by.training.model.ParagraphComposite;
-import by.training.model.SentenceComposite;
-import by.training.model.TextLeaf;
+import by.training.entity.BaseTextElement;
+import by.training.entity.Paragraph;
 import by.training.repository.TextElementRepository;
+import by.training.repository.TextElementSpecification;
 
 import java.util.List;
+import java.util.Optional;
 
-public class ParagraphService {
+public class ParagraphService implements TextService<Paragraph> {
 
-    private TextElementRepository<ParagraphComposite> repository;
-    private SentenceService childService;
+    private TextElementRepository<Paragraph> repository;
 
-    public ParagraphService(TextElementRepository<ParagraphComposite> repository,
-                            SentenceService childService) {
+    public ParagraphService(TextElementRepository<Paragraph> repository) {
         this.repository = repository;
-        this.childService = childService;
     }
 
-    public void addAll(ParagraphComposite item, long parentId) {
-        long id = add(item, parentId);
-        for (TextLeaf leaf : item.getAll()) {
-            childService.addAll((SentenceComposite) leaf, id);
-        }
+    @Override
+    public long add(Paragraph element) {
+        return repository.create(element);
     }
 
-    public List<ParagraphComposite> compile() {
-        return repository.compile();
+    @Override
+    public Optional<Paragraph> get(long id) {
+        return repository.get(id);
     }
 
-    public List<SentenceComposite> sortSentencesByWords(boolean asc) {
-        return childService.sort(asc);
-    }
-
-    private long add(ParagraphComposite item, long parentId) {
-        return repository.create(item, parentId);
+    @Override
+    public List<Paragraph> find(TextElementSpecification<BaseTextElement> spec) {
+        return repository.find(spec);
     }
 }

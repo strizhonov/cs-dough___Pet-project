@@ -14,4 +14,5 @@ public class ParentIdSpecification implements TextElementSpecification<BaseTextE
     public boolean isSatisfiedBy(BaseTextElement item) {
         return item.getParentId() == parentId;
     }
+
 }

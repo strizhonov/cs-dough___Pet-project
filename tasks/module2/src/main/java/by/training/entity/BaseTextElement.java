@@ -2,7 +2,7 @@ package by.training.entity;
 
 public abstract class BaseTextElement {
 
-    protected final long id;
+    protected long id;
     protected final long parentId;
     protected final String text;
 
@@ -16,6 +16,10 @@ public abstract class BaseTextElement {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public long getParentId() {
         return parentId;
     }
@@ -23,4 +27,5 @@ public abstract class BaseTextElement {
     public String getText() {
         return text;
     }
+
 }

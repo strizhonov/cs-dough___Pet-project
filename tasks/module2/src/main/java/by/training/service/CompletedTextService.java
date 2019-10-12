@@ -1,40 +1,34 @@
 package by.training.service;
 
-import by.training.model.CompletedTextComposite;
-import by.training.model.ParagraphComposite;
-import by.training.model.SentenceComposite;
-import by.training.model.TextLeaf;
+import by.training.entity.BaseTextElement;
+import by.training.entity.CompletedText;
 import by.training.repository.TextElementRepository;
+import by.training.repository.TextElementSpecification;
 
 import java.util.List;
+import java.util.Optional;
 
-public class CompletedTextService {
+public class CompletedTextService implements TextService<CompletedText> {
 
-    private TextElementRepository<CompletedTextComposite> repository;
-    private ParagraphService childService;
+    private TextElementRepository<CompletedText> repository;
 
-    public CompletedTextService(TextElementRepository<CompletedTextComposite> repository,
-                                ParagraphService childService) {
+    public CompletedTextService(TextElementRepository<CompletedText> repository) {
         this.repository = repository;
-        this.childService = childService;
     }
 
-    private long add(CompletedTextComposite item, long parentId) {
-        return repository.create(item, parentId);
+    @Override
+    public long add(CompletedText element) {
+        return repository.create(element);
     }
 
-    public void addAll(CompletedTextComposite item, long parentId) {
-        long id = add(item, -1);
-        for (TextLeaf leaf : item.getAll()) {
-            childService.addAll((ParagraphComposite) leaf, id);
-        }
+    @Override
+    public Optional<CompletedText> get(long id) {
+        return repository.get(id);
     }
 
-    public List<CompletedTextComposite> compile() {
-        return repository.compile();
+    @Override
+    public List<CompletedText> find(TextElementSpecification<BaseTextElement> spec) {
+        return repository.find(spec);
     }
 
-    public List<SentenceComposite> sortSentencesByWords(boolean asc) {
-        return childService.sortSentencesByWords(asc);
-    }
 }

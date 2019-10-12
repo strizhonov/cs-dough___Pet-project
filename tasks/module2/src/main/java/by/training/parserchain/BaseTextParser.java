@@ -16,6 +16,6 @@ public abstract class BaseTextParser implements ParserChain<TextLeaf> {
             return next.parse(text);
         }
 
-        return () -> null;
+        return null;
     }
 }

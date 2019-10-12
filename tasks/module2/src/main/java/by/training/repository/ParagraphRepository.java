@@ -1,30 +1,43 @@
 package by.training.repository;
 
+import by.training.entity.BaseTextElement;
 import by.training.entity.Paragraph;
-import by.training.model.ParagraphComposite;
-import by.training.model.SentenceComposite;
-import by.training.model.TextLeaf;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
-public class ParagraphRepository implements TextElementRepository<ParagraphComposite> {
+public class ParagraphRepository implements TextElementRepository<Paragraph> {
 
-    private List<Paragraph> paragraphs;
-    private TextElementRepository<SentenceComposite> childRepo;
+    private List<Paragraph> paragraphs = new LinkedList<>();
 
-    public ParagraphRepository(TextElementRepository<SentenceComposite> childRepo) {
-        this.childRepo = childRepo;
-        paragraphs = new LinkedList<>();
+    public List<Paragraph> getData() {
+        return new LinkedList<>(paragraphs);
     }
 
     @Override
-    public long create(ParagraphComposite item, long parentId) {
+    public long create(Paragraph item) {
         long id = IdCreator.getInstance().getUniqueId();
-        String text = item.getText();
-        Paragraph paragraph = new Paragraph(id, parentId, text);
-        paragraphs.add(paragraph);
+        item.setId(id);
+        paragraphs.add(item);
         return id;
+    }
+
+    @Override
+    public Optional<Paragraph> get(long id) {
+        for (Paragraph paragraph : paragraphs) {
+            if (paragraph.getId() == id) {
+                return Optional.of(paragraph);
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public void update(Paragraph item) {
+        long id = item.getId();
+        delete(id);
+        create(item);
     }
 
     @Override
@@ -38,36 +51,17 @@ public class ParagraphRepository implements TextElementRepository<ParagraphCompo
     }
 
     @Override
-    public List<ParagraphComposite> compile() {
-        List<ParagraphComposite> paragraphsComposite = new LinkedList<>();
-
-        for (Paragraph paragraph : paragraphs) {
-            long id = paragraph.getId();
-            ParentIdSpecification spec = new ParentIdSpecification(id);
-            List<TextLeaf> sentences = childRepo.find(spec);
-            ParagraphComposite composite = new ParagraphComposite(sentences);
-            paragraphsComposite.add(composite);
-        }
-
-        return paragraphsComposite;
-    }
-
-    @Override
-    public List<TextLeaf> find(ParentIdSpecification spec) {
-        List<TextLeaf> paragraphComposites = new LinkedList<>();
+    public List<Paragraph> find(TextElementSpecification<BaseTextElement> spec) {
+        List<Paragraph> found = new LinkedList<>();
 
         for (Paragraph paragraph : paragraphs) {
             if (!spec.isSatisfiedBy(paragraph)) {
                 continue;
             }
-            long id = paragraph.getId();
-            ParentIdSpecification innerSpec = new ParentIdSpecification(id);
-            List<TextLeaf> sentences = childRepo.find(innerSpec);
-            ParagraphComposite composite = new ParagraphComposite(sentences);
-            paragraphComposites.add(composite);
+            found.add(paragraph);
         }
 
-        return paragraphComposites;
+        return found;
     }
 
 }
