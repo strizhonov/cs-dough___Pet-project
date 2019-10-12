@@ -12,7 +12,6 @@ import org.junit.runners.JUnit4;
 public class SentenceParserTest {
 
     private String paragraph;
-    ;
 
     @Before
     public void init() {

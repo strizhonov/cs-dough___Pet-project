@@ -1,7 +1,6 @@
 package by.training.controller;
 
 import by.training.model.CompletedTextComposite;
-import by.training.model.TextComposite;
 import by.training.parserchain.ParagraphParser;
 import by.training.parserchain.SentenceParser;
 import by.training.parserchain.WordParser;

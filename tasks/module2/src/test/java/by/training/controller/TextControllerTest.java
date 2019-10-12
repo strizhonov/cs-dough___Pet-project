@@ -7,7 +7,10 @@ import by.training.parserchain.SentenceParser;
 import by.training.parserchain.WordParser;
 import by.training.reader.FileReader;
 import by.training.reader.FileReaderImpl;
-import by.training.repository.*;
+import by.training.repository.CompletedTextRepository;
+import by.training.repository.ParagraphRepository;
+import by.training.repository.SentenceRepository;
+import by.training.repository.WordRepository;
 import by.training.service.CompletedTextService;
 import by.training.service.ParagraphService;
 import by.training.service.SentenceService;
@@ -93,7 +96,7 @@ public class TextControllerTest {
     }
 
     @Test
-    public void sort() throws URISyntaxException, IOException {
+    public void sortAsc() throws URISyntaxException, IOException {
         URI uri = this.getClass().getResource("/valid_text.txt").toURI();
         String path = Paths.get(uri).toString();
 
@@ -108,8 +111,7 @@ public class TextControllerTest {
         paragraphComposite.setChildService(sentenceService);
         paragraphComposite.setWordService(wordService);
 
-        ParentIdSpecification spec = new ParentIdSpecification(132);
-        paragraphComposite.load(spec);
+        paragraphComposite.load(132);
 
         paragraphComposite.sortChildrenByLeavesCount(false);
         int firstSentenceLength = paragraphComposite.getAll().get(0).getText().split(" ").length;

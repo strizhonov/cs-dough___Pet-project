@@ -1,12 +1,11 @@
 package by.training.model;
 
-import by.training.entity.BaseTextElement;
 import by.training.entity.Sentence;
 import by.training.entity.Word;
-import by.training.repository.IdSpecification;
-import by.training.repository.TextElementSpecification;
+import by.training.repository.ParentIdSpecification;
 import by.training.service.SentenceService;
 import by.training.service.WordService;
+import org.apache.log4j.Logger;
 
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -15,6 +14,7 @@ import java.util.Optional;
 
 public class SentenceComposite implements TextComposite {
 
+    private static final Logger LOGGER = Logger.getLogger(SentenceComposite.class);
     private static final String SEPARATOR = " ";
     private List<TextLeaf> words = new LinkedList<>();
     private SentenceService service;
@@ -47,6 +47,10 @@ public class SentenceComposite implements TextComposite {
 
     @Override
     public long save(long parentId) {
+        if (service == null) {
+            LOGGER.error("No service found.");
+            return -1;
+        }
         String text = getText();
         Sentence element = new Sentence(-1, parentId, text);
         long id = service.add(element);
@@ -55,14 +59,18 @@ public class SentenceComposite implements TextComposite {
     }
 
     @Override
-    public void load(TextElementSpecification<BaseTextElement> spec) {
+    public void load(long parentId) {
+        if (childService == null) {
+            LOGGER.error("No service found.");
+            return;
+        }
+        ParentIdSpecification spec = new ParentIdSpecification(parentId);
         List<Word> words = childService.find(spec);
         for (Word word : words) {
             long id = word.getId();
-            IdSpecification spec1 = new IdSpecification(id);
             WordLeaf leaf = new WordLeaf();
             leaf.setService(childService);
-            leaf.load(spec1);
+            leaf.load(id);
             this.words.add(leaf);
         }
     }

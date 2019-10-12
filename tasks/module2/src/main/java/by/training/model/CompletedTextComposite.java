@@ -1,14 +1,13 @@
 package by.training.model;
 
-import by.training.entity.BaseTextElement;
 import by.training.entity.CompletedText;
 import by.training.entity.Paragraph;
 import by.training.repository.ParentIdSpecification;
-import by.training.repository.TextElementSpecification;
 import by.training.service.CompletedTextService;
 import by.training.service.ParagraphService;
 import by.training.service.SentenceService;
 import by.training.service.WordService;
+import org.apache.log4j.Logger;
 
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -17,6 +16,7 @@ import java.util.Optional;
 
 public class CompletedTextComposite implements TextComposite {
 
+    private static final Logger LOGGER = Logger.getLogger(CompletedTextComposite.class);
     private static final String SEPARATOR = "\n";
     private List<TextLeaf> paragraphs = new LinkedList<>();
     private CompletedTextService service;
@@ -63,6 +63,10 @@ public class CompletedTextComposite implements TextComposite {
 
     @Override
     public long save(long parentId) {
+        if (service == null) {
+            LOGGER.error("No service found.");
+            return -1;
+        }
         String text = getText();
         CompletedText element = new CompletedText(-1, parentId, text);
         long id = service.add(element);
@@ -71,16 +75,20 @@ public class CompletedTextComposite implements TextComposite {
     }
 
     @Override
-    public void load(TextElementSpecification<BaseTextElement> spec) {
+    public void load(long parentId) {
+        if (childService == null) {
+            LOGGER.error("No service found.");
+            return;
+        }
+        ParentIdSpecification spec = new ParentIdSpecification(parentId);
         List<Paragraph> paragraphs = childService.find(spec);
         for (Paragraph paragraph : paragraphs) {
             long id = paragraph.getId();
-            ParentIdSpecification spec1 = new ParentIdSpecification(id);
             ParagraphComposite composite = new ParagraphComposite();
             composite.setService(childService);
             composite.setChildService(sentenceService);
             composite.setWordService(wordService);
-            composite.load(spec1);
+            composite.load(id);
             this.paragraphs.add(composite);
         }
     }
