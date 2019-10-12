@@ -1,8 +1,6 @@
 package by.training.service;
 
-import by.training.model.SentenceComposite;
-import by.training.model.TextLeaf;
-import by.training.model.WordLeaf;
+import by.training.model.*;
 import by.training.repository.TextElementRepository;
 
 import java.util.Comparator;
@@ -28,7 +26,7 @@ public class SentenceService {
 
     public List<SentenceComposite> sort(boolean asc) {
         List<SentenceComposite> sentences = repository.compile();
-        Comparator<SentenceComposite> comparator = new WordNumberComparator(asc);
+        Comparator<TextComposite> comparator = new LeavesNumberComparator(asc);
         sentences.sort(comparator);
         return sentences;
     }

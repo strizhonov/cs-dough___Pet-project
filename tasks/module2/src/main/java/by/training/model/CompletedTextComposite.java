@@ -1,7 +1,9 @@
 package by.training.model;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 public class CompletedTextComposite implements TextComposite {
 
@@ -27,6 +29,34 @@ public class CompletedTextComposite implements TextComposite {
     }
 
     @Override
+    public void sortChildrenByLeavesCount(boolean asc) {
+        Optional<List<TextComposite>> optional = getChildrenAsComposite();
+        if (!optional.isPresent()) {
+            return;
+        }
+
+        List<TextComposite> composites = optional.get();
+        Comparator<TextComposite> comparator = new LeavesNumberComparator(asc);
+        composites.sort(comparator);
+
+        paragraphs.clear();
+        paragraphs.addAll(composites);
+    }
+
+    @Override
+    public Optional<List<TextComposite>> getChildrenAsComposite() {
+        List<TextComposite> children = new LinkedList<>();
+        for (TextLeaf paragraph : paragraphs) {
+            if (paragraph instanceof TextComposite) {
+                children.add((TextComposite) paragraph);
+            } else {
+                return Optional.empty();
+            }
+        }
+        return Optional.of(children);
+    }
+
+    @Override
     public String getText() {
         StringBuilder sb = new StringBuilder();
 
@@ -37,4 +67,5 @@ public class CompletedTextComposite implements TextComposite {
 
         return sb.toString();
     }
+
 }

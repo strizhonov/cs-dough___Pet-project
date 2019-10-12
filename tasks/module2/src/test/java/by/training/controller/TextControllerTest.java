@@ -2,6 +2,7 @@ package by.training.controller;
 
 import by.training.model.CompletedTextComposite;
 import by.training.model.SentenceComposite;
+import by.training.model.TextComposite;
 import by.training.parserchain.ParagraphParser;
 import by.training.parserchain.SentenceParser;
 import by.training.parserchain.WordParser;
@@ -91,20 +92,14 @@ public class TextControllerTest {
 
         controller.proceedFile(path);
 
-        List<SentenceComposite> sentences = controller.sortSentencesByWords(true);
-        Assert.assertTrue(sentences.get(0).getText().length() < sentences.get(1).getText().length());
+        List<CompletedTextComposite> texts = controller.compile();
+        CompletedTextComposite text = texts.get(0);
+        text.sortChildrenByLeavesCount(true);
+        int firstSentenceLength = text.getAll().get(0).getText().length();
+        int lastSentenceLength = text.getAll().get(3).getText().length();
+        Assert.assertTrue(firstSentenceLength < lastSentenceLength);
 
     }
 
-    @Test
-    public void sortDesc() throws URISyntaxException, IOException {
 
-        URI uri = this.getClass().getResource("/valid_text.txt").toURI();
-        String path = Paths.get(uri).toString();
-
-        controller.proceedFile(path);
-
-        List<SentenceComposite> sentences = controller.sortSentencesByWords(false);
-        Assert.assertTrue(sentences.get(0).getText().length() > sentences.get(1).getText().length());
-    }
 }

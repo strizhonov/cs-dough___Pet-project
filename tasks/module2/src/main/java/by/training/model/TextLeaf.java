@@ -1,5 +1,6 @@
-package by.training.model;
+package by.training.model;;
 
 public interface TextLeaf {
     String getText();
+
 }
