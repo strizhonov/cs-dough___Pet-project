@@ -41,7 +41,7 @@ public class Word extends BaseTextElement {
         if (!super.equals(o)) {
             return false;
         }
-         Word word = (Word) o;
+        Word word = (Word) o;
         return getType() == word.getType() &&
                 Objects.equals(getBefore(), word.getBefore()) &&
                 Objects.equals(getAfter(), word.getAfter());

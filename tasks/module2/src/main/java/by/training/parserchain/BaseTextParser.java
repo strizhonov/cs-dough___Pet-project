@@ -2,7 +2,7 @@ package by.training.parserchain;
 
 import by.training.model.TextLeaf;
 
-public abstract class BaseTextParser implements ParserChain<TextLeaf>{
+public abstract class BaseTextParser implements ParserChain<TextLeaf> {
 
     private BaseTextParser next;
 

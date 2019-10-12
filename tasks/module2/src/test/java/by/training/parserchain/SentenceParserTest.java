@@ -11,7 +11,8 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class SentenceParserTest {
 
-    private String paragraph;;
+    private String paragraph;
+    ;
 
     @Before
     public void init() {

@@ -15,7 +15,7 @@ public class WordParserTest {
 
     @Before
     public void init() {
-        sentence  = "It is a established fact that a reader will be of a page when looking at its layout... ";
+        sentence = "It is a established fact that a reader will be of a page when looking at its layout... ";
     }
 
     @Test

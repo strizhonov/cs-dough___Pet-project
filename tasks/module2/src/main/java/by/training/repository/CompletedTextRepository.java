@@ -2,6 +2,7 @@ package by.training.repository;
 
 import by.training.entity.CompletedText;
 import by.training.model.CompletedTextComposite;
+import by.training.model.ParagraphComposite;
 import by.training.model.TextLeaf;
 
 import java.util.LinkedList;
@@ -10,9 +11,9 @@ import java.util.List;
 public class CompletedTextRepository implements TextElementRepository<CompletedTextComposite> {
 
     private List<CompletedText> texts;
-    private ParagraphRepository childRepo;
+    private TextElementRepository<ParagraphComposite> childRepo;
 
-    public CompletedTextRepository(ParagraphRepository childRepo) {
+    public CompletedTextRepository(TextElementRepository<ParagraphComposite> childRepo) {
         this.childRepo = childRepo;
         this.texts = new LinkedList<>();
     }

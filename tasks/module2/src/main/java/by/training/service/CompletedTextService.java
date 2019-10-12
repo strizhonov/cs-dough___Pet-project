@@ -4,16 +4,16 @@ import by.training.model.CompletedTextComposite;
 import by.training.model.ParagraphComposite;
 import by.training.model.SentenceComposite;
 import by.training.model.TextLeaf;
-import by.training.repository.CompletedTextRepository;
+import by.training.repository.TextElementRepository;
 
 import java.util.List;
 
 public class CompletedTextService {
 
-    private CompletedTextRepository repository;
+    private TextElementRepository<CompletedTextComposite> repository;
     private ParagraphService childService;
 
-    public CompletedTextService(CompletedTextRepository repository,
+    public CompletedTextService(TextElementRepository<CompletedTextComposite> repository,
                                 ParagraphService childService) {
         this.repository = repository;
         this.childService = childService;
@@ -24,7 +24,7 @@ public class CompletedTextService {
     }
 
     public void addAll(CompletedTextComposite item, long parentId) {
-        long id = add(item, 0);
+        long id = add(item, -1);
         for (TextLeaf leaf : item.getAll()) {
             childService.addAll((ParagraphComposite) leaf, id);
         }

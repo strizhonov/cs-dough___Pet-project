@@ -3,16 +3,16 @@ package by.training.service;
 import by.training.model.ParagraphComposite;
 import by.training.model.SentenceComposite;
 import by.training.model.TextLeaf;
-import by.training.repository.ParagraphRepository;
+import by.training.repository.TextElementRepository;
 
 import java.util.List;
 
 public class ParagraphService {
 
-    private ParagraphRepository repository;
+    private TextElementRepository<ParagraphComposite> repository;
     private SentenceService childService;
 
-    public ParagraphService(ParagraphRepository repository,
+    public ParagraphService(TextElementRepository<ParagraphComposite> repository,
                             SentenceService childService) {
         this.repository = repository;
         this.childService = childService;
@@ -24,6 +24,7 @@ public class ParagraphService {
             childService.addAll((SentenceComposite) leaf, id);
         }
     }
+
     public List<ParagraphComposite> compile() {
         return repository.compile();
     }

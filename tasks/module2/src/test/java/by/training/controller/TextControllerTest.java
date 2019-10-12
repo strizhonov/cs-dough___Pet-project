@@ -1,29 +1,34 @@
 package by.training.controller;
 
-import by.training.model.CompletedTextComposite;;
+import by.training.model.CompletedTextComposite;
 import by.training.model.SentenceComposite;
+import by.training.parserchain.ParagraphParser;
+import by.training.parserchain.SentenceParser;
+import by.training.parserchain.WordParser;
 import by.training.reader.FileReader;
 import by.training.reader.FileReaderImpl;
+import by.training.repository.CompletedTextRepository;
+import by.training.repository.ParagraphRepository;
+import by.training.repository.SentenceRepository;
+import by.training.repository.WordRepository;
+import by.training.service.CompletedTextService;
+import by.training.service.ParagraphService;
+import by.training.service.SentenceService;
+import by.training.service.WordService;
 import by.training.validator.FileValidator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import by.training.parserchain.ParagraphParser;
-import by.training.parserchain.SentenceParser;
-import by.training.parserchain.WordParser;
-import by.training.repository.CompletedTextRepository;
-import by.training.repository.ParagraphRepository;
-import by.training.repository.SentenceRepository;
-import by.training.repository.WordRepository;
-import by.training.service.*;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.List;
+
+;
 
 @RunWith(JUnit4.class)
 public class TextControllerTest {
@@ -99,7 +104,7 @@ public class TextControllerTest {
     }
 
     @Test
-    public void sortDesc() throws URISyntaxException, IOException{
+    public void sortDesc() throws URISyntaxException, IOException {
 
         URI uri = this.getClass().getResource("/valid_text.txt").toURI();
         String path = Paths.get(uri).toString();

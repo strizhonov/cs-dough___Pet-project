@@ -2,8 +2,8 @@ package by.training.repository;
 
 import by.training.entity.Paragraph;
 import by.training.model.ParagraphComposite;
+import by.training.model.SentenceComposite;
 import by.training.model.TextLeaf;
-import by.training.model.WordLeaf;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.List;
 public class ParagraphRepository implements TextElementRepository<ParagraphComposite> {
 
     private List<Paragraph> paragraphs;
-    private SentenceRepository childRepo;
+    private TextElementRepository<SentenceComposite> childRepo;
 
-    public ParagraphRepository(SentenceRepository childRepo) {
+    public ParagraphRepository(TextElementRepository<SentenceComposite> childRepo) {
         this.childRepo = childRepo;
         paragraphs = new LinkedList<>();
     }

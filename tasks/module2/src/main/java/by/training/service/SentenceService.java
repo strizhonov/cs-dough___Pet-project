@@ -1,16 +1,19 @@
 package by.training.service;
 
-import by.training.model.*;
-import by.training.repository.SentenceRepository;
+import by.training.model.SentenceComposite;
+import by.training.model.TextLeaf;
+import by.training.model.WordLeaf;
+import by.training.repository.TextElementRepository;
+
 import java.util.Comparator;
 import java.util.List;
 
 public class SentenceService {
 
-    private SentenceRepository repository;
+    private TextElementRepository<SentenceComposite> repository;
     private WordService childService;
 
-    public SentenceService(SentenceRepository repository,
+    public SentenceService(TextElementRepository<SentenceComposite> repository,
                            WordService childService) {
         this.repository = repository;
         this.childService = childService;

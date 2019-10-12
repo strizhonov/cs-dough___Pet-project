@@ -3,6 +3,7 @@ package by.training.repository;
 import by.training.entity.Sentence;
 import by.training.model.SentenceComposite;
 import by.training.model.TextLeaf;
+import by.training.model.WordLeaf;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,9 +11,9 @@ import java.util.List;
 public class SentenceRepository implements TextElementRepository<SentenceComposite> {
 
     private List<Sentence> sentences;
-    private WordRepository childRepo;
+    private TextElementRepository<WordLeaf> childRepo;
 
-    public SentenceRepository(WordRepository childRepo) {
+    public SentenceRepository(TextElementRepository<WordLeaf> childRepo) {
         this.childRepo = childRepo;
         this.sentences = new LinkedList<>();
     }

@@ -1,9 +1,7 @@
 package by.training.controller;
 
 import by.training.model.CompletedTextComposite;
-import by.training.model.ParagraphComposite;
 import by.training.model.SentenceComposite;
-import by.training.model.TextLeaf;
 import by.training.parserchain.ParagraphParser;
 import by.training.parserchain.SentenceParser;
 import by.training.parserchain.WordParser;
@@ -11,7 +9,6 @@ import by.training.reader.FileReader;
 import by.training.service.CompletedTextService;
 import by.training.validator.FileValidator;
 import by.training.validator.ValidationResult;
-import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
