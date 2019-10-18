@@ -1,165 +1,149 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<devices>
-    <device id="a1" critical="false">
-        <name>HDD</name>
+<devices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://www.example.org/devices"
+         xsi:schemaLocation="http://www.example.org/devices devices_xsd_schema.xml">
+    <processor id="a1" critical="true" consumption="65">
+        <name>AMD Ryzen AZ</name>
         <origin>Thailand</origin>
         <price>140</price>
-        <types peripheral="false" cooler="false">
-            <consumption>15</consumption>
+        <types peripheral="false" cooler="true">
             <group>Main</group>
             <port>COM</port>
         </types>
-    </device>
-
-    <device id="A2" critical="false">
-        <name>AudioCard</name>
+    </processor>
+    <processor id="A2" critical="true" consumption="130">
+        <name>Intel i3 8885</name>
         <origin>China</origin>
         <price>100</price>
-        <types peripheral="false" cooler="false">
-            <consumption>10</consumption>
+        <types peripheral="false" cooler="true">
             <group>Main</group>
             <port>LPT</port>
         </types>
-    </device>
-    <device id="d3" critical="true">
-        <name>PowerSupply</name>
+    </processor>
+    <processor id="d3" critical="true" consumption="180">
+        <name>AMD R5</name>
         <origin>Germany</origin>
         <price>200</price>
         <types peripheral="false" cooler="true">
-            <consumption>300</consumption>
             <group>Main</group>
             <port>COM</port>
         </types>
-    </device>
-    <device id="k4" critical="false">
-        <name>Body</name>
+    </processor>
+    <processor id="k4" critical="true" consumption="130">
+        <name>Intel I-76</name>
         <origin>China</origin>
-        <price>20</price>
+        <price>220</price>
         <types peripheral="false" cooler="true">
-            <consumption>2</consumption>
             <group>Main</group>
-            <port>USB</port>
+            <port>LPT</port>
         </types>
-    </device>
-    <device id="f5" critical="true">
-        <name>Motherboard</name>
+    </processor>
+    <motherboard id="f5" critical="true" RAM_ports="2">
+        <name>ASRock A430</name>
         <origin>India</origin>
         <price>145</price>
         <types peripheral="false" cooler="true">
-            <consumption>15</consumption>
             <group>Main</group>
             <port>LPT</port>
         </types>
-    </device>
-    <device id="g6" critical="false">
-        <name>SSD</name>
+    </motherboard>
+    <motherboard id="g6" critical="false" RAM_ports="2">
+        <name>ASUS k8888</name>
         <origin>Japan</origin>
         <price>200</price>
-        <types peripheral="false" cooler="false">
-            <consumption>30</consumption>
+        <types peripheral="false" cooler="true">
             <group>Main</group>
             <port>COM</port>
         </types>
-    </device>
-    <device id="f7" critical="false">
-        <name>GraphicCard</name>
+    </motherboard>
+    <motherboard id="f7" critical="false" RAM_ports="4">
+        <name>MSI KK-55</name>
         <origin>Thailand</origin>
         <price>300</price>
         <types peripheral="false" cooler="true">
-            <consumption>100</consumption>
             <group>Main</group>
             <port>LPT</port>
         </types>
-    </device>
-    <device id="g8" critical="true">
-        <name>RAM</name>
+    </motherboard>
+    <motherboard id="g8" critical="true" RAM_ports="2">
+        <name>ASRock AB-350m</name>
         <origin>China</origin>
-        <price>50</price>
-        <types peripheral="false" cooler="false">
-            <consumption>16</consumption>
+        <price>500</price>
+        <types peripheral="false" cooler="true">
             <group>Main</group>
             <port>LPT</port>
         </types>
-    </device>
-    <device id="h9" critical="true">
-        <name>Processor</name>
+    </motherboard>
+    <motherboard id="h9" critical="true" RAM_ports="2">
+        <name>MSI I-MSI</name>
         <origin>USA</origin>
         <price>250</price>
         <types peripheral="false" cooler="true">
-            <consumption>130</consumption>
             <group>Main</group>
             <port>COM</port>
         </types>
-    </device>
-    <device id="t0" critical="false">
-        <name>OpticDrive</name>
+    </motherboard>
+    <motherboard id="t0" critical="false" RAM_ports="2">
+        <name>OD ooo-s</name>
         <origin>China</origin>
-        <price>50</price>
+        <price>150</price>
         <types peripheral="false" cooler="false">
-            <consumption>4</consumption>
             <group>IO</group>
             <port>LPT</port>
         </types>
-    </device>
-    <device id="t1" critical="false">
-        <name>KeyBoard</name>
+    </motherboard>
+    <mouse id="t1" critical="false" buttons="2">
+        <name>SmartBuy A-1</name>
         <origin>Italy</origin>
         <price>50</price>
         <types peripheral="true" cooler="false">
-            <consumption>3</consumption>
             <group>IO</group>
             <port>USB</port>
         </types>
-    </device>
-    <device id="r2" critical="false">
-        <name>Mouse</name>
+    </mouse>
+    <mouse id="r2" critical="false" buttons="2">
+        <name>A4Tech RIX</name>
         <origin>Afghanistan</origin>
         <price>45</price>
         <types peripheral="true" cooler="false">
-            <consumption>3</consumption>
             <group>IO</group>
             <port>USB</port>
         </types>
-    </device>
-    <device id="r3" critical="false">
-        <name>Monitor</name>
+    </mouse>
+    <mouse id="r3" critical="false" buttons="2">
+        <name>Logitech jj-8</name>
         <origin>Thailand</origin>
-        <price>387</price>
+        <price>87</price>
         <types peripheral="true" cooler="false">
-            <consumption>36</consumption>
             <group>IO</group>
-            <port>HDMI</port>
+            <port>USB</port>
         </types>
-    </device>
-    <device id="r4" critical="false">
-        <name>Headphones</name>
+    </mouse>
+    <mouse id="r4" critical="false" buttons="2">
+        <name>Defender o-9</name>
         <origin>China</origin>
         <price>60</price>
         <types peripheral="true" cooler="false">
-            <consumption>10</consumption>
             <group>IO</group>
             <port>USB</port>
         </types>
-    </device>
-    <device id="n5" critical="false">
-        <name>Printer</name>
+    </mouse>
+    <mouse id="n5" critical="false" buttons="4">
+        <name>SVEN UUU-s</name>
         <origin>Germany</origin>
         <price>245</price>
         <types peripheral="true" cooler="false">
-            <consumption>29</consumption>
             <group>IO</group>
             <port>USB</port>
         </types>
-    </device>
-    <device id="m6" critical="false">
-        <name>Speakers</name>
+    </mouse>
+    <mouse id="m6" critical="false" buttons="12">
+        <name>Rapoo apoo</name>
         <origin>Germany</origin>
         <price>2000</price>
         <types peripheral="true" cooler="false">
-            <consumption>55</consumption>
             <group>Multimedia</group>
             <port>USB</port>
         </types>
-    </device>
+    </mouse>
 </devices>
