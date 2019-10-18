@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<devices>
+    <device id="a1" critical="false">
+        <name>HDD</name>
+        <origin>Thailand</origin>
+        <price>140</price>
+        <types peripheral="false" cooler="false">
+            <consumption>15</consumption>
+            <group>Main</group>
+            <port>COM</port>
+        </types>
+    </device>
+
+    <device id="A2" critical="false">
+        <name>AudioCard</name>
+        <origin>China</origin>
+        <price>100</price>
+        <types peripheral="false" cooler="false">
+            <consumption>10</consumption>
+            <group>Main</group>
+            <port>LPT</port>
+        </types>
+    </device>
+    <device id="d3" critical="true">
+        <name>PowerSupply</name>
+        <origin>Germany</origin>
+        <price>200</price>
+        <types peripheral="false" cooler="true">
+            <consumption>300</consumption>
+            <group>Main</group>
+            <port>COM</port>
+        </types>
+    </device>
+    <device id="k4" critical="false">
+        <name>Body</name>
+        <origin>China</origin>
+        <price>20</price>
+        <types peripheral="false" cooler="true">
+            <consumption>2</consumption>
+            <group>Main</group>
+            <port>USB</port>
+        </types>
+    </device>
+    <device id="f5" critical="true">
+        <name>Motherboard</name>
+        <origin>India</origin>
+        <price>145</price>
+        <types peripheral="false" cooler="true">
+            <consumption>15</consumption>
+            <group>Main</group>
+            <port>LPT</port>
+        </types>
+    </device>
+    <device id="g6" critical="false">
+        <name>SSD</name>
+        <origin>Japan</origin>
+        <price>200</price>
+        <types peripheral="false" cooler="false">
+            <consumption>30</consumption>
+            <group>Main</group>
+            <port>COM</port>
+        </types>
+    </device>
+    <device id="f7" critical="false">
+        <name>GraphicCard</name>
+        <origin>Thailand</origin>
+        <price>300</price>
+        <types peripheral="false" cooler="true">
+            <consumption>100</consumption>
+            <group>Main</group>
+            <port>LPT</port>
+        </types>
+    </device>
+    <device id="g8" critical="true">
+        <name>RAM</name>
+        <origin>China</origin>
+        <price>50</price>
+        <types peripheral="false" cooler="false">
+            <consumption>16</consumption>
+            <group>Main</group>
+            <port>LPT</port>
+        </types>
+    </device>
+    <device id="h9" critical="true">
+        <name>Processor</name>
+        <origin>USA</origin>
+        <price>250</price>
+        <types peripheral="false" cooler="true">
+            <consumption>130</consumption>
+            <group>Main</group>
+            <port>COM</port>
+        </types>
+    </device>
+    <device id="t0" critical="false">
+        <name>OpticDrive</name>
+        <origin>China</origin>
+        <price>50</price>
+        <types peripheral="false" cooler="false">
+            <consumption>4</consumption>
+            <group>IO</group>
+            <port>LPT</port>
+        </types>
+    </device>
+    <device id="t1" critical="false">
+        <name>KeyBoard</name>
+        <origin>Italy</origin>
+        <price>50</price>
+        <types peripheral="true" cooler="false">
+            <consumption>3</consumption>
+            <group>IO</group>
+            <port>USB</port>
+        </types>
+    </device>
+    <device id="r2" critical="false">
+        <name>Mouse</name>
+        <origin>Afghanistan</origin>
+        <price>45</price>
+        <types peripheral="true" cooler="false">
+            <consumption>3</consumption>
+            <group>IO</group>
+            <port>USB</port>
+        </types>
+    </device>
+    <device id="r3" critical="false">
+        <name>Monitor</name>
+        <origin>Thailand</origin>
+        <price>387</price>
+        <types peripheral="true" cooler="false">
+            <consumption>36</consumption>
+            <group>IO</group>
+            <port>HDMI</port>
+        </types>
+    </device>
+    <device id="r4" critical="false">
+        <name>Headphones</name>
+        <origin>China</origin>
+        <price>60</price>
+        <types peripheral="true" cooler="false">
+            <consumption>10</consumption>
+            <group>IO</group>
+            <port>USB</port>
+        </types>
+    </device>
+    <device id="n5" critical="false">
+        <name>Printer</name>
+        <origin>Germany</origin>
+        <price>245</price>
+        <types peripheral="true" cooler="false">
+            <consumption>29</consumption>
+            <group>IO</group>
+            <port>USB</port>
+        </types>
+    </device>
+    <device id="m6" critical="false">
+        <name>Speakers</name>
+        <origin>Germany</origin>
+        <price>2000</price>
+        <types peripheral="true" cooler="false">
+            <consumption>55</consumption>
+            <group>Multimedia</group>
+            <port>USB</port>
+        </types>
+    </device>
+</devices>

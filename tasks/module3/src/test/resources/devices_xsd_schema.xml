@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+    <xs:element name="devices">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="device" type="device" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="device">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="origin" type="xs:string"/>
+            <xs:element name="price" type="price"/>
+            <xs:element name="types" type="types"/>
+        </xs:sequence>
+        <xs:attribute name="id" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:ID">
+                    <xs:pattern value="[A-Za-z0-9]+"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="critical" default="false">
+            <xs:simpleType>
+                <xs:restriction base="xs:boolean"/>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:simpleType name="price">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="types">
+        <xs:sequence>
+            <xs:element name="consumption" type="consumption"/>
+            <xs:element name="group" type="xs:string"/>
+            <xs:element name="port" type="port"/>
+        </xs:sequence>
+        <xs:attribute name="peripheral" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:boolean"/>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="cooler" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:boolean"/>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:simpleType name="consumption">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="port">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="COM"/>
+            <xs:enumeration value="USB"/>
+            <xs:enumeration value="LPT"/>
+            <xs:enumeration value="HDMI"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

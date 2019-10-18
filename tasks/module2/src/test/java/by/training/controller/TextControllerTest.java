@@ -111,7 +111,7 @@ public class TextControllerTest {
         paragraphComposite.setChildService(sentenceService);
         paragraphComposite.setWordService(wordService);
 
-        paragraphComposite.load(132);
+        paragraphComposite.load(2);
 
         paragraphComposite.sortChildrenByLeavesCount(false);
         int firstSentenceLength = paragraphComposite.getAll().get(0).getText().split(" ").length;
