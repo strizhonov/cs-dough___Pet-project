@@ -1,24 +1,24 @@
 package by.training.entity;
 
-import java.util.Objects;
+public abstract class Device {
 
-public class Device {
-
-    private long id;
-    private String name;
-    private int price;
-    private String origin;
-    private DeviceAttributesContainer attributesContainer;
-    private boolean critical;
+    protected long id;
+    protected String name;
+    protected int price;
+    protected String origin;
+    protected DeviceAttributesContainer attributesContainer;
+    protected boolean critical;
+    protected DeviceType type;
 
     public Device(long id, String name, int price, String origin,
-                  DeviceAttributesContainer attributesContainer, boolean critical) {
+                  DeviceAttributesContainer attributesContainer, boolean critical, DeviceType type) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.origin = origin;
         this.attributesContainer = attributesContainer;
         this.critical = critical;
+        this.type = type;
     }
 
     public long getId() {
@@ -69,33 +69,12 @@ public class Device {
         this.critical = critical;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Device)) return false;
-        Device device = (Device) o;
-        return getId() == device.getId() &&
-                getPrice() == device.getPrice() &&
-                isCritical() == device.isCritical() &&
-                Objects.equals(getName(), device.getName()) &&
-                Objects.equals(getOrigin(), device.getOrigin()) &&
-                Objects.equals(getAttributesContainer(), device.getAttributesContainer());
+    public DeviceType getType() {
+        return type;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName(), getPrice(), getOrigin(), getAttributesContainer(), isCritical());
+    public void setType(DeviceType type) {
+        this.type = type;
     }
 
-    @Override
-    public String toString() {
-        return "Device{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", origin='" + origin + '\'' +
-                ", attributeContainer=" + attributesContainer +
-                ", critical=" + critical +
-                '}';
-    }
 }

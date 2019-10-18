@@ -89,7 +89,6 @@
             <xs:enumeration value="COM"/>
             <xs:enumeration value="USB"/>
             <xs:enumeration value="LPT"/>
-            <xs:enumeration value="HDMI"/>
         </xs:restriction>
     </xs:simpleType>
 

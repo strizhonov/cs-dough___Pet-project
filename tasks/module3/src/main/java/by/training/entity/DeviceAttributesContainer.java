@@ -5,15 +5,12 @@ import java.util.Objects;
 public class DeviceAttributesContainer {
 
     private boolean peripheral;
-    private int powerConsumption;
     private boolean cooler;
     private String group;
     private PortType port;
 
-    public DeviceAttributesContainer(boolean peripheral, int powerConsumption,
-                                     boolean cooler, String group, PortType port) {
+    public DeviceAttributesContainer(boolean peripheral, boolean cooler, String group, PortType port) {
         this.peripheral = peripheral;
-        this.powerConsumption = powerConsumption;
         this.cooler = cooler;
         this.group = group;
         this.port = port;
@@ -25,14 +22,6 @@ public class DeviceAttributesContainer {
 
     public void setPeripheral(boolean peripheral) {
         this.peripheral = peripheral;
-    }
-
-    public int getPowerConsumption() {
-        return powerConsumption;
-    }
-
-    public void setPowerConsumption(int powerConsumption) {
-        this.powerConsumption = powerConsumption;
     }
 
     public boolean isCooler() {
@@ -65,7 +54,6 @@ public class DeviceAttributesContainer {
         if (!(o instanceof DeviceAttributesContainer)) return false;
         DeviceAttributesContainer that = (DeviceAttributesContainer) o;
         return isPeripheral() == that.isPeripheral() &&
-                getPowerConsumption() == that.getPowerConsumption() &&
                 isCooler() == that.isCooler() &&
                 Objects.equals(getGroup(), that.getGroup()) &&
                 getPort() == that.getPort();
@@ -73,14 +61,13 @@ public class DeviceAttributesContainer {
 
     @Override
     public int hashCode() {
-        return Objects.hash(isPeripheral(), getPowerConsumption(), isCooler(), getGroup(), getPort());
+        return Objects.hash(isPeripheral(), isCooler(), getGroup(), getPort());
     }
 
     @Override
     public String toString() {
         return "DeviceAttributeContainer{" +
                 "peripheral=" + peripheral +
-                ", powerConsumption=" + powerConsumption +
                 ", cooler=" + cooler +
                 ", group='" + group + '\'' +
                 ", port=" + port +
