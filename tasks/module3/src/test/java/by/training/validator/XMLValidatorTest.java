@@ -21,9 +21,10 @@ public class XMLValidatorTest {
         URI XSDUri = this.getClass().getResource("/devices_xsd_schema.xml").toURI();
         String XSDPath = Paths.get(XSDUri).toString();
 
-        XMLValidator validator = new XMLValidator();
+        XMLValidator validator = new XMLValidator(XSDPath);
 
-        Assert.assertTrue(validator.validateXMLWithXSD(XMLPath, XSDPath));
+        ValidationResult result = validator.validate(XMLPath);
+        Assert.assertTrue(result.isValid());
     }
 
     @Test
@@ -35,9 +36,10 @@ public class XMLValidatorTest {
         URI XSDUri = this.getClass().getResource("/devices_xsd_schema.xml").toURI();
         String XSDPath = Paths.get(XSDUri).toString();
 
-        XMLValidator validator = new XMLValidator();
+        XMLValidator validator = new XMLValidator(XSDPath);
 
-        Assert.assertFalse(validator.validateXMLWithXSD(XMLPath, XSDPath));
+        ValidationResult result = validator.validate(XMLPath);
+        Assert.assertFalse(result.isValid());
     }
 
 }

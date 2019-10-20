@@ -77,8 +77,7 @@ public abstract class Device {
         this.type = type;
     }
 
-    public abstract static class Builder {
-
+    public static abstract class Builder {
         protected String id;
         protected String name;
         protected int price;

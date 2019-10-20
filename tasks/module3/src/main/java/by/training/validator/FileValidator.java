@@ -15,7 +15,7 @@ public class FileValidator {
 
         if (!file.exists()) {
             result.add("path", "File by specified path doesn't exist.");
-            LOGGER.error("File by specified path (" + path + ") doesn't exist.");
+            LOGGER.warn("File by specified path (" + path + ") doesn't exist.");
         }
 
         return result;
