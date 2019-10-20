@@ -6,9 +6,9 @@ public class MotherBoard extends Device {
 
     private int ramSlots;
 
-    public MotherBoard(long id, String name, int price, String origin, DeviceAttributesContainer attributesContainer,
+    public MotherBoard(String id, String name, int price, String origin, DeviceAttributesContainer attributesContainer,
                        boolean critical, int ramSlots) {
-        super(id, name, price, origin, attributesContainer, critical, DeviceType.MOTHER_BOARD);
+        super(id, name, price, origin, attributesContainer, critical, DeviceType.MOTHERBOARD);
         this.ramSlots = ramSlots;
     }
 
@@ -45,6 +45,20 @@ public class MotherBoard extends Device {
                 ", type=" + type +
                 "ramSlots=" + ramSlots +
                 '}';
+    }
+
+    public static class Builder extends Device.Builder {
+
+        private int ramSlots;
+
+        public Builder setRamSlots(int ramSlots) {
+            this.ramSlots = ramSlots;
+            return this;
+        }
+
+        public MotherBoard build() {
+            return new MotherBoard(id, name, price, origin, attributesContainer, critical, ramSlots);
+        }
     }
 
 }

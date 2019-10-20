@@ -74,4 +74,37 @@ public class DeviceAttributesContainer {
                 '}';
     }
 
+    public static class Builder {
+
+        private boolean peripheral;
+        private boolean cooler;
+        private String group;
+        private PortType port;
+
+        public Builder setPeripheral(boolean peripheral) {
+            this.peripheral = peripheral;
+            return this;
+        }
+
+        public Builder setCooler(boolean cooler) {
+            this.cooler = cooler;
+            return this;
+        }
+
+        public Builder setGroup(String group) {
+            this.group = group;
+            return this;
+        }
+
+        public Builder setPortType(PortType portType) {
+            this.port = portType;
+            return this;
+        }
+
+        public DeviceAttributesContainer build() {
+            return new DeviceAttributesContainer(peripheral, cooler, group, port);
+        }
+
+    }
+
 }

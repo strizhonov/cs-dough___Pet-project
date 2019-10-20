@@ -47,7 +47,7 @@
             <port>LPT</port>
         </types>
     </motherboard>
-    <motherboard id="g6" critical="false" RAM_ports="2">
+    <motherboard id="g6" RAM_ports="2">
         <name>ASUS k8888</name>
         <origin>Japan</origin>
         <price>200</price>
@@ -56,7 +56,7 @@
             <port>COM</port>
         </types>
     </motherboard>
-    <motherboard id="f7" critical="false" RAM_ports="4">
+    <motherboard id="f7" RAM_ports="4">
         <name>MSI KK-55</name>
         <origin>Thailand</origin>
         <price>300</price>
@@ -83,16 +83,16 @@
             <port>COM</port>
         </types>
     </motherboard>
-    <motherboard id="t0" critical="false" RAM_ports="2">
+    <motherboard id="t0" RAM_ports="2">
         <name>OD ooo-s</name>
         <origin>China</origin>
         <price>150</price>
         <types peripheral="false" cooler="false">
-            <group>IO</group>
+            <group>Main</group>
             <port>LPT</port>
         </types>
     </motherboard>
-    <mouse id="t1" critical="false" buttons="2">
+    <mouse id="t1" buttons="2">
         <name>SmartBuy A-1</name>
         <origin>Italy</origin>
         <price>50</price>
@@ -101,7 +101,7 @@
             <port>USB</port>
         </types>
     </mouse>
-    <mouse id="r2" critical="false" buttons="2">
+    <mouse id="r2" buttons="2">
         <name>A4Tech RIX</name>
         <origin>Afghanistan</origin>
         <price>45</price>
@@ -110,7 +110,7 @@
             <port>USB</port>
         </types>
     </mouse>
-    <mouse id="r3" critical="false" buttons="2">
+    <mouse id="r3" buttons="2">
         <name>Logitech jj-8</name>
         <origin>Thailand</origin>
         <price>87</price>
@@ -119,7 +119,7 @@
             <port>USB</port>
         </types>
     </mouse>
-    <mouse id="r4" critical="false" buttons="2">
+    <mouse id="r4" buttons="2">
         <name>Defender o-9</name>
         <origin>China</origin>
         <price>60</price>
@@ -128,7 +128,7 @@
             <port>USB</port>
         </types>
     </mouse>
-    <mouse id="n5" critical="false" buttons="4">
+    <mouse id="n5" buttons="4">
         <name>SVEN UUU-s</name>
         <origin>Germany</origin>
         <price>245</price>
@@ -137,7 +137,7 @@
             <port>USB</port>
         </types>
     </mouse>
-    <mouse id="m6" critical="false" buttons="12">
+    <mouse id="m6" buttons="12">
         <name>Rapoo apoo</name>
         <origin>Germany</origin>
         <price>2000</price>

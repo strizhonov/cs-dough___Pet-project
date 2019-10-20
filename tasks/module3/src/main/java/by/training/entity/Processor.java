@@ -6,7 +6,7 @@ public class Processor extends Device {
 
     private int consumption;
 
-    public Processor(long id, String name, int price, String origin,
+    public Processor(String id, String name, int price, String origin,
                      DeviceAttributesContainer attributesContainer, boolean critical, int consumption) {
         super(id, name, price, origin, attributesContainer, critical, DeviceType.PROCESSOR);
         this.consumption = consumption;
@@ -46,4 +46,19 @@ public class Processor extends Device {
                 ", type=" + type +
                 '}';
     }
+
+    public static class Builder extends Device.Builder {
+
+        private int consumption;
+
+        public Builder setConsumption(int consumption) {
+            this.consumption = consumption;
+            return this;
+        }
+
+        public Processor build() {
+            return new Processor(id, name, price, origin, attributesContainer, critical, consumption);
+        }
+    }
+
 }

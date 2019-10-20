@@ -20,21 +20,23 @@ public class DeviceRepositoryImpl implements DeviceRepository<Device> {
     }
 
     @Override
-    public Optional<Device> get(long id) {
-        return this.devices.stream().filter((item) -> item.getId() == id).findFirst();
+    public Optional<Device> get(String id) {
+        return this.devices.stream()
+                .filter((item) -> item.getId().equals(id))
+                .findFirst();
     }
 
     @Override
     public void update(Device item) {
-        long id = item.getId();
+        String id = item.getId();
         delete(id);
         create(item);
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(String id) {
         for (Device device : devices) {
-            if (device.getId() == id) {
+            if (device.getId().equals(id)) {
                 devices.remove(device);
                 break;
             }

@@ -2,7 +2,7 @@ package by.training.entity;
 
 public abstract class Device {
 
-    protected long id;
+    protected String id;
     protected String name;
     protected int price;
     protected String origin;
@@ -10,7 +10,7 @@ public abstract class Device {
     protected boolean critical;
     protected DeviceType type;
 
-    public Device(long id, String name, int price, String origin,
+    public Device(String id, String name, int price, String origin,
                   DeviceAttributesContainer attributesContainer, boolean critical, DeviceType type) {
         this.id = id;
         this.name = name;
@@ -21,11 +21,11 @@ public abstract class Device {
         this.type = type;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -76,5 +76,48 @@ public abstract class Device {
     public void setType(DeviceType type) {
         this.type = type;
     }
+
+    public abstract static class Builder {
+
+        protected String id;
+        protected String name;
+        protected int price;
+        protected String origin;
+        protected DeviceAttributesContainer attributesContainer;
+        protected boolean critical;
+
+        public Builder setId(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder setPrice(int price) {
+            this.price = price;
+            return this;
+        }
+
+        public Builder setOrigin(String origin) {
+            this.origin = origin;
+            return this;
+        }
+
+        public Builder setAttributesContainer(DeviceAttributesContainer attributesContainer) {
+            this.attributesContainer = attributesContainer;
+            return this;
+        }
+
+        public Builder setCritical(boolean critical) {
+            this.critical = critical;
+            return this;
+        }
+
+        public abstract Device build();
+    }
+
 
 }

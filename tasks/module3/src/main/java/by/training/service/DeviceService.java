@@ -18,7 +18,7 @@ public class DeviceService {
         repository.create(item);
     }
 
-    public Optional<Device> get(long id) {
+    public Optional<Device> get(String id) {
         return repository.get(id);
     }
 
@@ -26,7 +26,7 @@ public class DeviceService {
         repository.update(item);
     }
 
-    public void delete(long id) {
+    public void delete(String id) {
         repository.delete(id);
     }
 

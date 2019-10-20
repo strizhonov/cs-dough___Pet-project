@@ -6,7 +6,7 @@ public class Mouse extends Device {
 
     private int buttons;
 
-    public Mouse(long id, String name, int price, String origin,
+    public Mouse(String id, String name, int price, String origin,
                  DeviceAttributesContainer attributesContainer, boolean critical, int buttons) {
         super(id, name, price, origin, attributesContainer, critical, DeviceType.MOUSE);
         this.buttons = buttons;
@@ -46,4 +46,20 @@ public class Mouse extends Device {
                 ", type=" + type +
                 '}';
     }
+
+    public static class Builder extends Device.Builder {
+
+        private int buttons;
+
+        public Builder setButtons(int buttons) {
+            this.buttons = buttons;
+            return this;
+        }
+
+        public Mouse build() {
+            return new Mouse(id, name, price, origin, attributesContainer, critical, buttons);
+        }
+    }
+
+
 }
