@@ -1,7 +1,7 @@
 package by.training.parser;
 
 import by.training.entity.Device;
-import by.training.entity.DeviceAttributesContainer;
+import by.training.entity.DeviceProperties;
 import by.training.entity.MotherBoard;
 import by.training.entity.Mouse;
 import by.training.entity.PortType;
@@ -16,6 +16,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +44,7 @@ public class DeviceStAXParser implements Parser<Device> {
     private static final Logger LOGGER = Logger.getLogger(DeviceStAXParser.class);
     private List<Device> deviceList;
     private String data;
-    private DeviceAttributesContainer.Builder attributesBuilder;
+    private DeviceProperties.Builder attributesBuilder;
     private Device.Builder deviceBuilder;
 
     @Override
@@ -171,7 +173,7 @@ public class DeviceStAXParser implements Parser<Device> {
     }
 
     private void startDeviceAttributesContainerBuilding(StartElement startElement) {
-        attributesBuilder = new DeviceAttributesContainer.Builder();
+        attributesBuilder = new DeviceProperties.Builder();
 
         QName peripheralName = new QName(PERIPHERAL);
         Attribute peripheralAttribute = startElement.getAttributeByName(peripheralName);
@@ -197,7 +199,7 @@ public class DeviceStAXParser implements Parser<Device> {
                 deviceList.add(device);
                 break;
             case TYPES:
-                DeviceAttributesContainer attributesContainer = attributesBuilder.build();
+                DeviceProperties attributesContainer = attributesBuilder.build();
                 deviceBuilder = deviceBuilder.setAttributesContainer(attributesContainer);
                 break;
             case PORT:

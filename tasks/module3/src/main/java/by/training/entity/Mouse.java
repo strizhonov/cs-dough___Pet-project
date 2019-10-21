@@ -7,7 +7,7 @@ public class Mouse extends Device {
     private int buttons;
 
     public Mouse(String id, String name, int price, String origin,
-                 DeviceAttributesContainer attributesContainer, boolean critical, int buttons) {
+                 DeviceProperties attributesContainer, boolean critical, int buttons) {
         super(id, name, price, origin, attributesContainer, critical, DeviceType.MOUSE);
         this.buttons = buttons;
     }

@@ -34,4 +34,13 @@ public class DeviceStAXParserTest {
         parser.parse(XMLPath);
     }
 
+    @Test(expected = ParserException.class)
+    public void parseEmpty() throws URISyntaxException, ParserException {
+        URI XMLUri = this.getClass().getResource("/empty_file.xml").toURI();
+        String XMLPath = Paths.get(XMLUri).toString();
+
+        DeviceStAXParser parser = new DeviceStAXParser();
+        parser.parse(XMLPath);
+    }
+
 }

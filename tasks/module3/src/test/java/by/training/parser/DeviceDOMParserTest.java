@@ -25,9 +25,18 @@ public class DeviceDOMParserTest {
         Assert.assertEquals(16, devices.size());
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test(expected = NullPointerException.class)
     public void parseInvalid() throws URISyntaxException, ParserException {
         URI XMLUri = this.getClass().getResource("/invalid_devices.xml").toURI();
+        String XMLPath = Paths.get(XMLUri).toString();
+
+        DeviceDOMParser parser = new DeviceDOMParser();
+        parser.parse(XMLPath);
+    }
+
+    @Test(expected = ParserException.class)
+    public void parseEmpty() throws URISyntaxException, ParserException {
+        URI XMLUri = this.getClass().getResource("/empty_file.xml").toURI();
         String XMLPath = Paths.get(XMLUri).toString();
 
         DeviceDOMParser parser = new DeviceDOMParser();

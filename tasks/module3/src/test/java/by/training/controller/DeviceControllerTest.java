@@ -1,6 +1,11 @@
 package by.training.controller;
 
-import by.training.command.*;
+import by.training.command.CommandProvider;
+import by.training.command.CommandProviderImpl;
+import by.training.command.CommandType;
+import by.training.command.DeviceDOMParserCommand;
+import by.training.command.DeviceSAXParserCommand;
+import by.training.command.DeviceStAXParserCommand;
 import by.training.entity.Device;
 import by.training.parser.DeviceDOMParser;
 import by.training.parser.DeviceSAXParser;

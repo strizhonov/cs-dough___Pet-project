@@ -2,14 +2,14 @@ package by.training.entity;
 
 import java.util.Objects;
 
-public class DeviceAttributesContainer {
+public class DeviceProperties {
 
     private boolean peripheral;
     private boolean cooler;
     private String group;
     private PortType port;
 
-    public DeviceAttributesContainer(boolean peripheral, boolean cooler, String group, PortType port) {
+    public DeviceProperties(boolean peripheral, boolean cooler, String group, PortType port) {
         this.peripheral = peripheral;
         this.cooler = cooler;
         this.group = group;
@@ -51,8 +51,8 @@ public class DeviceAttributesContainer {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DeviceAttributesContainer)) return false;
-        DeviceAttributesContainer that = (DeviceAttributesContainer) o;
+        if (!(o instanceof DeviceProperties)) return false;
+        DeviceProperties that = (DeviceProperties) o;
         return isPeripheral() == that.isPeripheral() &&
                 isCooler() == that.isCooler() &&
                 Objects.equals(getGroup(), that.getGroup()) &&
@@ -101,8 +101,8 @@ public class DeviceAttributesContainer {
             return this;
         }
 
-        public DeviceAttributesContainer build() {
-            return new DeviceAttributesContainer(peripheral, cooler, group, port);
+        public DeviceProperties build() {
+            return new DeviceProperties(peripheral, cooler, group, port);
         }
 
     }

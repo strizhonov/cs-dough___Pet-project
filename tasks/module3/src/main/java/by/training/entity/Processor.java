@@ -7,7 +7,7 @@ public class Processor extends Device {
     private int consumption;
 
     public Processor(String id, String name, int price, String origin,
-                     DeviceAttributesContainer attributesContainer, boolean critical, int consumption) {
+                     DeviceProperties attributesContainer, boolean critical, int consumption) {
         super(id, name, price, origin, attributesContainer, critical, DeviceType.PROCESSOR);
         this.consumption = consumption;
     }

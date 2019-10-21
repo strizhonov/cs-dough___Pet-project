@@ -49,7 +49,6 @@ public class DeviceController {
         }
 
         List<Device> devices;
-
         try {
             devices = command.execute(path);
         } catch (CommandException e) {

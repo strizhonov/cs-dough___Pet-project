@@ -6,7 +6,7 @@ public class MotherBoard extends Device {
 
     private int ramSlots;
 
-    public MotherBoard(String id, String name, int price, String origin, DeviceAttributesContainer attributesContainer,
+    public MotherBoard(String id, String name, int price, String origin, DeviceProperties attributesContainer,
                        boolean critical, int ramSlots) {
         super(id, name, price, origin, attributesContainer, critical, DeviceType.MOTHERBOARD);
         this.ramSlots = ramSlots;

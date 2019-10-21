@@ -1,7 +1,7 @@
 package by.training.parser;
 
 import by.training.entity.Device;
-import by.training.entity.DeviceAttributesContainer;
+import by.training.entity.DeviceProperties;
 import by.training.entity.DeviceType;
 import by.training.entity.MotherBoard;
 import by.training.entity.Mouse;
@@ -16,36 +16,46 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static by.training.parser.ParserConstantsContainer.PROCESSOR;
-import static by.training.parser.ParserConstantsContainer.MOUSE;
 import static by.training.parser.ParserConstantsContainer.BUTTONS;
 import static by.training.parser.ParserConstantsContainer.CONSUMPTION;
 import static by.training.parser.ParserConstantsContainer.COOLER;
 import static by.training.parser.ParserConstantsContainer.CRITICAL;
+import static by.training.parser.ParserConstantsContainer.GROUP;
 import static by.training.parser.ParserConstantsContainer.ID;
 import static by.training.parser.ParserConstantsContainer.MOTHERBOARD;
-import static by.training.parser.ParserConstantsContainer.PERIPHERAL;
-import static by.training.parser.ParserConstantsContainer.RAM;
-import static by.training.parser.ParserConstantsContainer.TYPES;
-import static by.training.parser.ParserConstantsContainer.GROUP;
+import static by.training.parser.ParserConstantsContainer.MOUSE;
 import static by.training.parser.ParserConstantsContainer.NAME;
 import static by.training.parser.ParserConstantsContainer.ORIGIN;
+import static by.training.parser.ParserConstantsContainer.PERIPHERAL;
 import static by.training.parser.ParserConstantsContainer.PORT;
 import static by.training.parser.ParserConstantsContainer.PRICE;
+import static by.training.parser.ParserConstantsContainer.PROCESSOR;
+import static by.training.parser.ParserConstantsContainer.RAM;
+import static by.training.parser.ParserConstantsContainer.TYPES;
 
 public class DeviceSAXHandler extends DefaultHandler {
     private static final Logger LOGGER = Logger.getLogger(DeviceSAXHandler.class);
     private List<Device> deviceList;
     private String data;
-    private DeviceAttributesContainer.Builder attributesBuilder;
+    private DeviceProperties.Builder attributesBuilder;
     private Device.Builder deviceBuilder;
 
-    public DeviceSAXHandler() {
+    DeviceSAXHandler() {
         deviceList = new ArrayList<>();
     }
 
-    public List<Device> getDevices() {
+    List<Device> getDevices() {
         return this.deviceList;
+    }
+
+    @Override
+    public void startDocument() {
+        LOGGER.info("At document start...");
+    }
+
+    @Override
+    public void endDocument() {
+        LOGGER.info("At document end...");
     }
 
     @Override
@@ -70,7 +80,7 @@ public class DeviceSAXHandler extends DefaultHandler {
                 deviceList.add(device);
                 break;
             case TYPES:
-                DeviceAttributesContainer attributesContainer = attributesBuilder.build();
+                DeviceProperties attributesContainer = attributesBuilder.build();
                 deviceBuilder = deviceBuilder.setAttributesContainer(attributesContainer);
                 break;
             case PORT:
@@ -148,7 +158,7 @@ public class DeviceSAXHandler extends DefaultHandler {
     }
 
     private void startDeviceAttributesBuilding(Attributes attributes) {
-        attributesBuilder = new DeviceAttributesContainer.Builder();
+        attributesBuilder = new DeviceProperties.Builder();
         String sPeripheral = attributes.getValue(PERIPHERAL);
         boolean peripheral = Boolean.parseBoolean(sPeripheral);
         String sCooler = attributes.getValue(COOLER);

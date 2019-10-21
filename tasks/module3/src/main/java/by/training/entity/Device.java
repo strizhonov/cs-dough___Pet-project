@@ -6,12 +6,12 @@ public abstract class Device {
     protected String name;
     protected int price;
     protected String origin;
-    protected DeviceAttributesContainer attributesContainer;
+    protected DeviceProperties attributesContainer;
     protected boolean critical;
     protected DeviceType type;
 
     public Device(String id, String name, int price, String origin,
-                  DeviceAttributesContainer attributesContainer, boolean critical, DeviceType type) {
+                  DeviceProperties attributesContainer, boolean critical, DeviceType type) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -53,11 +53,11 @@ public abstract class Device {
         this.origin = origin;
     }
 
-    public DeviceAttributesContainer getAttributesContainer() {
+    public DeviceProperties getAttributesContainer() {
         return attributesContainer;
     }
 
-    public void setAttributesContainer(DeviceAttributesContainer attributesContainer) {
+    public void setAttributesContainer(DeviceProperties attributesContainer) {
         this.attributesContainer = attributesContainer;
     }
 
@@ -82,7 +82,7 @@ public abstract class Device {
         protected String name;
         protected int price;
         protected String origin;
-        protected DeviceAttributesContainer attributesContainer;
+        protected DeviceProperties attributesContainer;
         protected boolean critical;
 
         public Builder setId(String id) {
@@ -105,7 +105,7 @@ public abstract class Device {
             return this;
         }
 
-        public Builder setAttributesContainer(DeviceAttributesContainer attributesContainer) {
+        public Builder setAttributesContainer(DeviceProperties attributesContainer) {
             this.attributesContainer = attributesContainer;
             return this;
         }

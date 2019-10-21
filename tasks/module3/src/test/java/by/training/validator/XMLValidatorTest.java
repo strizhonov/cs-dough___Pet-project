@@ -42,4 +42,19 @@ public class XMLValidatorTest {
         Assert.assertFalse(result.isValid());
     }
 
+    @Test
+    public void voidXML() throws URISyntaxException {
+
+        URI XMLUri = this.getClass().getResource("/empty_file.xml").toURI();
+        String XMLPath = Paths.get(XMLUri).toString();
+
+        URI XSDUri = this.getClass().getResource("/devices_xsd_schema.xml").toURI();
+        String XSDPath = Paths.get(XSDUri).toString();
+
+        XMLValidator validator = new XMLValidator(XSDPath);
+
+        ValidationResult result = validator.validate(XMLPath);
+        Assert.assertFalse(result.isValid());
+    }
+
 }
