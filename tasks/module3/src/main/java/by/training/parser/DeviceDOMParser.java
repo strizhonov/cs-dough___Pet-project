@@ -1,6 +1,12 @@
 package by.training.parser;
 
-import by.training.entity.*;
+import by.training.entity.Device;
+import by.training.entity.DeviceAttributesContainer;
+import by.training.entity.DeviceType;
+import by.training.entity.MotherBoard;
+import by.training.entity.Mouse;
+import by.training.entity.PortType;
+import by.training.entity.Processor;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -16,7 +22,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import static by.training.parser.ParserConstantsContainer.*;
+import static by.training.parser.ParserConstantsContainer.BUTTONS;
+import static by.training.parser.ParserConstantsContainer.CONSUMPTION;
+import static by.training.parser.ParserConstantsContainer.COOLER;
+import static by.training.parser.ParserConstantsContainer.CRITICAL;
+import static by.training.parser.ParserConstantsContainer.ID;
+import static by.training.parser.ParserConstantsContainer.PERIPHERAL;
+import static by.training.parser.ParserConstantsContainer.RAM;
 
 public class DeviceDOMParser implements Parser<Device> {
     private static final int NAME_INDEX = 1;
@@ -119,7 +131,7 @@ public class DeviceDOMParser implements Parser<Device> {
                 return buildMouse(node);
 
             default:
-                throw new ParserException();
+                throw new ParserException("There is no parser logic for device type " + sDeviceType + " found.");
         }
 
     }

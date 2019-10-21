@@ -1,6 +1,11 @@
 package by.training.parser;
 
-import by.training.entity.*;
+import by.training.entity.Device;
+import by.training.entity.DeviceAttributesContainer;
+import by.training.entity.MotherBoard;
+import by.training.entity.Mouse;
+import by.training.entity.PortType;
+import by.training.entity.Processor;
 import org.apache.log4j.Logger;
 
 import javax.xml.namespace.QName;
@@ -15,7 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static by.training.parser.ParserConstantsContainer.*;
+import static by.training.parser.ParserConstantsContainer.PROCESSOR;
+import static by.training.parser.ParserConstantsContainer.MOUSE;
+import static by.training.parser.ParserConstantsContainer.BUTTONS;
+import static by.training.parser.ParserConstantsContainer.CONSUMPTION;
+import static by.training.parser.ParserConstantsContainer.COOLER;
+import static by.training.parser.ParserConstantsContainer.CRITICAL;
+import static by.training.parser.ParserConstantsContainer.ID;
+import static by.training.parser.ParserConstantsContainer.MOTHERBOARD;
+import static by.training.parser.ParserConstantsContainer.PERIPHERAL;
+import static by.training.parser.ParserConstantsContainer.RAM;
+import static by.training.parser.ParserConstantsContainer.TYPES;
+import static by.training.parser.ParserConstantsContainer.GROUP;
+import static by.training.parser.ParserConstantsContainer.NAME;
+import static by.training.parser.ParserConstantsContainer.ORIGIN;
+import static by.training.parser.ParserConstantsContainer.PORT;
+import static by.training.parser.ParserConstantsContainer.PRICE;
 
 public class DeviceStAXParser implements Parser<Device> {
 
