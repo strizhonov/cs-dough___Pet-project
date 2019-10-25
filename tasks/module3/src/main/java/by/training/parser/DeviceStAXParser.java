@@ -13,31 +13,38 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.*;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static by.training.parser.ParserConstantsContainer.PROCESSOR;
-import static by.training.parser.ParserConstantsContainer.MOUSE;
 import static by.training.parser.ParserConstantsContainer.BUTTONS;
 import static by.training.parser.ParserConstantsContainer.CONSUMPTION;
 import static by.training.parser.ParserConstantsContainer.COOLER;
 import static by.training.parser.ParserConstantsContainer.CRITICAL;
+import static by.training.parser.ParserConstantsContainer.DATE;
+import static by.training.parser.ParserConstantsContainer.DATE_TIME_FORMAT;
+import static by.training.parser.ParserConstantsContainer.GROUP;
 import static by.training.parser.ParserConstantsContainer.ID;
 import static by.training.parser.ParserConstantsContainer.MOTHERBOARD;
-import static by.training.parser.ParserConstantsContainer.PERIPHERAL;
-import static by.training.parser.ParserConstantsContainer.RAM;
-import static by.training.parser.ParserConstantsContainer.TYPES;
-import static by.training.parser.ParserConstantsContainer.GROUP;
+import static by.training.parser.ParserConstantsContainer.MOUSE;
 import static by.training.parser.ParserConstantsContainer.NAME;
 import static by.training.parser.ParserConstantsContainer.ORIGIN;
+import static by.training.parser.ParserConstantsContainer.PERIPHERAL;
 import static by.training.parser.ParserConstantsContainer.PORT;
 import static by.training.parser.ParserConstantsContainer.PRICE;
+import static by.training.parser.ParserConstantsContainer.PROCESSOR;
+import static by.training.parser.ParserConstantsContainer.RAM;
+import static by.training.parser.ParserConstantsContainer.TYPES;
 
 public class DeviceStAXParser implements Parser<Device> {
 
@@ -205,7 +212,8 @@ public class DeviceStAXParser implements Parser<Device> {
             case PORT:
                 Optional<PortType> optPortType = PortType.fromString(data);
                 if (!optPortType.isPresent()) {
-                    throw new ParserException();
+                    LOGGER.error("PortType " + data + " not found.");
+                    throw new ParserException("PortType " + data + " not found.");
                 }
                 PortType portType = optPortType.get();
                 attributesBuilder.setPortType(portType);
@@ -222,6 +230,17 @@ public class DeviceStAXParser implements Parser<Device> {
                 break;
             case NAME:
                 deviceBuilder = deviceBuilder.setName(data);
+                break;
+            case DATE:
+                SimpleDateFormat format = new SimpleDateFormat(DATE_TIME_FORMAT);
+                Date date;
+                try {
+                    date = format.parse(data);
+                } catch (ParseException e) {
+                    LOGGER.error(e);
+                    throw new ParserException(e);
+                }
+                deviceBuilder = deviceBuilder.setManufacturingDate(date);
                 break;
             default:
                 break;

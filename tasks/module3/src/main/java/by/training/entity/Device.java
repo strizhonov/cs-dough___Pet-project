@@ -1,5 +1,7 @@
 package by.training.entity;
 
+import java.util.Date;
+
 public abstract class Device {
 
     protected String id;
@@ -9,9 +11,10 @@ public abstract class Device {
     protected DeviceProperties attributesContainer;
     protected boolean critical;
     protected DeviceType type;
+    protected Date manufacturingDate;
 
     public Device(String id, String name, int price, String origin,
-                  DeviceProperties attributesContainer, boolean critical, DeviceType type) {
+                  DeviceProperties attributesContainer, boolean critical, DeviceType type, Date manufacturingDate) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -19,6 +22,7 @@ public abstract class Device {
         this.attributesContainer = attributesContainer;
         this.critical = critical;
         this.type = type;
+        this.manufacturingDate = manufacturingDate;
     }
 
     public String getId() {
@@ -77,6 +81,14 @@ public abstract class Device {
         this.type = type;
     }
 
+    public Date getManufacturingDate() {
+        return manufacturingDate;
+    }
+
+    public void setManufacturingDate(Date manufacturingDate) {
+        this.manufacturingDate = manufacturingDate;
+    }
+
     public static abstract class Builder {
         protected String id;
         protected String name;
@@ -84,6 +96,7 @@ public abstract class Device {
         protected String origin;
         protected DeviceProperties attributesContainer;
         protected boolean critical;
+        protected Date manufacturingDate;
 
         public Builder setId(String id) {
             this.id = id;
@@ -112,6 +125,11 @@ public abstract class Device {
 
         public Builder setCritical(boolean critical) {
             this.critical = critical;
+            return this;
+        }
+
+        public Builder setManufacturingDate(Date manufacturingDate) {
+            this.manufacturingDate = manufacturingDate;
             return this;
         }
 

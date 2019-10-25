@@ -18,6 +18,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +29,8 @@ import static by.training.parser.ParserConstantsContainer.BUTTONS;
 import static by.training.parser.ParserConstantsContainer.CONSUMPTION;
 import static by.training.parser.ParserConstantsContainer.COOLER;
 import static by.training.parser.ParserConstantsContainer.CRITICAL;
+import static by.training.parser.ParserConstantsContainer.DATE;
+import static by.training.parser.ParserConstantsContainer.DATE_TIME_FORMAT;
 import static by.training.parser.ParserConstantsContainer.GROUP;
 import static by.training.parser.ParserConstantsContainer.ID;
 import static by.training.parser.ParserConstantsContainer.NAME;
@@ -90,7 +95,9 @@ public class DeviceDOMParser implements Parser<Device> {
         StringBuilder name = new StringBuilder();
         StringBuilder origin = new StringBuilder();
         StringBuilder sPrice = new StringBuilder();
+        StringBuilder sDate = new StringBuilder();
         int price = 0;
+        Date date = null;
         DeviceProperties attributesContainer = null;
 
         for (int i = 0; i < nodes.getLength(); i++) {
@@ -109,6 +116,17 @@ public class DeviceDOMParser implements Parser<Device> {
                     content = childNode.getTextContent();
                     sPrice.append(content);
                     price = Integer.parseInt(sPrice.toString());
+                    break;
+                case DATE:
+                    content = childNode.getTextContent();
+                    sDate.append(content);
+                    SimpleDateFormat format = new SimpleDateFormat(DATE_TIME_FORMAT);
+                    try {
+                        date = format.parse(sDate.toString());
+                    } catch (ParseException e) {
+                        LOGGER.error(e);
+                        throw new ParserException(e);
+                    }
                     break;
                 case TYPES:
                     attributesContainer = buildDeviceAttributeContainer(childNode);
@@ -133,7 +151,8 @@ public class DeviceDOMParser implements Parser<Device> {
                         .setName(name.toString())
                         .setOrigin(origin.toString())
                         .setPrice(price)
-                        .setAttributesContainer(attributesContainer);
+                        .setAttributesContainer(attributesContainer)
+                        .setManufacturingDate(date);
                 return buildProcessor(node);
 
             case MOTHERBOARD:
@@ -142,7 +161,8 @@ public class DeviceDOMParser implements Parser<Device> {
                         .setName(name.toString())
                         .setOrigin(origin.toString())
                         .setPrice(price)
-                        .setAttributesContainer(attributesContainer);
+                        .setAttributesContainer(attributesContainer)
+                        .setManufacturingDate(date);
                 return buildMotherBoard(node);
 
             case MOUSE:
@@ -151,7 +171,8 @@ public class DeviceDOMParser implements Parser<Device> {
                         .setName(name.toString())
                         .setOrigin(origin.toString())
                         .setPrice(price)
-                        .setAttributesContainer(attributesContainer);
+                        .setAttributesContainer(attributesContainer)
+                        .setManufacturingDate(date);
                 return buildMouse(node);
 
             default:

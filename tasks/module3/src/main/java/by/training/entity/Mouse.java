@@ -1,14 +1,15 @@
 package by.training.entity;
 
+import java.util.Date;
 import java.util.Objects;
 
 public class Mouse extends Device {
 
     private int buttons;
 
-    public Mouse(String id, String name, int price, String origin,
-                 DeviceProperties attributesContainer, boolean critical, int buttons) {
-        super(id, name, price, origin, attributesContainer, critical, DeviceType.MOUSE);
+    public Mouse(String id, String name, int price, String origin, DeviceProperties attributesContainer,
+                 boolean critical, int buttons, Date manufacturingDate) {
+        super(id, name, price, origin, attributesContainer, critical, DeviceType.MOUSE, manufacturingDate);
         this.buttons = buttons;
     }
 
@@ -57,7 +58,7 @@ public class Mouse extends Device {
         }
 
         public Mouse build() {
-            return new Mouse(id, name, price, origin, attributesContainer, critical, buttons);
+            return new Mouse(id, name, price, origin, attributesContainer, critical, buttons, manufacturingDate);
         }
     }
 

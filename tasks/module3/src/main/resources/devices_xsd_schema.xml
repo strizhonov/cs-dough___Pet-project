@@ -15,6 +15,7 @@
             <xs:element name="name" type="xs:string"/>
             <xs:element name="origin" type="xs:string"/>
             <xs:element name="price" type="price"/>
+            <xs:element name="date" type="xs:dateTime"/>
             <xs:element name="types" type="types"/>
         </xs:sequence>
         <xs:attribute name="id" use="required">

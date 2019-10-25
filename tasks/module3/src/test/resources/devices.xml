@@ -4,6 +4,7 @@
         <name>AMD Ryzen AZ</name>
         <origin>Thailand</origin>
         <price>140</price>
+        <date>2018-01-03T09:00:00</date>
         <types peripheral="false" cooler="true">
             <group>Main</group>
             <port>COM</port>
@@ -13,6 +14,7 @@
         <name>Intel i3 8885</name>
         <origin>China</origin>
         <price>100</price>
+        <date>2018-11-13T09:00:00</date>
         <types peripheral="false" cooler="true">
             <group>Main</group>
             <port>LPT</port>
@@ -22,6 +24,7 @@
         <name>AMD R5</name>
         <origin>Germany</origin>
         <price>200</price>
+        <date>2019-01-13T09:00:00</date>
         <types peripheral="false" cooler="true">
             <group>Main</group>
             <port>COM</port>
@@ -31,6 +34,7 @@
         <name>Intel I-76</name>
         <origin>China</origin>
         <price>220</price>
+        <date>2019-03-23T09:00:00</date>
         <types peripheral="false" cooler="true">
             <group>Main</group>
             <port>LPT</port>
@@ -40,6 +44,7 @@
         <name>ASRock A430</name>
         <origin>India</origin>
         <price>145</price>
+        <date>2018-02-13T09:00:00</date>
         <types peripheral="false" cooler="true">
             <group>Main</group>
             <port>LPT</port>
@@ -49,6 +54,7 @@
         <name>ASUS k8888</name>
         <origin>Japan</origin>
         <price>200</price>
+        <date>2019-02-18T09:00:00</date>
         <types peripheral="false" cooler="true">
             <group>Main</group>
             <port>COM</port>
@@ -58,6 +64,7 @@
         <name>MSI KK-55</name>
         <origin>Thailand</origin>
         <price>300</price>
+        <date>2018-03-13T09:00:00</date>
         <types peripheral="false" cooler="true">
             <group>Main</group>
             <port>LPT</port>
@@ -67,6 +74,7 @@
         <name>ASRock AB-350m</name>
         <origin>China</origin>
         <price>500</price>
+        <date>2019-12-30T09:00:00</date>
         <types peripheral="false" cooler="true">
             <group>Main</group>
             <port>LPT</port>
@@ -76,6 +84,7 @@
         <name>MSI I-MSI</name>
         <origin>USA</origin>
         <price>250</price>
+        <date>2018-03-13T09:00:00</date>
         <types peripheral="false" cooler="true">
             <group>Main</group>
             <port>COM</port>
@@ -85,6 +94,7 @@
         <name>OD ooo-s</name>
         <origin>China</origin>
         <price>150</price>
+        <date>2018-05-13T09:00:00</date>
         <types peripheral="false" cooler="false">
             <group>Main</group>
             <port>LPT</port>
@@ -94,6 +104,7 @@
         <name>SmartBuy A-1</name>
         <origin>Italy</origin>
         <price>50</price>
+        <date>2019-11-26T09:44:00</date>
         <types peripheral="true" cooler="false">
             <group>IO</group>
             <port>USB</port>
@@ -103,6 +114,7 @@
         <name>A4Tech RIX</name>
         <origin>Afghanistan</origin>
         <price>45</price>
+        <date>2019-10-20T11:00:00</date>
         <types peripheral="true" cooler="false">
             <group>IO</group>
             <port>USB</port>
@@ -112,6 +124,7 @@
         <name>Logitech jj-8</name>
         <origin>Thailand</origin>
         <price>87</price>
+        <date>2019-07-25T12:00:00</date>
         <types peripheral="true" cooler="false">
             <group>IO</group>
             <port>USB</port>
@@ -121,6 +134,7 @@
         <name>Defender o-9</name>
         <origin>China</origin>
         <price>60</price>
+        <date>2019-09-15T09:45:40</date>
         <types peripheral="true" cooler="false">
             <group>IO</group>
             <port>USB</port>
@@ -130,6 +144,7 @@
         <name>SVEN UUU-s</name>
         <origin>Germany</origin>
         <price>245</price>
+        <date>2019-11-15T09:12:00</date>
         <types peripheral="true" cooler="false">
             <group>IO</group>
             <port>USB</port>
@@ -139,6 +154,7 @@
         <name>Rapoo apoo</name>
         <origin>Germany</origin>
         <price>2000</price>
+        <date>2019-10-15T12:11:00</date>
         <types peripheral="true" cooler="false">
             <group>Multimedia</group>
             <port>USB</port>

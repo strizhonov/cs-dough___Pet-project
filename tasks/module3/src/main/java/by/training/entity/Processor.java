@@ -1,14 +1,15 @@
 package by.training.entity;
 
+import java.util.Date;
 import java.util.Objects;
 
 public class Processor extends Device {
 
     private int consumption;
 
-    public Processor(String id, String name, int price, String origin,
-                     DeviceProperties attributesContainer, boolean critical, int consumption) {
-        super(id, name, price, origin, attributesContainer, critical, DeviceType.PROCESSOR);
+    public Processor(String id, String name, int price, String origin, DeviceProperties attributesContainer,
+                     boolean critical, int consumption, Date manufacturingDate) {
+        super(id, name, price, origin, attributesContainer, critical, DeviceType.PROCESSOR, manufacturingDate);
         this.consumption = consumption;
     }
 
@@ -37,13 +38,14 @@ public class Processor extends Device {
     public String toString() {
         return "Processor{" +
                 "consumption=" + consumption +
-                ", id=" + id +
+                ", id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", origin='" + origin + '\'' +
                 ", attributesContainer=" + attributesContainer +
                 ", critical=" + critical +
                 ", type=" + type +
+                ", manufacturingDate=" + manufacturingDate +
                 '}';
     }
 
@@ -57,7 +59,7 @@ public class Processor extends Device {
         }
 
         public Processor build() {
-            return new Processor(id, name, price, origin, attributesContainer, critical, consumption);
+            return new Processor(id, name, price, origin, attributesContainer, critical, consumption, manufacturingDate);
         }
     }
 

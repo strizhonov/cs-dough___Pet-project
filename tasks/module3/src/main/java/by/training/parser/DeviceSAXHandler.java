@@ -12,7 +12,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +23,8 @@ import static by.training.parser.ParserConstantsContainer.BUTTONS;
 import static by.training.parser.ParserConstantsContainer.CONSUMPTION;
 import static by.training.parser.ParserConstantsContainer.COOLER;
 import static by.training.parser.ParserConstantsContainer.CRITICAL;
+import static by.training.parser.ParserConstantsContainer.DATE;
+import static by.training.parser.ParserConstantsContainer.DATE_TIME_FORMAT;
 import static by.training.parser.ParserConstantsContainer.GROUP;
 import static by.training.parser.ParserConstantsContainer.ID;
 import static by.training.parser.ParserConstantsContainer.MOTHERBOARD;
@@ -50,12 +55,12 @@ public class DeviceSAXHandler extends DefaultHandler {
 
     @Override
     public void startDocument() {
-        LOGGER.info("At document start...");
+        LOGGER.info("At the document's start...");
     }
 
     @Override
     public void endDocument() {
-        LOGGER.info("At document end...");
+        LOGGER.info("At the document's end...");
     }
 
     @Override
@@ -104,6 +109,17 @@ public class DeviceSAXHandler extends DefaultHandler {
                 break;
             case NAME:
                 deviceBuilder = deviceBuilder.setName(data);
+                break;
+            case DATE:
+                SimpleDateFormat format = new SimpleDateFormat(DATE_TIME_FORMAT);
+                Date date;
+                try {
+                    date = format.parse(data);
+                } catch (ParseException e) {
+                    LOGGER.error(e);
+                    throw new SAXException(e);
+                }
+                deviceBuilder = deviceBuilder.setManufacturingDate(date);
                 break;
             default:
                 break;

@@ -1,5 +1,6 @@
 package by.training.entity;
 
+import java.util.Date;
 import java.util.Objects;
 
 public class MotherBoard extends Device {
@@ -7,8 +8,8 @@ public class MotherBoard extends Device {
     private int ramSlots;
 
     public MotherBoard(String id, String name, int price, String origin, DeviceProperties attributesContainer,
-                       boolean critical, int ramSlots) {
-        super(id, name, price, origin, attributesContainer, critical, DeviceType.MOTHERBOARD);
+                       boolean critical, int ramSlots, Date manufacturingDate) {
+        super(id, name, price, origin, attributesContainer, critical, DeviceType.MOTHERBOARD, manufacturingDate);
         this.ramSlots = ramSlots;
     }
 
@@ -36,14 +37,15 @@ public class MotherBoard extends Device {
     @Override
     public String toString() {
         return "MotherBoard{" +
-                "id=" + id +
+                "ramSlots=" + ramSlots +
+                ", id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", origin='" + origin + '\'' +
                 ", attributesContainer=" + attributesContainer +
                 ", critical=" + critical +
                 ", type=" + type +
-                "ramSlots=" + ramSlots +
+                ", manufacturingDate=" + manufacturingDate +
                 '}';
     }
 
@@ -57,7 +59,7 @@ public class MotherBoard extends Device {
         }
 
         public MotherBoard build() {
-            return new MotherBoard(id, name, price, origin, attributesContainer, critical, ramSlots);
+            return new MotherBoard(id, name, price, origin, attributesContainer, critical, ramSlots, manufacturingDate);
         }
     }
 

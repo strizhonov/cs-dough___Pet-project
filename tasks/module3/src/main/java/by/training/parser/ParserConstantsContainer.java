@@ -17,5 +17,6 @@ public class ParserConstantsContainer {
     static final String PRICE = "price";
     static final String ORIGIN = "origin";
     static final String NAME = "name";
-    static final String DEVICES = "devices";
+    static final String DATE = "date";
+    static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 }
