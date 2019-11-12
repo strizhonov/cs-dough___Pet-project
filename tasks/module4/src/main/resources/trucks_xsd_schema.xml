@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="trucks">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="truck" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="truck">
+        <xs:sequence>
+            <xs:element name="capacity" type="xs:string"/>
+            <xs:element name="cargo" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="id" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:integer"/>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="perishable" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:boolean"/>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:element name="truck" type="truck"/>
+
+</xs:schema>

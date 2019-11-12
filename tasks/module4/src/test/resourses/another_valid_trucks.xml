@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trucks>
+    <truck id="1" perishable="true">
+        <capacity>20</capacity>
+        <cargo>10</cargo>
+    </truck>
+    <truck id="2" perishable="false">
+        <capacity>20</capacity>
+        <cargo>7</cargo>
+    </truck>
+    <truck id="3" perishable="false">
+        <capacity>15</capacity>
+        <cargo>0</cargo>
+    </truck>
+    <truck id="4" perishable="false">
+        <capacity>15</capacity>
+        <cargo>0</cargo>
+    </truck>
+    <truck id="5" perishable="true">
+        <capacity>10</capacity>
+        <cargo>9</cargo>
+    </truck>
+    <truck id="6" perishable="false">
+        <capacity>20</capacity>
+        <cargo>0</cargo>
+    </truck>
+    <truck id="7" perishable="true">
+        <capacity>8</capacity>
+        <cargo>7</cargo>
+    </truck>
+    <truck id="8" perishable="false">
+        <capacity>5</capacity>
+        <cargo>0</cargo>
+    </truck>
+    <truck id="9" perishable="false">
+        <capacity>20</capacity>
+        <cargo>15</cargo>
+    </truck>
+    <truck id="10" perishable="false">
+        <capacity>12</capacity>
+        <cargo>0</cargo>
+    </truck>
+    <truck id="11" perishable="false">
+        <capacity>12</capacity>
+        <cargo>0</cargo>
+    </truck>
+    <truck id="12" perishable="false">
+        <capacity>12</capacity>
+        <cargo>0</cargo>
+    </truck>
+    <truck id="13" perishable="false">
+        <capacity>12</capacity>
+        <cargo>10</cargo>
+    </truck>
+    <truck id="13" perishable="true">
+        <capacity>12</capacity>
+        <cargo>0</cargo>
+    </truck>
+    <truck id="13" perishable="false">
+        <capacity>12</capacity>
+        <cargo>0</cargo>
+    </truck>
+</trucks>
