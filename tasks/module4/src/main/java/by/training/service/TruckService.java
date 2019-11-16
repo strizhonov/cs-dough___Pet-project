@@ -15,10 +15,13 @@ public class TruckService {
     private static final Logger LOGGER = Logger.getLogger(TruckService.class);
     private Repository<PlainTruck> repository;
     private WarehouseService warehouseService;
+    private Comparator<Truck> defComparator;
 
-    public TruckService(Repository<PlainTruck> repository, WarehouseService warehouseService) {
+    public TruckService(Repository<PlainTruck> repository, WarehouseService warehouseService,
+                        Comparator<Truck> defComparator) {
         this.repository = repository;
         this.warehouseService = warehouseService;
+        this.defComparator = defComparator;
     }
 
     public void processAll(long warehouseId) throws TruckServiceException {
@@ -30,7 +33,6 @@ public class TruckService {
                 trucks.add(truck);
             }
 
-            Comparator<Truck> defComparator = new TruckDefaultComparator();
             TruckQueueManager queueManager = new TruckQueueManager(this, trucks, warehouse, defComparator);
             queueManager.processQueue();
 

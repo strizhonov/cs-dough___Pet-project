@@ -2,6 +2,8 @@ package by.training.service;
 
 import by.training.entity.PlainTruck;
 import by.training.entity.PlainWarehouse;
+import by.training.model.Truck;
+import by.training.model.TruckDefaultComparator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +12,8 @@ import org.junit.runners.JUnit4;
 import by.training.repository.Repository;
 import by.training.repository.TruckRepository;
 import by.training.repository.WarehouseRepository;
+
+import java.util.Comparator;
 
 @RunWith(JUnit4.class)
 public class TruckServiceTest {
@@ -24,7 +28,8 @@ public class TruckServiceTest {
         Repository<PlainWarehouse> warehouseRepository = new WarehouseRepository();
         Repository<PlainTruck> truckRepository = new TruckRepository();
         warehouseService = new WarehouseService(warehouseRepository);
-        truckService = new TruckService(truckRepository, warehouseService);
+        Comparator<Truck> defComparator = new TruckDefaultComparator();
+        truckService = new TruckService(truckRepository, warehouseService, defComparator);
     }
 
     @Test

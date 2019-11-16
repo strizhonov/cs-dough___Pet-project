@@ -2,6 +2,8 @@ package by.training.controller;
 
 import by.training.entity.PlainTruck;
 import by.training.entity.PlainWarehouse;
+import by.training.model.Truck;
+import by.training.model.TruckDefaultComparator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +23,7 @@ import by.training.validator.XMLValidator;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.Comparator;
 
 @RunWith(JUnit4.class)
 public class IntegrationTest {
@@ -38,7 +41,8 @@ public class IntegrationTest {
         Repository<PlainTruck> truckRepository = new TruckRepository();
 
         warehouseService = new WarehouseService(warehouseRepository);
-        TruckService truckService = new TruckService(truckRepository, warehouseService);
+        Comparator<Truck> defComparator = new TruckDefaultComparator();
+        TruckService truckService = new TruckService(truckRepository, warehouseService, defComparator);
 
         URI truckXSDUri = this.getClass().getResource("/trucks_xsd_schema.xml").toURI();
         String truckXSDPath = Paths.get(truckXSDUri).toString();

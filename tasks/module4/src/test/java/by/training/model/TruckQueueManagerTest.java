@@ -25,7 +25,8 @@ public class TruckQueueManagerTest {
         Repository<PlainTruck> truckRepository = new TruckRepository();
 
         WarehouseService warehouseService = new WarehouseService(warehouseRepository);
-        truckService = new TruckService(truckRepository, warehouseService);
+        Comparator<Truck> defComparator = new TruckDefaultComparator();
+        truckService = new TruckService(truckRepository, warehouseService, defComparator);
     }
 
     @Test
