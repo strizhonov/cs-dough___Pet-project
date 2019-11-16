@@ -146,7 +146,8 @@ public class DeviceDOMParser implements Parser<Device> {
 
         switch (deviceType) {
             case PROCESSOR:
-                deviceBuilder = new Processor.Builder().setId(id)
+                deviceBuilder = new Processor.Builder()
+                        .setId(id)
                         .setCritical(critical)
                         .setName(name.toString())
                         .setOrigin(origin.toString())
@@ -156,7 +157,8 @@ public class DeviceDOMParser implements Parser<Device> {
                 return buildProcessor(node);
 
             case MOTHERBOARD:
-                deviceBuilder = new MotherBoard.Builder().setId(id)
+                deviceBuilder = new MotherBoard.Builder()
+                        .setId(id)
                         .setCritical(critical)
                         .setName(name.toString())
                         .setOrigin(origin.toString())
@@ -166,7 +168,8 @@ public class DeviceDOMParser implements Parser<Device> {
                 return buildMotherBoard(node);
 
             case MOUSE:
-                deviceBuilder = new Mouse.Builder().setId(id)
+                deviceBuilder = new Mouse.Builder()
+                        .setId(id)
                         .setCritical(critical)
                         .setName(name.toString())
                         .setOrigin(origin.toString())
