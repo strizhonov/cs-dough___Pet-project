@@ -1,11 +1,8 @@
 package by.training.connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -16,16 +13,18 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class ConnectionPool {
 
-    private static final Logger LOGGER = Logger.getLogger(ConnectionPool.class);
+public class ConnectionPool implements AutoCloseable {
+
+    private static final Logger LOGGER = LogManager.getLogger(ConnectionPool.class);
 
     private static final String DB_PROPERTIES_FILE = "database";
     private static final String DB_DRIVER_KEY = "driver";
@@ -36,15 +35,16 @@ public class ConnectionPool {
     private static final String EXECUTOR_DELAY_KEY = "terminator_executor_delay";
     private static final String EXECUTOR_PERIOD_KEY = "terminator_executor_period";
     private static final String EXECUTOR_TIME_UNIT_KEY = "terminator_executor_period_time_unit";
-    private static final String CONNECTION_WAITING_TIMEOUT_MS_KEY = "max_connection_waiting_time_out";
+    private static final String CONNECTION_WAITING_TIMEOUT_MS_KEY = "max_connection_waiting_time_out_ms";
 
+    private final AtomicBoolean initialized = new AtomicBoolean();
     private final List<Connection> available = new ArrayList<>();
     private final Map<Connection, Date> borrowed = new HashMap<>();
     private final Lock lock = new ReentrantLock();
     private final ConnectionProvider connectionProvider = new ConnectionProxyProvider(this);
     private final ScheduledExecutorService terminatorExecutorService = Executors.newSingleThreadScheduledExecutor();
     private int poolSize;
-    private Properties properties;
+    private ResourceBundle resourceBundle;
 
     private ConnectionPool() {
 
@@ -59,13 +59,19 @@ public class ConnectionPool {
     }
 
     public void init(int poolSize) throws SQLException {
-        this.poolSize = poolSize;
-        initProperties();
-        register();
-        initConnections(poolSize);
-        initConnectionReview();
+        if (!initialized.get()) {
+            this.poolSize = poolSize;
+            initProperties();
+
+            register();
+            initConnections(poolSize);
+            initConnectionReview();
+
+            initialized.set(true);
+        }
     }
 
+    @Override
     public void close() throws SQLException {
         lock.lock();
         try {
@@ -95,7 +101,7 @@ public class ConnectionPool {
         try {
             while (available.isEmpty()) {
                 if (borrowed.size() == poolSize) {
-                    String sWaitingTimeout = properties.getProperty(CONNECTION_WAITING_TIMEOUT_MS_KEY);
+                    String sWaitingTimeout = resourceBundle.getString(CONNECTION_WAITING_TIMEOUT_MS_KEY);
                     long waitingTimeout = Long.parseLong(sWaitingTimeout);
                     wait(waitingTimeout);
                 }
@@ -106,6 +112,7 @@ public class ConnectionPool {
             }
             connection = available.remove(0);
             borrowed.put(connection, new Date());
+            connection.setAutoCommit(false);
             return connection;
         } catch (InterruptedException e) {
             LOGGER.error("Unable to get database connection.", e);
@@ -119,42 +126,38 @@ public class ConnectionPool {
     void release(Connection connection) {
         lock.lock();
         try {
-            available.add(connection);
-            borrowed.remove(connection);
+            if (borrowed.remove(connection) != null) {
+                connection.setAutoCommit(true);
+                available.add(connection);
+            }
+        } catch (SQLException e) {
+            ///
         } finally {
             lock.unlock();
         }
     }
 
-    private void initProperties() throws SQLException {
-        properties = new Properties();
-        try {
-            Reader reader = new InputStreamReader(new FileInputStream(DB_PROPERTIES_FILE));
-            properties.load(reader);
-        } catch (IOException e) {
-            LOGGER.error("Unable to load database properties.", e);
-            throw new SQLException("Unable to load database properties.", e);
-        }
-
+    private void initProperties() {
+        resourceBundle = ResourceBundle.getBundle(DB_PROPERTIES_FILE);
     }
 
     private void initConnectionReview() {
-        String sConnectionLifetime = properties.getProperty(CONNECTION_LIFETIME_MS_KEY);
+        String sConnectionLifetime = resourceBundle.getString(CONNECTION_LIFETIME_MS_KEY);
         long connectionLifetime = Long.parseLong(sConnectionLifetime);
         Runnable runnable = new ConnectionTerminator(borrowed, connectionLifetime);
 
-        String sExecutorDelay = properties.getProperty(EXECUTOR_DELAY_KEY);
+        String sExecutorDelay = resourceBundle.getString(EXECUTOR_DELAY_KEY);
         long executorDelay = Long.parseLong(sExecutorDelay);
-        String sExecutorPeriod = properties.getProperty(EXECUTOR_PERIOD_KEY);
+        String sExecutorPeriod = resourceBundle.getString(EXECUTOR_PERIOD_KEY);
         long executorPeriod = Long.parseLong(sExecutorPeriod);
-        String sExecutorTimeUnit = properties.getProperty(EXECUTOR_TIME_UNIT_KEY);
+        String sExecutorTimeUnit = resourceBundle.getString(EXECUTOR_TIME_UNIT_KEY);
         TimeUnit executorTimeUnit = TimeUnit.valueOf(sExecutorTimeUnit);
 
         terminatorExecutorService.scheduleAtFixedRate(runnable, executorDelay, executorPeriod, executorTimeUnit);
     }
 
     private void register() throws SQLException {
-        String dbDriver = properties.getProperty(DB_DRIVER_KEY);
+        String dbDriver = resourceBundle.getString(DB_DRIVER_KEY);
         try {
             Class.forName(dbDriver);
         } catch (ClassNotFoundException e) {
@@ -179,9 +182,9 @@ public class ConnectionPool {
     }
 
     private Connection getConnectionFromDriver() throws SQLException {
-        String url = properties.getProperty(URL_KEY);
-        String user = properties.getProperty(USER_KEY);
-        String password = properties.getProperty(PASSWORD_KEY);
+        String url = resourceBundle.getString(URL_KEY);
+        String user = resourceBundle.getString(USER_KEY);
+        String password = resourceBundle.getString(PASSWORD_KEY);
 
         return DriverManager.getConnection(url, user, password);
     }

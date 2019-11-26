@@ -1,6 +1,7 @@
 package by.training.connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -10,7 +11,7 @@ import java.util.Map;
 
 public class ConnectionTerminator implements Runnable {
 
-    private static final Logger LOGGER = Logger.getLogger(ConnectionTerminator.class);
+    private static final Logger LOGGER = LogManager.getLogger(ConnectionTerminator.class);
     private Map<Connection, Date> borrowed;
     private long msConnectionLifetime;
 
@@ -27,13 +28,18 @@ public class ConnectionTerminator implements Runnable {
         while (iterator.hasNext()) {
             Map.Entry<Connection, Date> entry = iterator.next();
             long creation = entry.getValue().getTime();
-            if (current - creation > msConnectionLifetime) {
-                try {
-                    entry.getKey().close();
-                    iterator.remove();
-                } catch (SQLException e) {
-                    LOGGER.error("Unable to close connection.", e);
-                }
+
+            if (current - creation <= msConnectionLifetime) {
+                return;
+            }
+
+            try {
+                Connection connection = entry.getKey();
+                connection.rollback();
+                connection.close();
+                iterator.remove();
+            } catch (SQLException e) {
+                LOGGER.error("Unable to close connection.", e);
             }
         }
     }
