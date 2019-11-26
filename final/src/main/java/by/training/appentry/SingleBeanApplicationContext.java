@@ -1,6 +1,5 @@
 package by.training.appentry;
 
-
 import by.training.command.ActionCommandProviderImpl;
 import by.training.command.impl.CreateOrganizerCommand;
 import by.training.command.impl.CreatePlayerCommand;
@@ -60,60 +59,64 @@ public class SingleBeanApplicationContext {
         return registered.get(clazz);
     }
 
-    void init() {
-        if (!initialized.get()) {
-            ConnectionPool connectionPool = ConnectionPool.getInstance();
-            try {
-                connectionPool.init(10);
-            } catch (SQLException e) {
-                LOGGER.error("ConnectionPool initialization failed.", e);
-                throw new IllegalStateException("ConnectionPool initialization failed.", e);
-            }
-            ConnectionProvider connectionProvider = connectionPool.getConnectionProvider();
-
-            UserDaoImpl userDao = new UserDaoImpl(connectionProvider);
-            TournamentDaoImpl tournamentDao = new TournamentDaoImpl(connectionProvider);
-            WalletDaoImpl walletDao = new WalletDaoImpl(connectionProvider);
-            PlayerDaoImpl playerDao = new PlayerDaoImpl(connectionProvider);
-            OrganizerDaoImpl organizerDao = new OrganizerDaoImpl(connectionProvider);
-            GameDaoImpl gameDao = new GameDaoImpl(connectionProvider);
-
-            UserServiceImpl userService = new UserServiceImpl(userDao, walletDao);
-            TournamentServiceImpl tournamentService = new TournamentServiceImpl(tournamentDao);
-            PlayerServiceImpl playerService = new PlayerServiceImpl(playerDao);
-            OrganizerService organizerService = new OrganizerServiceImpl(organizerDao);
-            GameServiceImpl gameService = new GameServiceImpl(gameDao);
-
-            ActionCommandProviderImpl commandProvider = new ActionCommandProviderImpl();
-
-            ListTournamentsCommand listTournamentsCommand = new ListTournamentsCommand(tournamentService);
-            ToLoginPageCommand toLoginPageCommand = new ToLoginPageCommand();
-            RegisterCommand registerCommand = new RegisterCommand(userService);
-            LogInCommand logInCommand = new LogInCommand(userService);
-            ShowPlayerCommand showPlayerCommand = new ShowPlayerCommand(playerService);
-            CreatePlayerCommand createPlayerCommand = new CreatePlayerCommand(userService, playerService);
-            ToPlayerCreationCommand toPlayerCreationCommand = new ToPlayerCreationCommand();
-            ToTournamentCreationCommand toTournamentCreationCommand = new ToTournamentCreationCommand();
-            CreateTournamentCommand createTournamentCommand = new CreateTournamentCommand(tournamentService, userService, organizerService, gameService);
-            CreateOrganizerCommand createOrganizerCommand = new CreateOrganizerCommand(organizerService, userService);
-            ToOrganizerCreationCommand toOrganizerCreationCommand = new ToOrganizerCreationCommand();
-            ToTournamentPageCommand toTournamentPageCommand = new ToTournamentPageCommand(tournamentService);
-
-            commandProvider.register(listTournamentsCommand, toLoginPageCommand, registerCommand, logInCommand,
-                    showPlayerCommand, createPlayerCommand, toPlayerCreationCommand, toTournamentCreationCommand,
-                    createTournamentCommand, createOrganizerCommand, toOrganizerCreationCommand, toTournamentPageCommand);
-
-            try {
-                register(connectionProvider, userDao, tournamentDao, walletDao, playerDao, organizerDao,
-                        gameDao, userService, tournamentService, playerService, organizerService, gameService,
-                        commandProvider);
-            } catch (SingleBeanApplicationContextException e) {
-                LOGGER.error("Beans registering failed.", e);
-                throw new IllegalStateException("Beans registering failed.", e);
-            }
-
-            initialized.set(true);
+    boolean init() {
+        if (initialized.get()) {
+            LOGGER.warn("Application context has already been initialized.");
+            return false;
         }
+
+        ConnectionPool connectionPool = ConnectionPool.getInstance();
+        try {
+            connectionPool.init(10);
+        } catch (SQLException e) {
+            LOGGER.error("ConnectionPool initialization failed.", e);
+            throw new IllegalStateException("ConnectionPool initialization failed.", e);
+        }
+        ConnectionProvider connectionProvider = connectionPool.getConnectionProvider();
+
+        UserDaoImpl userDao = new UserDaoImpl(connectionProvider);
+        TournamentDaoImpl tournamentDao = new TournamentDaoImpl(connectionProvider);
+        WalletDaoImpl walletDao = new WalletDaoImpl(connectionProvider);
+        PlayerDaoImpl playerDao = new PlayerDaoImpl(connectionProvider);
+        OrganizerDaoImpl organizerDao = new OrganizerDaoImpl(connectionProvider);
+        GameDaoImpl gameDao = new GameDaoImpl(connectionProvider);
+
+        UserServiceImpl userService = new UserServiceImpl(userDao, walletDao);
+        TournamentServiceImpl tournamentService = new TournamentServiceImpl(tournamentDao);
+        PlayerServiceImpl playerService = new PlayerServiceImpl(playerDao);
+        OrganizerService organizerService = new OrganizerServiceImpl(organizerDao);
+        GameServiceImpl gameService = new GameServiceImpl(gameDao);
+
+        ActionCommandProviderImpl commandProvider = new ActionCommandProviderImpl();
+
+        ListTournamentsCommand listTournamentsCommand = new ListTournamentsCommand(tournamentService);
+        ToLoginPageCommand toLoginPageCommand = new ToLoginPageCommand();
+        RegisterCommand registerCommand = new RegisterCommand(userService);
+        LogInCommand logInCommand = new LogInCommand(userService);
+        ShowPlayerCommand showPlayerCommand = new ShowPlayerCommand(playerService);
+        CreatePlayerCommand createPlayerCommand = new CreatePlayerCommand(userService, playerService);
+        ToPlayerCreationCommand toPlayerCreationCommand = new ToPlayerCreationCommand();
+        ToTournamentCreationCommand toTournamentCreationCommand = new ToTournamentCreationCommand();
+        CreateTournamentCommand createTournamentCommand = new CreateTournamentCommand(tournamentService, userService, organizerService, gameService);
+        CreateOrganizerCommand createOrganizerCommand = new CreateOrganizerCommand(organizerService, userService);
+        ToOrganizerCreationCommand toOrganizerCreationCommand = new ToOrganizerCreationCommand();
+        ToTournamentPageCommand toTournamentPageCommand = new ToTournamentPageCommand(tournamentService);
+
+        commandProvider.register(listTournamentsCommand, toLoginPageCommand, registerCommand, logInCommand,
+                showPlayerCommand, createPlayerCommand, toPlayerCreationCommand, toTournamentCreationCommand,
+                createTournamentCommand, createOrganizerCommand, toOrganizerCreationCommand, toTournamentPageCommand);
+
+        try {
+            register(connectionProvider, userDao, tournamentDao, walletDao, playerDao, organizerDao,
+                    gameDao, userService, tournamentService, playerService, organizerService, gameService,
+                    commandProvider);
+        } catch (SingleBeanApplicationContextException e) {
+            LOGGER.error("Beans' registering failed.", e);
+            throw new IllegalStateException("Beans' registering failed.", e);
+        }
+
+        initialized.set(true);
+        return true;
     }
 
     void destroy() {
