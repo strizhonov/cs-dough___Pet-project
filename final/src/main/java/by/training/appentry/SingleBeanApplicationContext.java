@@ -94,11 +94,11 @@ public class SingleBeanApplicationContext {
         RegisterCommand registerCommand = new RegisterCommand(userService);
         LogInCommand logInCommand = new LogInCommand(userService);
         ShowPlayerCommand showPlayerCommand = new ShowPlayerCommand(playerService);
-        CreatePlayerCommand createPlayerCommand = new CreatePlayerCommand(userService, playerService);
+        CreatePlayerCommand createPlayerCommand = new CreatePlayerCommand(playerService);
         ToPlayerCreationCommand toPlayerCreationCommand = new ToPlayerCreationCommand();
         ToTournamentCreationCommand toTournamentCreationCommand = new ToTournamentCreationCommand();
-        CreateTournamentCommand createTournamentCommand = new CreateTournamentCommand(tournamentService, userService, organizerService, gameService);
-        CreateOrganizerCommand createOrganizerCommand = new CreateOrganizerCommand(organizerService, userService);
+        CreateTournamentCommand createTournamentCommand = new CreateTournamentCommand(tournamentService);
+        CreateOrganizerCommand createOrganizerCommand = new CreateOrganizerCommand(organizerService);
         ToOrganizerCreationCommand toOrganizerCreationCommand = new ToOrganizerCreationCommand();
         ToTournamentPageCommand toTournamentPageCommand = new ToTournamentPageCommand(tournamentService);
 
