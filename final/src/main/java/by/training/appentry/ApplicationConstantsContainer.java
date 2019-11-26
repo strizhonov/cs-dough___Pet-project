@@ -1,6 +1,6 @@
 package by.training.appentry;
 
-public class ApplicationConstantContainer {
+public class ApplicationConstantsContainer {
 
     /**
      * Keep alphabetically
@@ -12,6 +12,8 @@ public class ApplicationConstantContainer {
     public static final String ERROR = "error";
     public static final String EMAIL_CORRECTNESS_ERROR = "incorrect-email";
     public static final String EMAIL_CORRECTNESS_ERROR_MESSAGE = "Email is not correct, please, try again.";
+    public static final String EMAIL_ERROR = "email-error";
+    public static final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
     public static final String EMAIL_UNIQUENESS_ERROR = "non-unique-email";
     public static final String EMAIL_UNIQUENESS_ERROR_MESSAGE = "Email is not available, please, try another one.";
     public static final String END_DATE = "end-date";
@@ -24,9 +26,11 @@ public class ApplicationConstantContainer {
     public static final String LOGIN_ERROR_MESSAGE = "Login failed.";
     public static final String MESSAGE = "message";
     public static final String NAME = "name";
+    public static final String NAME_ERROR = "name-error";
     public static final String NAME_UNIQUENESS_ERROR = "non-unique-name";
     public static final String NAME_UNIQUENESS_ERROR_MESSAGE = "Name is not available, please, try another one.";
     public static final String NICKNAME = "nickname";
+    public static final String NICKNAME_ERROR = "nickname-error";
     public static final String NICKNAME_UNIQUENESS_ERROR = "non-unique-nickname";
     public static final String NICKNAME_UNIQUENESS_ERROR_MESSAGE = "Nickname is not available, please, try another one.";
     public static final String PASSWORD = "password";
@@ -36,6 +40,8 @@ public class ApplicationConstantContainer {
     public static final String PASSWORD_CORRECTNESS_ERROR = "incorrect-password";
     public static final String PASSWORD_CORRECTNESS_ERROR_MESSAGE = "Password should be 6 or greater characters, " +
             "include letters, digits or !@#$%^&. Please, try again.";
+    public static final String PASSWORD_ERROR = "password-error";
+    public static final String PASSWORD_REGEX = "^[\\w!@#$%^&]{6,}$";
     public static final String PRIZE_POOL = "prize-pool";
     public static final String PLAYER = "player";
     public static final String PLAYER_ID = "player-id";
@@ -56,7 +62,10 @@ public class ApplicationConstantContainer {
     public static final String USERNAME = "username";
     public static final String USERNAME_CORRECTNESS_ERROR = "incorrect-login";
     public static final String USERNAME_CORRECTNESS_ERROR_MESSAGE = "Username should include only letters and digits, please, try again.";
+    public static final String USERNAME_ERROR = "username-error";
+    public static final String USERNAME_OR_PASSWORD_ERROR = "username-or-password-error";
     public static final String USERNAME_OR_PASSWORD_ERROR_MESSAGE = "Username doesn't exist or password is wrong.";
+    public static final String USERNAME_REGEX = "^[A-Za-z0-9]+$";
     public static final String USERNAME_UNIQUENESS_ERROR = "non-unique-username";
     public static final String USERNAME_UNIQUENESS_ERROR_MESSAGE = "Username is not available, please, try another one.";
 
