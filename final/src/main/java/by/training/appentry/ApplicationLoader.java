@@ -110,7 +110,7 @@ public class SingleBeanApplicationContext {
             register(connectionProvider, userDao, tournamentDao, walletDao, playerDao, organizerDao,
                     gameDao, userService, tournamentService, playerService, organizerService, gameService,
                     commandProvider);
-        } catch (SingleBeanApplicationContextException e) {
+        } catch (ApplicationContextException e) {
             LOGGER.error("Beans' registering failed.", e);
             throw new IllegalStateException("Beans' registering failed.", e);
         }
@@ -134,16 +134,19 @@ public class SingleBeanApplicationContext {
         }
     }
 
-    private void register(Object... objects) throws SingleBeanApplicationContextException {
+    private void register(Object... objects) throws ApplicationContextException {
         for (Object obj : objects) {
-            if (registered.containsKey(obj.getClass())) {
-                LOGGER.error("Unable to register object " + obj.getClass().getSimpleName() +
-                        ", it's already registered.");
-                throw new SingleBeanApplicationContextException("Unable to register object " +
-                        obj.getClass().getSimpleName() + ", it's already registered.");
+            if (!isBean(obj) || registered.containsKey(obj.getClass())) {
+                LOGGER.error("Unable to register object " + obj.getClass().getSimpleName() + ".");
+                throw new ApplicationContextException("Unable to register object " +
+                        obj.getClass().getSimpleName() + ".");
             }
             registered.put(obj.getClass(), obj);
         }
+    }
+
+    private boolean isBean(Object obj) {
+        return obj.getClass().getAnnotation(Bean.class) != null;
     }
 
 }

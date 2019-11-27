@@ -14,13 +14,13 @@ public class ApplicationContextListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        SingleBeanApplicationContext.getInstance().init();
+        ApplicationLoader.getInstance().init();
         LOGGER.info("Context was initialized.");
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        SingleBeanApplicationContext.getInstance().destroy();
+        ApplicationLoader.getInstance().destroy();
         LOGGER.info("Context was destroyed.");
     }
 

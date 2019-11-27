@@ -1,5 +1,7 @@
 package by.training.appentry;
 
+import java.nio.charset.StandardCharsets;
+
 public class ApplicationConstantsContainer {
 
     /**
@@ -7,7 +9,8 @@ public class ApplicationConstantsContainer {
      */
 
     public static final String COUNTRY = "country";
-    public static final String SIMPLE_DATE_FORMAT = "yyyy-MM-dd";
+
+
     public static final String EMAIL = "email";
     public static final String ERROR = "error";
     public static final String EMAIL_CORRECTNESS_ERROR = "incorrect-email";
@@ -50,6 +53,8 @@ public class ApplicationConstantsContainer {
     public static final String SIGN_IN = "sign-in";
     public static final String SIGN_IN_ERROR = "sign-in-error";
     public static final String SIGN_IN_ERROR_MESSAGE = "Incorrect username or password.";
+    public static final String SIMPLE_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String STANDARD_CHARSET_NAME = StandardCharsets.UTF_8.toString();
     public static final String START_DATE = "start-date";
     public static final String SURNAME = "surname";
     public static final String TOURNAMENT = "tournament";
@@ -57,6 +62,7 @@ public class ApplicationConstantsContainer {
     public static final String TOURNAMENTS = "tournaments";
     public static final String UNAVAILABLE_ERROR = "unavailable";
     public static final String UNAVAILABLE_ERROR_MESSAGE = "Page is unavailable.";
+    public static final String URI_MAIN_PATTERN = "/app";
     public static final String USER = "user";
     public static final String USER_ROLE = "user-role";
     public static final String USERNAME = "username";
@@ -68,7 +74,7 @@ public class ApplicationConstantsContainer {
     public static final String USERNAME_REGEX = "^[A-Za-z0-9]+$";
     public static final String USERNAME_UNIQUENESS_ERROR = "non-unique-username";
     public static final String USERNAME_UNIQUENESS_ERROR_MESSAGE = "Username is not available, please, try another one.";
-
-
+    public static final String XSS_PROTECTION_NAME = "X-XSS-Protection";
+    public static final String XSS_PROTECTION_TYPE = "1;mode=block";
 
 }
