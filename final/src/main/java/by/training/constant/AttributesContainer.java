@@ -1,0 +1,63 @@
+package by.training.constant;
+
+
+public enum AttributesContainer {
+
+    /**
+     * Keep alphabetically
+     */
+
+    COUNTRY,
+    EMAIL,
+    ERROR,
+    EMAIL_CORRECTNESS_ERROR,
+    EMAIL_ERROR,
+    EMAIL_UNIQUENESS_ERROR,
+    END_DATE,
+    GAME,
+    GAME_TYPE,
+    ID,
+    LANGUAGE,
+    LOCALE,
+    LOGO,
+    LOGIN,
+    MESSAGE,
+    NAME,
+    NAME_ERROR,
+    NAME_UNIQUENESS_ERROR,
+    NICKNAME,
+    NICKNAME_ERROR,
+    NICKNAME_UNIQUENESS_ERROR,
+    PASSWORD,
+    PASSWORD_CONFIRMATION,
+    PASSWORD_CONFIRMATION_ERROR,
+    PASSWORD_CORRECTNESS_ERROR,
+    PASSWORD_ERROR,
+    PRIZE_POOL,
+    PLAYER,
+    PLAYER_ID,
+    PLAYERS_NUMBER,
+    SIGN_IN,
+    SIGN_IN_ERROR,
+    START_DATE,
+    STRING_LOCALE,
+    SURNAME,
+    TOURNAMENT,
+    TOURNAMENT_ID,
+    TOURNAMENTS,
+    UNAVAILABLE_ERROR,
+    USER,
+    USER_ROLE,
+    USER_TO_SHOW,
+    USERNAME,
+    USERNAME_CORRECTNESS_ERROR,
+    USERNAME_ERROR,
+    USERNAME_OR_PASSWORD_ERROR,
+    USERNAME_UNIQUENESS_ERROR;
+
+    @Override
+    public String toString() {
+        return this.name().toLowerCase();
+    }
+
+}
