@@ -4,15 +4,18 @@ import by.training.command.ActionCommand;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class AdminAccessChecker implements AccessChecker {
-@Override
-    public boolean isAccessAllowed(ActionCommand actionCommand, HttpServletRequest request) {
+public class ForAdminAccessSupervisor implements SecuritySupervisor {
+    
+    @Override
+    public boolean isAccessAllowed(ActionCommand command, HttpServletRequest request) {
         HttpSession session = request.getSession();
         UserDto user = (User) session.getAttribute(AttributesContainer.USER.toString());
-        if (user != null && user.getType == User.UserType.ADMIN) {
-            return true;
-        } 
-        return false;
+        return user != null && user.getType == User.UserType.ADMIN;
+    }
+    
+    @Override
+    public Optional<BaseRedirectRouter> direct(ActionCommand actionCommand, HttpServletRequest request, HttpServletResponse response) {
+        return isAccessAllowed(command, request) ? Optional.of(new RelativeRedirectRouter(denied_page)) : Optional.empty();
     }
 
 }
