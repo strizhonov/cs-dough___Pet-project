@@ -36,8 +36,8 @@ public class SecurityFilter implements Filter {
                 return;
             }
             if (!securityService.canExecute(command, request)) {
-                ServletRouter requestRouter = securityService.route(command, request);
-                requestRouter.getState().dispatch();
+                BaseRedirectRouter router = securityService.route(command, request);
+                router.dispatch(request, responce);
             }
 
         }
