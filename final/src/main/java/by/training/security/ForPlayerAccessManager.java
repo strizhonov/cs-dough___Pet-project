@@ -1,22 +1,33 @@
-+package by.training.security;
-+
-+import by.training.command.ActionCommand;
-+import by.training.servlet.ServletRouter;
-+
-+import javax.servlet.http.HttpServletRequest;
-+import javax.servlet.http.HttpServletResponse;
-+
-+public class ForSpecieficAccessChecker implements AccessChecker {
-+
-+
-+    @Override
-+    public boolean isAccessAllowed(ActionCommand command, HttpServletRequest request, HttpServletResponse response) {
+package by.training.security;
 
-         String playerId = request.getParameter(AttributesContainer.PLAYER_ID.toString())
-+        HttpSession session = request.getSession();
-+        UserDto user = (User) session.getAttribute(AttributesContainer.USER.toString());
-+        PlayerDto playerToOperate = (PlayerDto) session.getAttribute(AttributesContainer.PLAYER_TO_OPERATE.toString());
-+        return user != null && user.getPlayerId() == playerToOperate.getId();
-+        }
-+    
-+}
+import by.training.command.ActionCommand;
+import by.training.servlet.ServletRouter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class ForAnyOrganizerAccessTypeSupervisor implements SecuritySupervisor {
+
+
+    @Override
+    public boolean isAccessAllowed(ActionCommand command, HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        UserDto user = (User) session.getAttribute(AttributesContainer.USER.toString());
+        return user != null && user.getOrganizerId() != 0;
+    }
+    
+    @Override
+    public Optional<BaseRedirector> direct(ActionCommand command, HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        UserDto user = (User) session.getAttribute(AttributesContainer.USER.toString());
+        if (isAccessAllowed) {
+            return Optional.empty();
+        }
+        if (user != null) {
+        String message = ;
+        } else if (user.getOrganizerId() != 0;){
+         message = 
+         return Redirect;
+        }
+    
+}
