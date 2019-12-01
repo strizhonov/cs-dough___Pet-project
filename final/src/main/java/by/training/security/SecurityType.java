@@ -1,6 +1,6 @@
 package by.training.security;
 
-public enum SecurityType {
+public enum AccessAllowedForType {
     ANY(ForAnyAccessManager.class),
     ANONYMOUS(ForAnonymousAccessManager.class),
     NON_ORGANIZER_USERS(ForNonOrganizerAccessManager.class),
