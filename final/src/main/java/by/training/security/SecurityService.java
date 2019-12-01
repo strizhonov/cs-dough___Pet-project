@@ -7,7 +7,7 @@ import by.training.servlet.ServletRouter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface SecurityService {
+public interface AccessManager {
 
     boolean canExecute(ActionCommand actionCommand, HttpServletRequest request);
 
