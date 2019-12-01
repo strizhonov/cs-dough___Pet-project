@@ -4,7 +4,7 @@ import by.training.command.ActionCommand;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class ForAllAccessSupervisor implements SecuritySupervisor {
+public class ForAnyAccessSupervisor implements SecuritySupervisor {
     
     @Override
     public boolean isAccessAllowed(ActionCommand actionCommand, HttpServletRequest request) {
