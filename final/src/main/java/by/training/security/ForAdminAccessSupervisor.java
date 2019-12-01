@@ -15,7 +15,7 @@ public class ForAdminAccessSupervisor implements SecuritySupervisor {
     
     @Override
     public Optional<BaseRedirectRouter> direct(ActionCommand actionCommand, HttpServletRequest request, HttpServletResponse response) {
-        return isAccessAllowed(command, request) ? Optional.of(new RelativeRedirectRouter(denied_page)) : Optional.empty();
+        return isAccessAllowed(command, request) ? Optional.empty() : Optional.of(new RelativeRedirectRouter(denied_page));
     }
 
 }
