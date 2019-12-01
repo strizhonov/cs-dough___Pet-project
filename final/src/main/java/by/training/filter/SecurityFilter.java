@@ -19,10 +19,12 @@ public class SecurityFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
         if (request.getParameter(AttributesContainer.COMMAND) != null) {
             ActionCommandProvider commandProvider
-                    = (ActionCommandProvider) ApplicationLoader.getInstance().get(ActionCommandProviderImpl.class);
+                    = (ActionCommandProvider) ApplicationLoader.getInstance().get(ActionCommandProvider.class);
             ActionCommand command = commandProvider.get((HttpServletRequest) request);
             
-            SecuritySupervisor supervisor = command.getType().getSecurityType().getSupervisorClass().getInstance();
+            SecurityProvider securityProvider
+                    = (SecurityProvider) ApplicationLoader.getInstance().get(SecurityProvider.class);
+            SecuritySupervisor supervisor = securityProvider.get(command);
             
             Optional<BaseRedirectRouter> router = supervisor.direct(command, request, response);
             if (router.isPresent()) {
