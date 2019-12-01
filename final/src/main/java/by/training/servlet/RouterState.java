@@ -8,5 +8,5 @@ import java.io.IOException;
 
 @FunctionalInterface
 public interface RouterState {
-    void proceed(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
+    void proceed(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 }
