@@ -17,17 +17,17 @@ public class SecurityFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
-        if (request.getParameter("command") != null) {
+        if (request.getParameter(AttributesContainer.COMMAND) != null) {
             ActionCommandProvider commandProvider
                     = (ActionCommandProvider) ApplicationLoader.getInstance().get(ActionCommandProviderImpl.class);
             ActionCommand command = commandProvider.get((HttpServletRequest) request);
-            AccessManager accessManager = command.getType().getSecurityType().getCheckerClass().getInstance();
             
-            if (!accessManager.canExecute(command, request)) {
-                ServletRouter router = accessManager.route(command, request, response);
+            SecuritySupervisor supervisor = command.getType().getSecurityType().getSupervisorClass().getInstance();
+            
+            if (!supervisor.canExecute(command, request)) {
+                BaseRedirectRouter router = supervisor.direct(command, request, response);
                 LOGGER.warn("Command execution can not be performed due to the security reasons.");
-                router.getState().dispatch(this, request, response);
-                return;
+                router.dispatch(request, response);
             }
 
         }
