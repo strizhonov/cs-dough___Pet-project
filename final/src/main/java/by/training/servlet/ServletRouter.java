@@ -2,7 +2,7 @@ package by.training.servlet;
 
 import by.training.constant.PathsContainer;
 
-public class ServletRouter {
+public class ServletRouter //interface {
 
     private String path;
     private RouterState state;
