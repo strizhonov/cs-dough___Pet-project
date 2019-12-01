@@ -1,6 +1,6 @@
 package by.training.connection;
 
-public interface TransactionManager extends ConnectionProvider {
+public interface TransactionManager {
 
     boolean startTransaction() throws TransactionCommonException;
 
