@@ -25,9 +25,11 @@ public class SecurityFilter implements Filter {
             SecuritySupervisor supervisor = command.getType().getSecurityType().getSupervisorClass().getInstance();
             
             if (!supervisor.canExecute(command, request)) {
-                BaseRedirectRouter router = supervisor.direct(command, request, response);
                 LOGGER.warn("Command execution can not be performed due to the security reasons.");
-                router.dispatch(request, response);
+                Optional<BaseRedirectRouter> router = supervisor.direct(command, request, response);
+                if (router.isPresent()) {
+                    router.get().dispatch(request, response);
+                }
             }
 
         }
