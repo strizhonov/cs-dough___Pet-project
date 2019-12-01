@@ -1,5 +1,6 @@
 package by.training.dto;
 
+import by.training.constant.ValuesContainer;
 import by.training.entity.Game;
 
 import java.util.Date;
@@ -9,20 +10,19 @@ public class GameDto {
     private long id;
     /**
      * Bracket index logic:
-     * <p>
-     * i=0
-     * final
-     * <p>
-     * i=1                                i=2
-     * semi-final                          semi-final
-     * <p>
-     * i=3              i=4               i=5               i=6
+     *
+     *                                   i=0
+     *                                    final
+     *
+     *                    i=1                                i=2
+     *                semi-final                          semi-final
+     *
+     *       i=3              i=4               i=5               i=6
      * quarter final     quarter final     quarter final     quarter final
      */
     private int bracketIndex;
     private Date startTime;
     private Date endTime;
-    private Game.GameType type;
     private long firstPlayerId;
     private long secondPlayerId;
     private long winnerId;
@@ -59,14 +59,6 @@ public class GameDto {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
-    }
-
-    public Game.GameType getType() {
-        return type;
-    }
-
-    public void setType(Game.GameType type) {
-        this.type = type;
     }
 
     public long getFirstPlayerId() {
@@ -114,7 +106,6 @@ public class GameDto {
         private int bracketIndex;
         private Date startTime;
         private Date endTime;
-        private Game.GameType type;
         private long firstPlayerId;
         private long secondPlayerId;
         private long winnerId;
@@ -145,11 +136,6 @@ public class GameDto {
 
         public Builder endTime(Date endTime) {
             this.endTime = endTime;
-            return this;
-        }
-
-        public Builder type(Game.GameType type) {
-            this.type = type;
             return this;
         }
 
@@ -184,7 +170,6 @@ public class GameDto {
             gameDto.setBracketIndex(bracketIndex);
             gameDto.setStartTime(startTime);
             gameDto.setEndTime(endTime);
-            gameDto.setType(type);
             gameDto.setFirstPlayerId(firstPlayerId);
             gameDto.setSecondPlayerId(secondPlayerId);
             gameDto.setWinnerId(winnerId);

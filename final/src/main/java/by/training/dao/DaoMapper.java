@@ -32,11 +32,9 @@ public class DaoMapper {
         long id = rs.getLong(GAME_ID.toString());
         int bracketIndex = rs.getInt(BRACKET_INDEX.toString());
         java.sql.Date sqlStartTime = rs.getDate(START_TIME.toString());
-        java.util.Date startTime = new java.util.Date(sqlStartTime.getTime());
+        java.util.Date startTime = sqlStartTime == null ? null : new java.util.Date(sqlStartTime.getTime());
         java.sql.Date sqlEndTime = rs.getDate(END_TIME.toString());
-        java.util.Date endTime = new java.util.Date(sqlEndTime.getTime());
-        String sType = rs.getString(GAME_TYPE.toString());
-        Game.GameType type = Game.GameType.fromString(sType).orElse(ValuesContainer.DEFAULT_GAME_TYPE);
+        java.util.Date endTime = sqlEndTime == null ? null : new java.util.Date(sqlEndTime.getTime());
         long firstPlayerId = rs.getLong(FIRST_PLAYER_ID.toString());
         long secondPlayerId = rs.getLong(SECOND_PLAYER_ID.toString());
         long winnerId = rs.getLong(WINNER_ID.toString());
@@ -48,7 +46,6 @@ public class DaoMapper {
                 .bracketIndex(bracketIndex)
                 .startTime(startTime)
                 .endTime(endTime)
-                .type(type)
                 .firstPlayerId(firstPlayerId)
                 .secondPlayerId(secondPlayerId)
                 .winnerId(winnerId)

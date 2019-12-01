@@ -1,4 +1,3 @@
-<jsp:include page="/jsp/jsp-block/import.jsp"/>
 <html>
 <head>
     <jsp:include page="/jsp/jsp-block/head.jsp"/>

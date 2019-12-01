@@ -16,10 +16,10 @@
             <tbody>
             <c:forEach var="tournament" items="${requestScope.tournaments}">
                 <tr>
-                    <th><a href="${pageContext.request.contextPath}/app?command=to_tournament_page&id=${tournament.id}">${tournament.id}</a></th>
-                    <th><a href="${pageContext.request.contextPath}/app?command=to_tournament_page&id=${tournament.id}">${tournament.name}</a></th>
-                    <th><a href="${pageContext.request.contextPath}/app?command=to_tournament_page&id=${tournament.id}">${tournament.prizePool}</a></th>
-                    <th><a href="${pageContext.request.contextPath}/app?command=to_tournament_page&id=${tournament.id}">${tournament.status}</a></th>
+                    <th><a href="${pageContext.request.contextPath}/?command=to_tournament_page&id=${tournament.id}">${tournament.id}</a></th>
+                    <th><a href="${pageContext.request.contextPath}/?command=to_tournament_page&id=${tournament.id}">${tournament.name}</a></th>
+                    <th><a href="${pageContext.request.contextPath}/?command=to_tournament_page&id=${tournament.id}">${tournament.prizePool}</a></th>
+                    <th><a href="${pageContext.request.contextPath}/?command=to_tournament_page&id=${tournament.id}">${tournament.status}</a></th>
                 </tr>
             </c:forEach>
             </tbody>

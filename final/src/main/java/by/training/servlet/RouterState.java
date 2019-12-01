@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @FunctionalInterface
-public interface ServletRouterState {
-    void dispatch(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException;
+public interface RouterState {
+    void proceed(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 }

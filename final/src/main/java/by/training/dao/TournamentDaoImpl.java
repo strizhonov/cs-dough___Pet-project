@@ -39,8 +39,8 @@ public class TournamentDaoImpl implements TournamentDao {
                     "FROM tournament";
     private static final String SELECT_TOURNAMENT_PARTICIPANTS_IDS =
             "SELECT player_id " +
-            "FROM participant " +
-            "WHERE tournament_id=?";
+                    "FROM participant " +
+                    "WHERE tournament_id=?";
     private static final String SELECT_TOURNAMENT_GAMES_IDS =
             "SELECT game_id " +
                     "FROM game " +
@@ -57,22 +57,26 @@ public class TournamentDaoImpl implements TournamentDao {
 
     @Override
     public long save(TournamentDto tournamentDto) throws DaoException {
-        try (Connection connection = provider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
+        try {
+            Connection connection = provider.getConnection();
+            try (PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
 
-            fillSaveStatement(statement, tournamentDto);
-            statement.executeUpdate();
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getLong(1);
+                fillSaveStatement(statement, tournamentDto);
+                statement.executeUpdate();
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getLong(1);
+                    }
+                    return 0;
                 }
-                return 0;
+
             }
 
         } catch (SQLException | IOException e) {
             LOGGER.error("Unable to perform entity saving.", e);
             throw new DaoException("Unable to perform entity saving.", e);
         }
+
     }
 
     @Override
@@ -91,6 +95,7 @@ public class TournamentDaoImpl implements TournamentDao {
                     throw new DaoException("Unable to get tournament with " + id + " id, not found.");
                 }
                 return tournamentDto;
+
             }
 
         } catch (SQLException e) {
@@ -101,12 +106,14 @@ public class TournamentDaoImpl implements TournamentDao {
 
     @Override
     public boolean update(TournamentDto tournamentDto) throws DaoException {
-        try (Connection connection = provider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+        try {
+            Connection connection = provider.getConnection();
+            try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
 
-            fillUpdateStatement(statement, tournamentDto);
-            return statement.executeUpdate() > 0;
+                fillUpdateStatement(statement, tournamentDto);
+                return statement.executeUpdate() > 0;
 
+            }
         } catch (SQLException | IOException e) {
             LOGGER.error("Unable to perform entity updating.", e);
             throw new DaoException("Unable to perform entity updating.", e);

@@ -2,10 +2,7 @@ package by.training.dao;
 
 import by.training.appentry.Bean;
 import by.training.connection.ConnectionProvider;
-import by.training.deleted.ResultSetManager;
-import by.training.deleted.ResultSetManagerImpl;
 import by.training.dto.OrganizerDto;
-import by.training.entity.Organizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -156,7 +153,7 @@ public class OrganizerDaoImpl implements OrganizerDao {
                 if (resultSet.next()) {
                     organizerDto = compile(resultSet);
                 }
-                 return organizerDto;
+                return organizerDto;
             }
 
         } catch (SQLException e) {

@@ -2,10 +2,7 @@ package by.training.dao;
 
 import by.training.appentry.Bean;
 import by.training.connection.ConnectionProvider;
-import by.training.deleted.ResultSetManager;
-import by.training.deleted.ResultSetManagerImpl;
 import by.training.dto.GameServerDto;
-import by.training.entity.GameServerEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

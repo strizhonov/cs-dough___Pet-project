@@ -5,7 +5,7 @@ import by.training.constant.PathsContainer;
 public class ServletRouter {
 
     private String path;
-    private ServletRouterState state;
+    private RouterState state;
 
     public ServletRouter() {
         this.path = PathsContainer.INDEX_PAGE_PATH;
@@ -36,7 +36,7 @@ public class ServletRouter {
         this.path = path;
     }
 
-    public ServletRouterState getState() {
+    public RouterState getState() {
         return state;
     }
 

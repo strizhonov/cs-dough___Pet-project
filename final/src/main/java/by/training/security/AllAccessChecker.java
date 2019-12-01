@@ -4,9 +4,9 @@ import by.training.command.ActionCommand;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class AllAccessState implements AccessState {
+public class AllAccessChecker implements AccessChecker {
     @Override
-    public boolean canExecute(ActionCommand actionCommand, HttpServletRequest request) {
+    public boolean isAccessAllowed(ActionCommand actionCommand, HttpServletRequest request) {
         return true;
     }
 }

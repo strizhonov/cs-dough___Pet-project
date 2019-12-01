@@ -2,10 +2,7 @@ package by.training.dao;
 
 import by.training.appentry.Bean;
 import by.training.connection.ConnectionProvider;
-import by.training.deleted.ResultSetManager;
-import by.training.deleted.ResultSetManagerImpl;
 import by.training.dto.PlayerDto;
-import by.training.entity.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -193,7 +190,7 @@ public class PlayerDaoImpl implements PlayerDao {
 
     private List<Long> findGamesIdsByPlayerId(long playerId) throws DaoException {
         try (Connection connection = provider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_PLAYER_GAMES_IDS);) {
+             PreparedStatement statement = connection.prepareStatement(SELECT_PLAYER_GAMES_IDS)) {
 
             statement.setLong(1, playerId);
             statement.setLong(2, playerId);

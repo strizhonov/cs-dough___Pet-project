@@ -4,6 +4,7 @@ import by.training.appentry.Bean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -70,8 +71,20 @@ public class TransactionManagerImpl implements TransactionManager {
     }
 
     @Override
-    public Connection getConnection() {
-        return localConnection.get();
+    public Connection getConnection() throws SQLException {
+        Connection connection = localConnection.get() != null ? localConnection.get() : connectionProvider.getConnection();
+
+        return (Connection) Proxy.newProxyInstance(connection.getClass().getClassLoader(),
+                new Class[]{Connection.class},
+                (proxy, method, args) -> {
+                    if ("close".equals(method.getName())) {
+                        LOGGER.info("Method close of proxy called.");
+                        return null;
+                    } else {
+                        return method.invoke(connection, args);
+                    }
+                });
     }
+
 
 }

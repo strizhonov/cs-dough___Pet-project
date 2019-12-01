@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="col-sm-6">
-        <form class="register-form" action="${pageContext.request.contextPath}/app?command=create_organizer" method="post">
+        <form class="register-form" action="${pageContext.request.contextPath}/?command=create_organizer" method="post">
             <h3><fmt:message key="new.organizer.title"/></h3>
             <div class="form-group">
                 <input name="name" type="text" placeholder="<fmt:message key="name"/>" class="form-control">

@@ -7,6 +7,10 @@ import by.training.dto.GameDto;
 import by.training.dto.TournamentDto;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.Test;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Bean
 public class GameServiceImpl extends BaseBeanService implements GameService {
@@ -55,11 +59,10 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
                 GameDto gameDto = GameDto.Builder.aGameDto()
                         .tournamentId(tournamentDto.getId())
                         .bracketIndex(i)
-                        .type(tournamentDto.getCommonGameType())
                         .build();
                 gameDao.saveNew(gameDto);
-                transactionManager.commitTransaction();
             }
+            transactionManager.commitTransaction();
         } catch (Throwable e) {
             transactionManager.rollbackTransaction();
             LOGGER.error("Game creation failed.", e);
@@ -67,4 +70,24 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
         }
 
     }
+
+    @Override
+    public List<GameDto> findLatest(int maxGameResults) throws ServiceException {
+        try {
+            transactionManager.startTransaction();
+            Date now = new Date();
+            List<GameDto> result = gameDao.findAll().stream()
+                    .filter(game -> game.getEndTime() != null && game.getEndTime().before(now))
+                    .sorted(Comparator.comparing(GameDto::getEndTime).reversed())
+                    .limit(maxGameResults)
+                    .collect(Collectors.toList());
+            transactionManager.commitTransaction();
+            return result;
+        } catch (Throwable e) {
+            transactionManager.rollbackTransaction();
+            LOGGER.error("Game retrieving failed.", e);
+            throw new ServiceException("Game retrieving failed.", e);
+        }
+    }
+
 }

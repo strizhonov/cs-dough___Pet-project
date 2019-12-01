@@ -7,7 +7,7 @@
             <div class="notice">Now you can log in</div>
         </c:if>
         <div class="login">
-            <form class="register-form" action="${pageContext.request.contextPath}/app?command=register" method="post">
+            <form class="register-form" action="${pageContext.request.contextPath}/?command=login" method="post">
                 <input id="username"
                        name="username"
                        type="text"
@@ -34,7 +34,7 @@
                 <button id="submit">Register</button>
                 <p class="message">Already registered? <a href="#">Sign In</a></p>
             </form>
-            <form class="login-form" action="${pageContext.request.contextPath}/app?command=login" method="post">
+            <form class="login-form" action="${pageContext.request.contextPath}/?command=login" method="post">
                 <input type="text" placeholder="<fmt:message key="username"/>" name="username"/>
                 <input type="password" placeholder="<fmt:message key="password"/>" name="password"/>
                 <button>Log In</button>
@@ -43,5 +43,3 @@
         </div>
     </div>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="../../js/login.js" type="text/javascript"></script>

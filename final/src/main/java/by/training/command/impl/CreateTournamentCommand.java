@@ -49,7 +49,7 @@ public class CreateTournamentCommand implements ActionCommand {
         TournamentDto tournamentDto = compile(request);
         try {
             long tournamentId = tournamentService.create(tournamentDto);
-            return new ServletRouter("/app?command=show_tournament&id=" + tournamentId);
+            return new ServletRouter("/?command=show_tournament&id=" + tournamentId);
         } catch (ServiceException e) {
             LOGGER.error("Tournament creation failed.", e);
             throw new ActionCommandExecutionException("Tournament creation failed.", e);

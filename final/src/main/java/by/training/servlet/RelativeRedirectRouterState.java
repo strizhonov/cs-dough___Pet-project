@@ -1,11 +1,10 @@
 package by.training.servlet;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class RelativeRedirectRouterState implements ServletRouterState {
+public class RelativeRedirectRouterState implements RouterState {
 
     private String path;
 
@@ -14,7 +13,7 @@ public class RelativeRedirectRouterState implements ServletRouterState {
     }
 
     @Override
-    public void dispatch(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response)
+    public void proceed(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         response.sendRedirect(request.getContextPath() + path);
     }

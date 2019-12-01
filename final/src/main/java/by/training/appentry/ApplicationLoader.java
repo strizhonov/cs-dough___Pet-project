@@ -92,27 +92,33 @@ public class ApplicationLoader {
             throw new ApplicationLoaderException("ConnectionPool initialization failed.", e);
         }
         ConnectionProvider connectionProvider = connectionPool.getConnectionProvider();
-        TransactionManager transactionManager = new TransactionManagerImpl(connectionProvider);
 
-        UserDao userDao = new UserDaoImpl(transactionManager);
-        TournamentDao tournamentDao = new TournamentDaoImpl(transactionManager);
-        WalletDao walletDao = new WalletDaoImpl(transactionManager);
-        PlayerDao playerDao = new PlayerDaoImpl(transactionManager);
-        OrganizerDao organizerDao = new OrganizerDaoImpl(transactionManager);
-        GameDao gameDao = new GameDaoImpl(transactionManager);
+        TransactionManager userTransactionManager = new TransactionManagerImpl(connectionProvider);
+        TransactionManager tournamentTransactionManager = new TransactionManagerImpl(connectionProvider);
+        TransactionManager walletTransactionManager = new TransactionManagerImpl(connectionProvider);
+        TransactionManager playerTransactionManager = new TransactionManagerImpl(connectionProvider);
+        TransactionManager organizerTransactionManager = new TransactionManagerImpl(connectionProvider);
+        TransactionManager gameTransactionManager = new TransactionManagerImpl(connectionProvider);
 
-        WalletService walletService = new WalletServiceImpl(transactionManager, walletDao);
+        UserDao userDao = new UserDaoImpl(userTransactionManager);
+        TournamentDao tournamentDao = new TournamentDaoImpl(tournamentTransactionManager);
+        WalletDao walletDao = new WalletDaoImpl(walletTransactionManager);
+        PlayerDao playerDao = new PlayerDaoImpl(playerTransactionManager);
+        OrganizerDao organizerDao = new OrganizerDaoImpl(organizerTransactionManager);
+        GameDao gameDao = new GameDaoImpl(gameTransactionManager);
+
+        WalletService walletService = new WalletServiceImpl(walletTransactionManager, walletDao);
         UserService userService;
         try {
-            userService = new UserServiceImpl(userDao, walletService, transactionManager);
+            userService = new UserServiceImpl(userDao, walletService, userTransactionManager);
         } catch (ServiceException e) {
             LOGGER.error("User Service initialization failed.", e);
             throw new ApplicationLoaderException("User Service initialization failed.", e);
         }
-        PlayerService playerService = new PlayerServiceImpl(playerDao, userService, transactionManager);
-        OrganizerService organizerService = new OrganizerServiceImpl(organizerDao, userService, transactionManager);
-        GameService gameService = new GameServiceImpl(gameDao, transactionManager);
-        TournamentService tournamentService = new TournamentServiceImpl(tournamentDao, gameService, transactionManager);
+        PlayerService playerService = new PlayerServiceImpl(playerDao, userService, playerTransactionManager);
+        OrganizerService organizerService = new OrganizerServiceImpl(organizerDao, userService, organizerTransactionManager);
+        GameService gameService = new GameServiceImpl(gameDao, gameTransactionManager);
+        TournamentService tournamentService = new TournamentServiceImpl(tournamentDao, gameService, tournamentTransactionManager);
         ActionCommandProvider commandProvider = new ActionCommandProviderImpl();
 
         ListTournamentsCommand listTournamentsCommand = new ListTournamentsCommand(tournamentService);
@@ -130,11 +136,12 @@ public class ApplicationLoader {
         ChangeLanguageToEnCommand changeLanguageToEnCommand = new ChangeLanguageToEnCommand();
         ChangeLanguageToRuCommand changeLanguageToRuCommand = new ChangeLanguageToRuCommand();
         ToUserPageCommand toUserPageCommand = new ToUserPageCommand(userService);
+        ToHomePageCommand toHomePageCommand = new ToHomePageCommand(gameService);
 
         commandProvider.register(listTournamentsCommand, toLoginPageCommand, registerCommand, logInCommand,
                 showPlayerCommand, createPlayerCommand, toPlayerCreationCommand, toTournamentCreationCommand,
                 createTournamentCommand, createOrganizerCommand, toOrganizerCreationCommand, toTournamentPageCommand,
-                changeLanguageToEnCommand, changeLanguageToRuCommand, toUserPageCommand);
+                changeLanguageToEnCommand, changeLanguageToRuCommand, toUserPageCommand, toHomePageCommand);
 
         SecurityService securityService = new SecurityServiceImpl();
 

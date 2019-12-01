@@ -13,26 +13,26 @@ import java.util.List;
 @Bean
 public class GameDaoImpl implements GameDao {
     private static final String INSERT =
-            "INSERT INTO game (bracket_index, start_time, end_time, game_type, first_player_id, second_player_id, winner_id, tournament_id) " +
-                    "VALUES (?,?,?,?,?,?,?,?)";
+            "INSERT INTO game (bracket_index, start_time, end_time, first_player_id, second_player_id, winner_id, tournament_id) " +
+                    "VALUES (?,?,?,?,?,?,?)";
     private static final String INSERT_NEW =
-            "INSERT INTO game (bracket_index, game_type, tournament_id) " +
-                    "VALUES (?,?,?)";
+            "INSERT INTO game (bracket_index, tournament_id) " +
+                    "VALUES (?,?)";
     private static final String SELECT =
-            "SELECT game.game_id, bracket_index, start_time, end_time, game_type, first_player_id, second_player_id, winner_id, tournament_id, gameserver.game_server_id " +
+            "SELECT game.game_id, bracket_index, start_time, end_time, first_player_id, second_player_id, winner_id, tournament_id, gameserver.game_server_id " +
                     "FROM game " +
                     "LEFT JOIN gameserver " +
                     "ON game.game_id = gameserver.game_id " +
                     "WHERE game.game_id = ?";
     private static final String UPDATE =
             "UPDATE game " +
-                    "SET bracket_index=?, start_time=?, end_time=?, game_type=?, first_player_id=?, second_player_id=?, winner_id=?, tournament_id=? " +
+                    "SET bracket_index=?, start_time=?, end_time=?, first_player_id=?, second_player_id=?, winner_id=?, tournament_id=? " +
                     "WHERE game_id = ?";
     private static final String DELETE =
             "DELETE FROM game " +
                     "WHERE tournament_id = ?";
     private static final String SELECT_ALL =
-            "SELECT game.game_id, bracket_index, start_time, end_time, game_type, first_player_id, second_player_id, winner_id, tournament_id , gameserver.game_id " +
+            "SELECT game.game_id, bracket_index, start_time, end_time, first_player_id, second_player_id, winner_id, tournament_id , gameserver.game_server_id " +
                     "FROM game " +
                     "LEFT JOIN gameserver " +
                     "ON game.game_id = gameserver.game_id";
@@ -68,19 +68,25 @@ public class GameDaoImpl implements GameDao {
 
     @Override
     public long saveNew(GameDto gameDto) throws DaoException {
-        try (Connection connection = provider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(INSERT_NEW, Statement.RETURN_GENERATED_KEYS)) {
+        try {
+            Connection connection = provider.getConnection();
+            try (PreparedStatement statement = connection.prepareStatement(INSERT_NEW, Statement.RETURN_GENERATED_KEYS)) {
 
-            fillNewSaveStatement(statement, gameDto);
-            statement.executeUpdate();
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                return generatedKeys.getLong(1);
+                fillNewSaveStatement(statement, gameDto);
+                statement.executeUpdate();
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getLong(1);
+                    }
+                    return 0;
+                }
             }
 
         } catch (SQLException e) {
             LOGGER.error("Unable to perform entity saving.", e);
             throw new DaoException("Unable to perform entity saving.", e);
         }
+
     }
 
     @Override
@@ -154,6 +160,27 @@ public class GameDaoImpl implements GameDao {
         }
     }
 
+
+    @Override
+    public List<GameDto> findLatest(int maxGameResults) throws DaoException {
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SELECT_ALL);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            List<GameDto> result = new ArrayList<>();
+            while (resultSet.next()) {
+                GameDto gameDto = mapper.mapGameDto(resultSet);
+                result.add(gameDto);
+            }
+
+            return result;
+
+        } catch (SQLException e) {
+            LOGGER.error("Unable to perform entities retrieving.", e);
+            throw new DaoException("Unable to perform entities retrieving.", e);
+        }
+    }
+
     private void fillSaveStatement(PreparedStatement statement, GameDto game) throws SQLException {
         int i = 0;
         statement.setInt(++i, game.getBracketIndex());
@@ -161,7 +188,6 @@ public class GameDaoImpl implements GameDao {
         statement.setDate(++i, sqlStartTime);
         java.sql.Date sqlEndTime = DaoUtil.toSqlDate(game.getEndTime());
         statement.setDate(++i, sqlEndTime);
-        statement.setString(++i, game.getType().name());
         statement.setLong(++i, game.getFirstPlayerId());
         statement.setLong(++i, game.getSecondPlayerId());
         statement.setLong(++i, game.getWinnerId());
@@ -171,7 +197,6 @@ public class GameDaoImpl implements GameDao {
     private void fillNewSaveStatement(PreparedStatement statement, GameDto game) throws SQLException {
         int i = 0;
         statement.setInt(++i, game.getBracketIndex());
-        statement.setString(++i, game.getType().name());
         statement.setLong(++i, game.getTournamentId());
     }
 
@@ -182,7 +207,6 @@ public class GameDaoImpl implements GameDao {
         statement.setDate(++i, sqlStartTime);
         java.sql.Date sqlEndTime = DaoUtil.toSqlDate(game.getEndTime());
         statement.setDate(++i, sqlEndTime);
-        statement.setString(++i, game.getType().name());
         statement.setLong(++i, game.getFirstPlayerId());
         statement.setLong(++i, game.getSecondPlayerId());
         statement.setLong(++i, game.getWinnerId());

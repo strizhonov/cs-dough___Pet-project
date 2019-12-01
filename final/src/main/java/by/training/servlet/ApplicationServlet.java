@@ -5,20 +5,17 @@ import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandProvider;
 import by.training.command.ActionCommandProviderImpl;
-import by.training.constant.ValuesContainer;
 import by.training.security.SecurityService;
 import by.training.security.SecurityServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "app", urlPatterns = ValuesContainer.URI_MAIN_PATTERN)
 public class ApplicationServlet extends HttpServlet {
 
     private static final Logger LOGGER = LogManager.getLogger(ApplicationServlet.class);
@@ -41,12 +38,7 @@ public class ApplicationServlet extends HttpServlet {
         SecurityService securityService
                 = (SecurityService) ApplicationLoader.getInstance().get(SecurityServiceImpl.class);
 
-        if (!securityService.canExecute(command, request)) {
-            ServletRouter router = securityService.route(command, request, response);
-            LOGGER.warn("Command can not execute due to the security reasons.");
-            router.getState().dispatch(this, request, response);
-            return;
-        }
+
 
         try {
             ServletRouter router = command.execute(request, response);

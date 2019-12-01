@@ -1,12 +1,11 @@
 package by.training.servlet;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class AbsoluteRedirectRouterState implements ServletRouterState {
+public class AbsoluteRedirectRouterState implements RouterState {
 
     private String path;
 
@@ -15,7 +14,7 @@ public class AbsoluteRedirectRouterState implements ServletRouterState {
     }
 
     @Override
-    public void dispatch(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void proceed(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.sendRedirect(path);
     }
 }

@@ -1,6 +1,7 @@
 package by.training.command.impl;
 
 import by.training.command.ActionCommand;
+import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandType;
 import by.training.constant.AttributesContainer;
 import by.training.dto.TournamentDto;
@@ -25,12 +26,13 @@ public class ListTournamentsCommand implements ActionCommand {
     }
 
     @Override
-    public ServletRouter execute(HttpServletRequest request, HttpServletResponse response) {
+    public ServletRouter execute(HttpServletRequest request, HttpServletResponse response) throws ActionCommandExecutionException {
         try {
             List<TournamentDto> tournaments = service.findAll();
             request.setAttribute(AttributesContainer.TOURNAMENTS.toString(), tournaments);
         } catch (ServiceException e) {
             LOGGER.error("Unable to get tournaments' list.", e);
+            throw new ActionCommandExecutionException("Unable to get tournaments' list.", e);
         }
         return new ServletRouter("/jsp/tournaments.jsp");
     }

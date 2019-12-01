@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="col-sm-6">
-        <form class="register-form" action="${pageContext.request.contextPath}/app?command=create_player" method="post">
+        <form class="register-form" action="${pageContext.request.contextPath}/?command=create_player" method="post">
             <h3>New player creation form</h3>
             <div class="form-group">
                 <input name="name" type="text" placeholder="<fmt:message key="name"/>" class="form-control">

@@ -18,6 +18,7 @@ public enum AttributesContainer {
     GAME_TYPE,
     ID,
     LANGUAGE,
+    LATEST_GAMES,
     LOCALE,
     LOGO,
     LOGIN,

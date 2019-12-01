@@ -5,11 +5,12 @@ import by.training.constant.ValuesContainer;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
+import javax.servlet.http.HttpFilter;
 import java.io.IOException;
 
 @WebFilter(urlPatterns = {"/*"}, initParams = {@WebInitParam(name = "encoding",
         value = ValuesContainer.STANDARD_CHARSET_NAME)})
-public class EncodingFilter implements Filter {
+public class EncodingFilter implements HttpFilter {
 
     private String encoding;
 
