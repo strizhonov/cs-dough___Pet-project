@@ -4,62 +4,42 @@
 <fmt:setLocale value="${language}" />
 <fmt:setBundle basename="content"/>
 <div class="row">
-    <div class="wrapper col-md-6">
-        <div class="inner">
-            <div class="image-holder col-md-6">
-                <img src="images/registration-form-1.jpg" alt="">
-            </div>
-            <form action="" class="col-md-6">
-                <div class="form-group">
-                    <!— <input type="text" placeholder="<fmt:message key="nickname"/>" class="form-control">-->
-                    <!— <input type="text" placeholder="<fmt:message key="first.name"/>" class="form-control">-->
-                    <!— <input type="text" placeholder="<fmt:message key="surname"/>" class="form-control">-->
-                    <div class="form-control"><fmt:message key="nickname"/></div>
-                    <div class="form-control"><fmt:message key="first.name"/></div>
-                    <div class="form-control"><fmt:message key="surname"/></div>
-                </div>
-            </form>
-        </div>
+    <div class="image-holder col-md-6">
+        <img src="?command=get_picture&game_id=${game.id}&team_id${player.id}" alt="">
     </div>
-    <div class="wrapper col-md-6">
-        <div class="inner">
-            <div class="image-holder col-md-6">
-                <img src="images/registration-form-1.jpg" alt="">
-            </div>
-            form action="" class="col-md-6">
-            <div class="form-group">
-                <!— <input type="text" placeholder="<fmt:message key="nickname"/>" class="form-control">-->
-                <!— <input type="text" placeholder="<fmt:message key="first.name"/>" class="form-control">-->
-                <!— <input type="text" placeholder="<fmt:message key="surname"/>" class="form-control">-->
-                <div class="form-control"><fmt:message key="nickname"/></div>
-                <div class="form-control"><fmt:message key="first.name"/></div>
-                <div class="form-control"><fmt:message key="surname"/></div>
-            </div>
-            </form>
-        </div>
+    <div>
+        <div><fmt:message key="nickname"/></div>
+        <div><fmt:message key="first.name"/></div>
+        <div><fmt:message key="surname"/></div>
+        <div></div>
     </div>
+</div>
+        
+
+<div class="row">
+    <form action="?command=update_game&game_id=${game.id}" class="col-md-6">
+        <div name="start_time"><fmt:message key="start.time"/> ${game.startTime}</div>
+        <div>
+            <button><img src="" alt=""><button>
+        </div>
+    </div>   
 </div>
 
 <div class="row">
-    <div class="info">Date, time</div>
-    <div class="info">Result</div>
+    <button>
+        <fmt:message key="add.point"/>
+    </button >
+    <button>
+        <fmt:message key="add.point"/>
+    </button>
 </div>
 
-<div class="row buttons">
-    <button class="game-button">GET SERVER PATH
-        <i class="zmdi zmdi-arrow-right"></i>
+
+<div class="row">
+    <button>
+        <fmt:message key="get.server"/>
     </button>
-</div>
-<div class="row buttons">
-    <button class="game-button">INCREASE
-        <i class="zmdi zmdi-arrow-right"></i>
-    </button >
-    <button class="game-button">INCREASE
-        <i class="zmdi zmdi-arrow-right"></i>
-    </button>
-</div>
-<div class="row buttons">
-    <button class="game-button">WATCH TRANSLATION
-        <i class="zmdi zmdi-arrow-right"></i>
+    <button class="game-button">
+        <fmt:message key="translation"/>
     </button>
 </div>
