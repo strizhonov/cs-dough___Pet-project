@@ -1,0 +1,24 @@
+
+
+@Bean
+public class SecurityProviderImpl implements SecurityProvider {
+
+    private EnumMap<AccessAllowedForType, SecuritySupervisor> registered;
+
+    public ActionCommandProviderImpl() {
+        this.registered = new EnumMap<>(AccessAllowedForType.class);
+    }
+
+    @Override
+    public ActionCommand get(AccessAllowedForType accessType) {
+        return registerd.get
+    }
+
+    @Override
+    public void register(ActionCommand... commands) {
+        for (ActionCommand command : commands) {
+            registered.put(command.getType(), command);
+        }
+    }
+
+}
