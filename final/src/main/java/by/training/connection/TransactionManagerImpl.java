@@ -9,7 +9,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @Bean
-public class TransactionManagerImpl implements TransactionManager {
+public class TransactionManagerImpl implements TransactionManager, ConnectionProvider {
 
     private static final Logger LOGGER = LogManager.getLogger(TransactionManagerImpl.class);
     private ThreadLocal<Connection> localConnection = new ThreadLocal<>();
