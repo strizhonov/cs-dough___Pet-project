@@ -1,0 +1,4 @@
+package by.training.security;
+
+interface SecuritySupervisor extends SecurityDirector, CommandAccessChecker {
+}
