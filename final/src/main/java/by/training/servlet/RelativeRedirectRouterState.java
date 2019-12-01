@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class RelativeRedirectRouterState implements RouterState {
+public class RelativeRedirectRouterState implements HttpRouter {
 
     private String path;
 
@@ -13,7 +13,7 @@ public class RelativeRedirectRouterState implements RouterState {
     }
 
     @Override
-    public void proceed(HttpServletRequest request, HttpServletResponse response)
+    public void dispatch(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         response.sendRedirect(request.getContextPath() + path);
     }
