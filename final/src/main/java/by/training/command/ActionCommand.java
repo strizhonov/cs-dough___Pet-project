@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public interface ActionCommand {
-    ServletRouter execute(HttpServletRequest request, HttpServletResponse response) throws ActionCommandExecutionException;
+    ServletRouter execute(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response) throws ActionCommandExecutionException;
 
     ActionCommandType getType();
 }
