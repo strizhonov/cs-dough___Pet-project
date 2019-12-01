@@ -4,11 +4,11 @@
 <div>
     <form>
         <img src="" alt="">
-        <button class="for-logo">Upload logo</button>
+        <button>Upload logo</button>
     </form>
 </div>
 <div>
-    <form class="register-form" action="${pageContext.request.contextPath}/?command=create_player" method="post">
+    <form action="${pageContext.request.contextPath}/?command=create_player" method="post">
         <h3>New player creation form</h3>
         <div>
             <input name="name" type="text" placeholder="<fmt:message key="name"/>">
