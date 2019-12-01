@@ -15,29 +15,19 @@ import javax.servlet.http.HttpServletRequest;
 @WebFilter
 public class SecurityFilter implements Filter {
 
-    private SecurityService securityService;
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        securityService = new SecurityServiceImpl();
-    }
-
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
         if (request.getParameter("command") != null) {
             ActionCommandProvider commandProvider
                     = (ActionCommandProvider) ApplicationLoader.getInstance().get(ActionCommandProviderImpl.class);
             ActionCommand command = commandProvider.get((HttpServletRequest) request);
-
-            if (!securityService.canExecute(command, request)) {
-                ServletRouter router = securityService.route(command, request, response);
+            AccessManager accessManager = command.getType().getSecurityType().getCheckerClass().getInstance();
+            
+            if (!accessManager.canExecute(command, request)) {
+                ServletRouter router = accessManager.route(command, request, response);
                 LOGGER.warn("Command execution can not be performed due to the security reasons.");
                 router.getState().dispatch(this, request, response);
                 return;
-            }
-            if (!securityService.canExecute(command, request)) {
-                BaseRedirectRouter router = securityService.route(command, request);
-                router.dispatch(request, responce);
             }
 
         }
