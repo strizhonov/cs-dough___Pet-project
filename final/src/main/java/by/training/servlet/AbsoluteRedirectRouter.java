@@ -9,12 +9,12 @@ public class AbsoluteRedirectRouter implements HttpRouter {
 
     private String path;
 
-    public AbsoluteRedirectRouterState(String path) {
+    public AbsoluteRedirectRouter(String path) {
         this.path = path;
     }
 
     @Override
-    public void proceed(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void dispatch(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.sendRedirect(path);
     }
 }
