@@ -41,8 +41,8 @@ public class ApplicationServlet extends HttpServlet {
 
 
         try {
-            ServletRouter router = command.execute(request, response);
-            router.getState().dispatch(this, request, response);
+            HttpRouter router = command.route(this, request, response);
+            router.dispatch(request, response);
         } catch (ActionCommandExecutionException e) {
             LOGGER.error("Unable to execute command " + command.getClass().getSimpleName() + ".", e);
             throw new IllegalStateException("Unable to execute command " + command.getClass().getSimpleName() + ".", e);
