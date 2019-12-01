@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 public class SecurityServiceImpl implements SecurityService {
 
     @Override
-    public boolean canExecute(ActionCommand actionCommand, HttpServletRequest request) {
-        AccessChecker checker = createFromCommand(actionCommand);
+    public boolean canExecute(ActionCommand command, HttpServletRequest request) {
+        AccessChecker checker = command.getType().getSecurityType().getCheckerClass().getInstance();
         return checker.isAccessAllowed(actionCommand, request);
 
     }
