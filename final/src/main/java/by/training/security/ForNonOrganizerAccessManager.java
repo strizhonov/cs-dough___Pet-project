@@ -6,7 +6,7 @@ import by.training.servlet.ServletRouter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ForNonOrganizerAccessManager implements AccessManager {
+public class ForNonOrganizerAccessSupervisor implements SecuritySupervisor {
 
     @Override
     public boolean isAccessAllowed(ActionCommand command, HttpServletRequest request, HttpServletResponse response) {
@@ -17,7 +17,18 @@ public class ForNonOrganizerAccessManager implements AccessManager {
     
     @Override
     public Optional<BaseRedirector> direct(ActionCommand command, HttpServletRequest request, HttpServletResponse response) {
-        return isAllowed() ? Optional.empty : Optional.of(new AbsoluteRedirector(""))
+        HttpSession session = request.getSession();
+        UserDto user = (User) session.getAttribute(AttributesContainer.USER.toString());
+        if (!isAccessAllowed()) {
+            return Optional.empty();
+        }
+        if (user == null) {
+           String message = 
+           req.setParameter(message)
+        } else if (user.getOrganizerId != 0) {
+            String message = 
+        }
+        return Optional.of(new AbsoluteRedirector("Referer"));
     } 
     
     
