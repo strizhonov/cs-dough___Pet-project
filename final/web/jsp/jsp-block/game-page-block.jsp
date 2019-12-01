@@ -4,7 +4,7 @@
 <fmt:setLocale value="${language}" />
 <fmt:setBundle basename="content"/>
 <div class="row">
-    <div class="image-holder col-md-6">
+    <div>
         <img src="?command=get_picture&game_id=${game.id}&team_id${player.id}" alt="">
     </div>
     <div>
