@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Validation {
-    int newArgs() default 1;
+    int uniqueForWholeValidationArgs() default 1;
 }
