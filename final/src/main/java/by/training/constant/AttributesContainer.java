@@ -7,6 +7,7 @@ public enum AttributesContainer {
      * Keep alphabetically
      */
 
+    COMMAND,
     COUNTRY,
     EMAIL,
     ERROR,
@@ -49,7 +50,7 @@ public enum AttributesContainer {
     UNAVAILABLE_ERROR,
     USER,
     USER_ROLE,
-    USER_TO_SHOW,
+    USER_TO_PROCESS,
     USERNAME,
     USERNAME_CORRECTNESS_ERROR,
     USERNAME_ERROR,

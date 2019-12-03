@@ -4,8 +4,10 @@ import by.training.command.ActionCommand;
 import by.training.command.ActionCommandType;
 import by.training.constant.AttributesContainer;
 import by.training.constant.ValuesContainer;
-import by.training.servlet.ServletRouter;
+import by.training.servlet.AbsolutePathRedirector;
+import by.training.servlet.HttpRouter;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,9 +17,9 @@ public class ChangeLanguageToEnCommand implements ActionCommand {
     private final ActionCommandType type = ActionCommandType.CHANGE_LANGUAGE_TO_EN;
 
     @Override
-    public ServletRouter execute(HttpServletRequest request, HttpServletResponse response) {
+    public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response) {
         request.getSession().setAttribute(AttributesContainer.LANGUAGE.toString(), ValuesContainer.EN);
-        return new ServletRouter(request.getHeader(ValuesContainer.REFERER), ServletRouter.RouterType.ABSOLUTE_REDIRECT);
+        return new AbsolutePathRedirector(request.getHeader(ValuesContainer.REFERER));
     }
 
     @Override

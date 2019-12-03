@@ -8,13 +8,15 @@ import by.training.dto.OrganizerDto;
 import by.training.dto.UserDto;
 import by.training.service.OrganizerService;
 import by.training.service.ServiceException;
-import by.training.servlet.ServletRouter;
+import by.training.servlet.HttpRouter;
+import by.training.servlet.ServletForwarder;
 import by.training.validation.OrganizerDataValidator;
 import by.training.validation.ValidationException;
 import by.training.validation.ValidationResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -33,12 +35,11 @@ public class CreateOrganizerCommand implements ActionCommand {
     }
 
     @Override
-    public ServletRouter execute(HttpServletRequest request, HttpServletResponse response)
-            throws ActionCommandExecutionException {
+    public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response) throws ActionCommandExecutionException {
         String name = request.getParameter(AttributesContainer.NAME.toString());
 
         if (!isDataValid(name, validator, request)) {
-            return new ServletRouter(request.getContextPath());
+            return new ServletForwarder(servlet, request.getContextPath());
         }
 
         HttpSession httpSession = request.getSession();
@@ -50,7 +51,7 @@ public class CreateOrganizerCommand implements ActionCommand {
 
         try {
             organizerService.create(organizerDto, userDto);
-            return new ServletRouter("/jsp/user-profile.jsp");
+            return new ServletForwarder(servlet, "/jsp/user-profile.jsp");
         } catch (ServiceException e) {
             LOGGER.error("Unable to perform organizer creation and user updating.", e);
             throw new ActionCommandExecutionException("Unable to perform organizer creation and user updating.", e);

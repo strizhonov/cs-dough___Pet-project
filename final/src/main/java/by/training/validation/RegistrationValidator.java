@@ -53,7 +53,7 @@ public class RegistrationValidator extends BaseInputValidator {
         return result;
     }
 
-    @Validation(newArgs = 0)
+    @Validation
     private ValidationResult usernameUniqueness(String username) throws ValidationException {
         ValidationResult result = new ValidationResult();
         try {
@@ -80,7 +80,7 @@ public class RegistrationValidator extends BaseInputValidator {
         return result;
     }
 
-    @Validation(newArgs = 0)
+    @Validation
     private ValidationResult emailUniqueness(String email) throws ValidationException {
         ValidationResult result = new ValidationResult();
         try {

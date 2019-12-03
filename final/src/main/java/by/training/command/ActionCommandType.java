@@ -1,44 +1,44 @@
 package by.training.command;
 
-import by.training.security.SecurityType;
+import by.training.security.AccessAllowedForType;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static by.training.security.SecurityType.*;
+import static by.training.security.AccessAllowedForType.*;
 
 public enum ActionCommandType {
-    CHANGE_LANGUAGE_TO_RU(ALL),
-    CHANGE_LANGUAGE_TO_EN(ALL),
+    CHANGE_LANGUAGE_TO_RU(ANY),
+    CHANGE_LANGUAGE_TO_EN(ANY),
     CREATE_ORGANIZER(NON_ORGANIZER_USERS),
     CREATE_PLAYER(NON_PLAYER_USERS),
-    CREATE_TOURNAMENT(ORGANIZER),
-    DEFAULT_COMMAND(ALL),
+    CREATE_TOURNAMENT(ORGANIZER_OWNER),
+    DEFAULT_COMMAND(ANY),
     JOIN_TOURNAMENT(PLAYER),
-    LIST_TEAMS(ALL),
-    LIST_TOURNAMENTS(ALL),
-    LOGIN(ONLY_ANONYMOUS),
-    REGISTER(ONLY_ANONYMOUS),
-    SHOW_TEAM(ALL),
-    SHOW_PLAYER(ALL),
-    TO_GAME_PAGE(ALL),
-    TO_HOME_PAGE(ALL),
-    TO_ORGANIZER_CREATION(ORGANIZER),
-    TO_LOGIN_PAGE(ONLY_ANONYMOUS),
-    TO_PLAYER_CREATION(PLAYER),
+    LIST_TEAMS(ANY),
+    LIST_TOURNAMENTS(ANY),
+    LOGIN(ANONYMOUS),
+    REGISTER(ANONYMOUS),
+    SHOW_TEAM(ANY),
+    SHOW_PLAYER(ANY),
+    TO_GAME_PAGE(ANY),
+    TO_HOME_PAGE(ANY),
+    TO_ORGANIZER_CREATION(NON_ORGANIZER_USERS),
+    TO_LOGIN_PAGE(ANONYMOUS),
+    TO_PLAYER_CREATION(NON_PLAYER_USERS),
     TO_TOURNAMENT_CREATION(ORGANIZER),
-    TO_TOURNAMENT_PAGE(ALL),
-    TO_USER_PAGE(ALL);
+    TO_TOURNAMENT_PAGE(ANY),
+    TO_USER_PAGE(ANY);
 
-    SecurityType securityType;
+    AccessAllowedForType accessType;
 
-    ActionCommandType(SecurityType securityType) {
-        this.securityType = securityType;
+    ActionCommandType(AccessAllowedForType accessType) {
+        this.accessType = accessType;
 
     }
 
-    public SecurityType getSecurityType() {
-        return securityType;
+    public AccessAllowedForType getSecurityType() {
+        return accessType;
     }
 
     public static Optional<ActionCommandType> from(String name) {

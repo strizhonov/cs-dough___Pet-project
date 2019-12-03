@@ -9,7 +9,6 @@ import by.training.connection.TransactionManager;
 import by.training.connection.TransactionManagerImpl;
 import by.training.dao.*;
 import by.training.security.SecurityService;
-import by.training.security.SecurityServiceImpl;
 import by.training.service.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

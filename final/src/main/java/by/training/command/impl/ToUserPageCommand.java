@@ -31,7 +31,7 @@ public class ToUserPageCommand implements ActionCommand {
         long id = Long.parseLong(sId);
         try {
             UserDto toShow = userService.find(id);
-            request.getSession().setAttribute(AttributesContainer.USER_TO_SHOW.toString(), toShow);
+            request.getSession().setAttribute(AttributesContainer.USER_TO_PROCESS.toString(), toShow);
             return new ServletRouter("/jsp/game-page.jsp");
         } catch (ServiceException e) {
             LOGGER.error("Unable to get user with " + id + " id.", e);

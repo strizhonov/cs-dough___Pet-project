@@ -5,8 +5,6 @@ import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandProvider;
 import by.training.command.ActionCommandProviderImpl;
-import by.training.security.SecurityService;
-import by.training.security.SecurityServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,13 +33,8 @@ public class ApplicationServlet extends HttpServlet {
                 = (ActionCommandProvider) ApplicationLoader.getInstance().get(ActionCommandProviderImpl.class);
         ActionCommand command = commandProvider.get(request);
 
-        SecurityService securityService
-                = (SecurityService) ApplicationLoader.getInstance().get(SecurityServiceImpl.class);
-
-
-
         try {
-            HttpRouter router = command.route(this, request, response);
+            HttpRouter router = command.direct(this, request, response);
             router.dispatch(request, response);
         } catch (ActionCommandExecutionException e) {
             LOGGER.error("Unable to execute command " + command.getClass().getSimpleName() + ".", e);

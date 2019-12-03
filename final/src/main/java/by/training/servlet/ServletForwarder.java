@@ -7,19 +7,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class ServletForwardRouter implements HttpRouter {
+public class ServletForwarder implements HttpRouter {
 
     private HttpServlet servlet;
     private String path;
 
-    public ForwardRouter(HttpServlet servlet, String path) {
+    public ServletForwarder(HttpServlet servlet, String path) {
         this.servlet = servlet;
         this.path = path;
     }
 
     @Override
-    public void dispatch(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    public void dispatch(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         RequestDispatcher dispatcher = servlet.getServletContext().getRequestDispatcher(path);
         dispatcher.forward(request, response);
     }

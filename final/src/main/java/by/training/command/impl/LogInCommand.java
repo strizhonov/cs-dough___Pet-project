@@ -49,7 +49,7 @@ public class LogInCommand implements ActionCommand {
         httpSession.setAttribute(AttributesContainer.USER_ROLE.toString(), userDto.getType().name());
         httpSession.setAttribute(AttributesContainer.USER.toString(), userDto);
         httpSession.setAttribute(AttributesContainer.USER.toString(), userDto);
-        request.setAttribute(AttributesContainer.USER_TO_SHOW.toString(), userDto);
+        request.setAttribute(AttributesContainer.USER_TO_PROCESS.toString(), userDto);
 
         String lang = userDto.getLanguage().name();
         httpSession.setAttribute(AttributesContainer.LANGUAGE.toString(), lang);
