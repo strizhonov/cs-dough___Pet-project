@@ -146,30 +146,21 @@ public class ApplicationLoader {
                 createTournamentCommand, createOrganizerCommand, toOrganizerCreationCommand, toTournamentPageCommand,
                 changeLanguageToEnCommand, changeLanguageToRuCommand, toUserPageCommand, toHomePageCommand);
 
-        SecurityProvider<AccessAllowedForType> securityProvider = new SecurityProviderImpl();
-        SecurityDirector<AccessAllowedForType> forAdmin = new ForAdminAccessDirector();
-        SecurityDirector<AccessAllowedForType> forAnon = new ForAnonymousAccessDirector();
-        SecurityDirector<AccessAllowedForType> forAny = new ForAnyAccessDirector();
-        SecurityDirector<AccessAllowedForType> forOrg = new ForAnyOrganizerAccessDirector();
-        SecurityDirector<AccessAllowedForType> forPlayer = new ForAnyPlayerAccessDirector();
-        SecurityDirector<AccessAllowedForType> forNonOrg = new ForNonOrganizerAccessDirector();
-        SecurityDirector<AccessAllowedForType> forNonPlayer = new ForNonPlayerUserAccessDirector();
-        SecurityDirector<AccessAllowedForType> forOrgOwner = new ForOrganizerOwnerAccessDirector();
-        SecurityDirector<AccessAllowedForType> forPlayerOwner = new ForPlayerOwnerAccessDirector();
-        SecurityDirector<AccessAllowedForType> forUser = new ForUserAccessDirector();
-        SecurityDirector<AccessAllowedForType> forUserOwner = new ForUserOwnerAccessDirector();
+        SecurityProvider securityProvider = new SecurityProviderImpl();
+        SecurityDirector forAdmin = new ForAdminAccessDirector();
+        SecurityDirector forAnon = new ForAnonymousAccessDirector();
+        SecurityDirector forAny = new ForAnyAccessDirector();
+        SecurityDirector forOrg = new ForAnyOrganizerAccessDirector();
+        SecurityDirector forPlayer = new ForAnyPlayerAccessDirector();
+        SecurityDirector forNonOrg = new ForNonOrganizerAccessDirector();
+        SecurityDirector forNonPlayer = new ForNonPlayerUserAccessDirector();
+        SecurityDirector forOrgOwner = new ForOrganizerOwnerAccessDirector();
+        SecurityDirector forPlayerOwner = new ForPlayerOwnerAccessDirector();
+        SecurityDirector forUser = new ForUserAccessDirector();
+        SecurityDirector forUserOwner = new ForUserOwnerAccessDirector();
 
-        securityProvider.register(forAdmin);
-        securityProvider.register(forAnon);
-        securityProvider.register(forAny);
-        securityProvider.register(forOrg);
-        securityProvider.register(forPlayer);
-        securityProvider.register(forNonOrg);
-        securityProvider.register(forNonPlayer);
-        securityProvider.register(forOrgOwner);
-        securityProvider.register(forPlayerOwner);
-        securityProvider.register(forUser);
-        securityProvider.register(forUserOwner);
+        securityProvider.register(forAdmin, forAnon, forAny, forOrg, forPlayer, forNonOrg, forNonPlayer, forOrgOwner,
+                forPlayerOwner, forUser, forUserOwner);
 
         register(connectionProvider, userDao, tournamentDao, walletDao, playerDao, organizerDao,
                 gameDao, userService, tournamentService, playerService, organizerService, gameService,

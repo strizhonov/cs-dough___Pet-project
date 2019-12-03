@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
-public abstract class BaseSecurityDirector implements SecurityDirector<AccessAllowedForType> {
+public abstract class BaseSecurityDirector implements SecurityDirector {
 
     @Override
     public Optional<BaseRedirector> direct(HttpServletRequest request, HttpServletResponse response) {

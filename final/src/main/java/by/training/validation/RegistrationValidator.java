@@ -28,11 +28,11 @@ public class RegistrationValidator extends BaseInputValidator {
         }
         int i = -1;
         ValidationResult usernameCorrectness = usernameCorrectness(strings[++i]);
-        ValidationResult usernameUniqueness = usernameUniqueness(strings[i]);
+        ValidationResult usernameUniqueness = usernameUniqueness(strings[++i]);
         ValidationResult emailCorrectness = emailCorrectness(strings[++i]);
-        ValidationResult emailUniqueness = emailUniqueness(strings[i]);
+        ValidationResult emailUniqueness = emailUniqueness(strings[++i]);
         ValidationResult passwordCorrectness = passwordCorrectness(strings[++i]);
-        ValidationResult passwordsEquality = passwordsEquality(strings[i], strings[++i]);
+        ValidationResult passwordsEquality = passwordsEquality(strings[++i], strings[++i]);
         return usernameCorrectness
                 .and(usernameUniqueness)
                 .and(emailCorrectness)

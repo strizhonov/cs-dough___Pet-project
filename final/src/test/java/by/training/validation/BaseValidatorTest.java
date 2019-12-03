@@ -18,20 +18,20 @@ public class BaseValidatorTest {
             public ValidationResult validate(String... strings) throws ValidationException {
                 return null;
             }
-            @Validation(newArgs = 3)
-            public ValidationResult checkOne() throws ValidationException {
-                return null;
-            }
-            @Validation(newArgs = 1)
-            public ValidationResult checkTwo() throws ValidationException {
-                return null;
-            }
-            @Validation(newArgs = 0)
-            public ValidationResult checkThree() throws ValidationException {
+            @Validation
+            public ValidationResult checkOne(String s) throws ValidationException {
                 return null;
             }
             @Validation
-            public ValidationResult checkFour() throws ValidationException {
+            public ValidationResult checkTwo() throws ValidationException {
+                return null;
+            }
+            @Validation
+            public ValidationResult checkThree(String s1, String s2) throws ValidationException {
+                return null;
+            }
+            @Validation
+            public ValidationResult checkFour(String s) throws ValidationException {
                 return null;
             }
         };
@@ -39,7 +39,7 @@ public class BaseValidatorTest {
 
     @Test
     public void checkInput() throws ValidationException {
-        boolean result = validator.isArgsCountValid("1", "2", "3", "4", "5");
+        boolean result = validator.isArgsCountValid("1", "2", "3", "4");
         Assert.assertTrue(result);
     }
 

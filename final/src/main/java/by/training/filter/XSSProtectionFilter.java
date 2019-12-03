@@ -5,13 +5,14 @@ import by.training.constant.ValuesContainer;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
+import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebFilter(urlPatterns = {"/*"}, initParams = {@WebInitParam(name = "protection_name",
         value = ValuesContainer.XSS_PROTECTION_NAME), @WebInitParam(name = "protection_type",
         value = ValuesContainer.XSS_PROTECTION_TYPE)})
-public class XSSProtectionFilter implements Filter {
+public class XSSProtectionFilter extends HttpFilter {
 
     private String headerName;
     private String headerValue;
@@ -26,6 +27,12 @@ public class XSSProtectionFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         ((HttpServletResponse) response).setHeader(headerName, headerValue);
         chain.doFilter(request, response);
+    }
+
+    @Override
+    public void destroy() {
+        headerName = null;
+        headerValue = null;
     }
 
 }

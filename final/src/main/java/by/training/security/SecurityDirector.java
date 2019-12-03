@@ -6,9 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
-public interface SecurityDirector<SECURITY_TYPE> {
+public interface SecurityDirector {
 
-    SECURITY_TYPE getType();
+    AccessAllowedForType getType();
 
     Optional<BaseRedirector> direct(HttpServletRequest request, HttpServletResponse response);
 

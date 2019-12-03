@@ -45,7 +45,7 @@ public class RegisterCommand implements ActionCommand {
         String password = request.getParameter(AttributesContainer.PASSWORD.toString());
         String passConfirmation = request.getParameter(AttributesContainer.PASSWORD_CONFIRMATION.toString());
 
-        if (!isDataValid(validator, request, username, email, password, passConfirmation)) {
+        if (!isDataValid(validator, request, username, username, email, email, password, password, passConfirmation)) {
             return new ServletForwarder(servlet, request.getContextPath());
         }
 

@@ -6,23 +6,25 @@ import by.training.command.ActionCommand;
 import java.util.EnumMap;
 
 @Bean
-public class SecurityProviderImpl implements SecurityProvider<AccessAllowedForType> {
+public class SecurityProviderImpl implements SecurityProvider {
 
-    private EnumMap<AccessAllowedForType, SecurityDirector<AccessAllowedForType>> registered;
+    private EnumMap<AccessAllowedForType, SecurityDirector> registered;
 
     public SecurityProviderImpl() {
         this.registered = new EnumMap<>(AccessAllowedForType.class);
     }
 
     @Override
-    public SecurityDirector<AccessAllowedForType> get(ActionCommand command) {
+    public SecurityDirector get(ActionCommand command) {
         AccessAllowedForType securityType = command.getType().getSecurityType();
         return registered.get(securityType);
     }
 
     @Override
-    public void register(SecurityDirector<AccessAllowedForType> supervisor) {
-        registered.put(supervisor.getType(), supervisor);
+    public void register(SecurityDirector... directors) {
+        for (SecurityDirector director : directors) {
+            registered.put(director.getType(), director);
+        }
     }
 
 }

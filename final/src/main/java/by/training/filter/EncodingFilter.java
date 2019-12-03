@@ -10,7 +10,7 @@ import java.io.IOException;
 
 @WebFilter(urlPatterns = {"/*"}, initParams = {@WebInitParam(name = "encoding",
         value = ValuesContainer.STANDARD_CHARSET_NAME)})
-public class EncodingFilter implements HttpFilter {
+public class EncodingFilter extends HttpFilter {
 
     private String encoding;
 
