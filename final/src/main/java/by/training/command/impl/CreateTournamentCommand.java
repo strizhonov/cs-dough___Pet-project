@@ -96,13 +96,13 @@ public class CreateTournamentCommand implements ActionCommand {
         String sEndDate = request.getParameter(AttributesContainer.END_DATE.toString());
         Date startDate = new Date();
         try {
-            startDate = new SimpleDateFormat(ValuesContainer.SIMPLE_DATE_FORMAT).parse(sStartDate);
+            startDate = new SimpleDateFormat(ValuesContainer.DEFAULT_DATE_FORMAT).parse(sStartDate);
         } catch (ParseException e) {
             LOGGER.warn("Start date parsing failed.", e);
         }
         Date endDate = new Date();
         try {
-            endDate = new SimpleDateFormat(ValuesContainer.SIMPLE_DATE_FORMAT).parse(sEndDate);
+            endDate = new SimpleDateFormat(ValuesContainer.DEFAULT_DATE_FORMAT).parse(sEndDate);
         } catch (ParseException e) {
             LOGGER.warn("End date parsing failed.", e);
         }

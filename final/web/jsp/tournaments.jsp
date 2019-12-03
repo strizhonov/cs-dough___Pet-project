@@ -1,7 +1,14 @@
-<jsp:include page="/jsp/jsp-block/import.jsp"/>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="language" value="${not empty language ? language : param.language ? param.language : pageContext.request.locale}" scope="session"/>
+<fmt:setLocale value="${language}" />
+<fmt:setBundle basename="content"/>
 <html>
 <head>
-    <jsp:include page="/jsp/jsp-block/head.jsp"/>
+    <meta charset="utf-8">
+    <title><fmt:message key="tournaments"/></title>
+    <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <jsp:include page="/jsp/jsp-block/header.jsp"/>
@@ -11,7 +18,6 @@
 
 
 <jsp:include page="/jsp/jsp-block/footer.jsp"/>
-<jsp:include page="/jsp/jsp-block/common-block.jsp"/>
 </body>
 </html>
 

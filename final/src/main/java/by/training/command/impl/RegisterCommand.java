@@ -11,6 +11,7 @@ import by.training.entity.User;
 import by.training.service.ServiceException;
 import by.training.service.UserService;
 import by.training.servlet.HttpRouter;
+import by.training.servlet.RelativePathRedirector;
 import by.training.servlet.ServletForwarder;
 import by.training.validation.RegistrationValidator;
 import by.training.validation.ValidationException;
@@ -46,7 +47,7 @@ public class RegisterCommand implements ActionCommand {
         String passConfirmation = request.getParameter(AttributesContainer.PASSWORD_CONFIRMATION.toString());
 
         if (!isDataValid(validator, request, username, username, email, email, password, password, passConfirmation)) {
-            return new ServletForwarder(servlet, request.getContextPath());
+            return new RelativePathRedirector(response.getHeader(ValuesContainer.REFERER));
         }
 
         HttpSession session = request.getSession();

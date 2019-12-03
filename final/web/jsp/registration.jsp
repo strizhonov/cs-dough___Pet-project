@@ -1,10 +1,15 @@
-<jsp:include page="/jsp/jsp-block/import.jsp"/>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="language" value="${not empty language ? language : param.language ? param.language : pageContext.request.locale}" scope="session"/>
+<fmt:setLocale value="${language}" />
+<fmt:setBundle basename="content"/>
 <html>
 <head>
-    <jsp:include page="/jsp/jsp-block/head.jsp"/>
-    <link href="${pageContext.request.contextPath}/css/registration.css" rel="stylesheet" type="text/css">
+    <meta charset="utf-8">
+    <title><fmt:message key="registration"/></title>
+    <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet" type="text/css">
 </head>
-<body>
 <jsp:include page="/jsp/jsp-block/header.jsp"/>
 
 <%--CONTENT--%>
@@ -12,7 +17,7 @@
 
 
 <jsp:include page="/jsp/jsp-block/footer.jsp"/>
-<jsp:include page="/jsp/jsp-block/common-block.jsp"/>
-<script src="../js/login.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/login.js" type="text/javascript"></script>
 </body>
 </html>

@@ -5,10 +5,12 @@ import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandType;
 import by.training.constant.AttributesContainer;
 import by.training.constant.MessagesContainer;
+import by.training.constant.ValuesContainer;
 import by.training.dto.UserDto;
 import by.training.service.ServiceException;
 import by.training.service.UserService;
 import by.training.servlet.HttpRouter;
+import by.training.servlet.RelativePathRedirector;
 import by.training.servlet.ServletForwarder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +47,7 @@ public class LogInCommand implements ActionCommand {
         if (userDto == null) {
             request.setAttribute(AttributesContainer.USERNAME_OR_PASSWORD_ERROR.toString(),
                     MessagesContainer.USERNAME_OR_PASSWORD_ERROR_MESSAGE);
-            return new ServletForwarder(servlet, request.getContextPath());
+            return new RelativePathRedirector(response.getHeader(ValuesContainer.REFERER));
         }
 
         HttpSession httpSession = request.getSession();

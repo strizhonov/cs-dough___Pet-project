@@ -49,8 +49,9 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
             userDto.setPassword(encrypted);
             userDto.setPasswordKey(passKey);
 
+            long id = userDao.save(userDto);
             transactionManager.commitTransaction();
-            return userDao.save(userDto);
+            return id;
         } catch (Throwable e) {
             transactionManager.rollbackTransaction();
             LOGGER.error("User registering failed.", e);

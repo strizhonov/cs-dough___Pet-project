@@ -10,7 +10,7 @@
         <form action="${pageContext.request.contextPath}/?command=create_organizer" method="post">
             <div>
                 <input name="name" type="text" placeholder="<fmt:message key="name"/>">
-                <button><fmt:message key="create"/><i class="zmdi zmdi-arrow-right"></i></button>
+                <button><fmt:message key="create"/></button>
             </div>
         </form>
     </div>

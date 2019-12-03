@@ -17,6 +17,7 @@ public class ValuesContainer {
      */
 
     public static final CurrencyType DEFAULT_CURRENCY = Wallet.CurrencyType.USD;
+    public static final String DEFAULT_DATE_FORMAT = "dd-MMM-yyyy";
     public static final GameType DEFAULT_GAME_TYPE = Game.GameType.BO3;
     public static final Language DEFAULT_LANGUAGE = User.Language.EN;
     public static final TournamentStatus DEFAULT_TOURNAMENT_STATUS = Tournament.TournamentStatus.UPCOMING;
@@ -27,7 +28,6 @@ public class ValuesContainer {
     public static final String PASSWORD_REGEX = "^[\\w!@#$%^&]{6,}$";
     public static final String REFERER = "Referer";
     public static final String RU = "ru";
-    public static final String SIMPLE_DATE_FORMAT = "yyyy-MM-dd";
     public static final String STANDARD_CHARSET_NAME = "UTF-8";
     public static final String URI_MAIN_PATTERN = "/app";
     public static final String USERNAME_REGEX = "^[A-Za-z0-9]+$";
