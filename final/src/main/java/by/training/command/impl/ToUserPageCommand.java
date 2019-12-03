@@ -7,10 +7,12 @@ import by.training.constant.AttributesContainer;
 import by.training.dto.UserDto;
 import by.training.service.ServiceException;
 import by.training.service.UserService;
-import by.training.servlet.ServletRouter;
+import by.training.servlet.HttpRouter;
+import by.training.servlet.ServletForwarder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,13 +28,14 @@ public class ToUserPageCommand implements ActionCommand {
     }
 
     @Override
-    public ServletRouter execute(HttpServletRequest request, HttpServletResponse response) throws ActionCommandExecutionException {
+    public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response)
+            throws ActionCommandExecutionException {
         String sId = request.getParameter(AttributesContainer.ID.toString());
         long id = Long.parseLong(sId);
         try {
             UserDto toShow = userService.find(id);
             request.getSession().setAttribute(AttributesContainer.USER_TO_PROCESS.toString(), toShow);
-            return new ServletRouter("/jsp/game-page.jsp");
+            return new ServletForwarder(servlet, "/jsp/game-page.jsp");
         } catch (ServiceException e) {
             LOGGER.error("Unable to get user with " + id + " id.", e);
             throw new ActionCommandExecutionException("Unable to get user with " + id + " id.", e);

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
-public class ForAnonymousAccessSupervisor extends BaseSecuritySupervisor {
+public class ForAnonymousAccessDirector extends BaseSecurityDirector {
 
     private static final String REDIRECT_TO = ValuesContainer.REFERER;
     private final AccessAllowedForType type = AccessAllowedForType.ANONYMOUS;

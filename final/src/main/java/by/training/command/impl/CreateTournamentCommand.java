@@ -11,13 +11,15 @@ import by.training.dto.UserDto;
 import by.training.entity.Game;
 import by.training.service.ServiceException;
 import by.training.service.TournamentService;
-import by.training.servlet.ServletRouter;
+import by.training.servlet.HttpRouter;
+import by.training.servlet.ServletForwarder;
 import by.training.validation.TournamentDataValidator;
 import by.training.validation.ValidationException;
 import by.training.validation.ValidationResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -39,17 +41,17 @@ public class CreateTournamentCommand implements ActionCommand {
     }
 
     @Override
-    public ServletRouter execute(HttpServletRequest request, HttpServletResponse response)
+    public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response)
             throws ActionCommandExecutionException {
         String name = request.getParameter(AttributesContainer.NAME.toString());
         if (!isDataValid(name, validator, request)) {
-            return new ServletRouter(request.getContextPath());
+            return new ServletForwarder(servlet, request.getContextPath());
         }
 
         TournamentDto tournamentDto = compile(request);
         try {
             long tournamentId = tournamentService.create(tournamentDto);
-            return new ServletRouter("/?command=show_tournament&id=" + tournamentId);
+            return new ServletForwarder(servlet, "/?command=show_tournament&id=" + tournamentId);
         } catch (ServiceException e) {
             LOGGER.error("Tournament creation failed.", e);
             throw new ActionCommandExecutionException("Tournament creation failed.", e);

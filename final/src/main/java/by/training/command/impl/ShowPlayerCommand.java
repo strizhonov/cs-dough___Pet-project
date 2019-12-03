@@ -7,10 +7,12 @@ import by.training.constant.AttributesContainer;
 import by.training.dto.PlayerDto;
 import by.training.service.PlayerService;
 import by.training.service.ServiceException;
-import by.training.servlet.ServletRouter;
+import by.training.servlet.HttpRouter;
+import by.training.servlet.ServletForwarder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,13 +27,14 @@ public class ShowPlayerCommand implements ActionCommand {
     }
 
     @Override
-    public ServletRouter execute(HttpServletRequest request, HttpServletResponse response) throws ActionCommandExecutionException {
+    public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response)
+            throws ActionCommandExecutionException {
         String sId = request.getParameter(AttributesContainer.ID.toString());
         long id = Long.parseLong(sId);
         try {
             PlayerDto playerDto = playerService.find(id);
             request.setAttribute(AttributesContainer.PLAYER.toString(), playerDto);
-            return new ServletRouter("/jsp/player-profile.jsp");
+            return new ServletForwarder(servlet, "/jsp/player-profile.jsp");
         } catch (ServiceException e) {
             LOGGER.error("Unable to get player with " + id + " id.", e);
             throw new ActionCommandExecutionException("Unable to get player with " + id + " id.", e);

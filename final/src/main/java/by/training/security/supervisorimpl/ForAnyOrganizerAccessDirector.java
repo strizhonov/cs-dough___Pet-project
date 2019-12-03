@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
-public class ForAnyOrganizerAccessSupervisor extends BaseSecuritySupervisor {
+public class ForAnyOrganizerAccessDirector extends BaseSecurityDirector {
 
     private static final String REDIRECT_USER_TO = PathsContainer.ORGANIZER_CREATION;
     private static final String REDIRECT_NON_USER_TO = PathsContainer.LOGIN;

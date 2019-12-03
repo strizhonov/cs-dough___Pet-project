@@ -1,6 +1,5 @@
 package by.training.security.supervisorimpl;
 
-import by.training.command.ActionCommand;
 import by.training.constant.AttributesContainer;
 import by.training.constant.PathsContainer;
 import by.training.dto.UserDto;
@@ -13,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
-public class ForNonOrganizerAccessSupervisor extends BaseSecuritySupervisor {
+public class ForNonOrganizerAccessDirector extends BaseSecurityDirector {
 
     private static final String REDIRECT_USER_TO = PathsContainer.ACCESS_DENIED;
     private static final String REDIRECT_NON_USER_TO = PathsContainer.LOGIN;

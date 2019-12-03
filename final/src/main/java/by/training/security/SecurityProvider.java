@@ -4,8 +4,8 @@ import by.training.command.ActionCommand;
 
 public interface SecurityProvider<T> {
 
-    SecuritySupervisor<T> get(ActionCommand command);
+    SecurityDirector<T> get(ActionCommand command);
 
-    void register(SecuritySupervisor<T> supervisor);
+    void register(SecurityDirector<T> supervisor);
 
 }

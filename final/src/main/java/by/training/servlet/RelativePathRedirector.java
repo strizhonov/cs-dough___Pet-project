@@ -6,6 +6,10 @@ import java.io.IOException;
 
 public class RelativePathRedirector extends BaseRedirector {
 
+    public RelativePathRedirector() {
+        super("");
+    }
+
     public RelativePathRedirector(String path) {
         super(path);
     }

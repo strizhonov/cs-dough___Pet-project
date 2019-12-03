@@ -12,10 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
-public class ForUserOwnerAccessSupervisor extends BaseSecuritySupervisor {
+public class ForOrganizerOwnerAccessDirector extends BaseSecurityDirector {
 
     private static final String REDIRECT_TO = PathsContainer.ACCESS_DENIED;
-    private final AccessAllowedForType type = AccessAllowedForType.USER_OWNER;
+    private final AccessAllowedForType type = AccessAllowedForType.ORGANIZER_OWNER;
 
     @Override
     public AccessAllowedForType getType() {
@@ -27,7 +27,7 @@ public class ForUserOwnerAccessSupervisor extends BaseSecuritySupervisor {
         HttpSession session = request.getSession();
         UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
         UserDto userToProcess = (UserDto) session.getAttribute(AttributesContainer.USER_TO_PROCESS.toString());
-        return user != null && userToProcess != null && user.getId() == userToProcess.getId();
+        return user != null && userToProcess != null && user.getOrganizerId() == userToProcess.getOrganizerId();
     }
 
 
@@ -35,5 +35,5 @@ public class ForUserOwnerAccessSupervisor extends BaseSecuritySupervisor {
     protected Optional<BaseRedirector> getOptionalRedirector(HttpServletRequest request, HttpServletResponse response) {
         return Optional.of(new RelativePathRedirector(REDIRECT_TO));
     }
-
+    
 }

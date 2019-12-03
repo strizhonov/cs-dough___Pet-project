@@ -12,31 +12,25 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
-public class ForNonPlayerUserAccessSupervisor extends BaseSecuritySupervisor {
+public class ForUserAccessDirector extends BaseSecurityDirector {
 
-    private static final String REDIRECT_USER_TO = PathsContainer.ACCESS_DENIED;
-    private static final String REDIRECT_NON_USER_TO = PathsContainer.LOGIN;
-    private final AccessAllowedForType type = AccessAllowedForType.NON_PLAYER_USERS;
-
-    @Override
-    public AccessAllowedForType getType() {
-        return type;
-    }
+    private static final String REDIRECT_TO = PathsContainer.LOGIN;
+    private final AccessAllowedForType type = AccessAllowedForType.USER;
 
     @Override
     protected boolean isAccessAllowed(HttpServletRequest request) {
         HttpSession session = request.getSession();
         UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
-        return user == null || user.getPlayerAccountId() == 0;
+        return user != null;
     }
 
     @Override
     protected Optional<BaseRedirector> getOptionalRedirector(HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession();
-        UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
-        return user != null
-                ? Optional.of(new RelativePathRedirector(REDIRECT_USER_TO))
-                : Optional.of(new RelativePathRedirector(REDIRECT_NON_USER_TO));
+        return Optional.of(new RelativePathRedirector(REDIRECT_TO));
     }
 
+    @Override
+    public AccessAllowedForType getType() {
+        return type;
+    }
 }

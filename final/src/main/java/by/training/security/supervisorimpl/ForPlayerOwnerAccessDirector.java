@@ -3,7 +3,6 @@ package by.training.security.supervisorimpl;
 import by.training.constant.AttributesContainer;
 import by.training.constant.PathsContainer;
 import by.training.dto.UserDto;
-import by.training.entity.User;
 import by.training.security.AccessAllowedForType;
 import by.training.servlet.BaseRedirector;
 import by.training.servlet.RelativePathRedirector;
@@ -13,10 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
-public class ForAdminAccessSupervisor extends BaseSecuritySupervisor {
+public class ForPlayerOwnerAccessDirector extends BaseSecurityDirector {
 
     private static final String REDIRECT_TO = PathsContainer.ACCESS_DENIED;
-    private final AccessAllowedForType type = AccessAllowedForType.ADMIN;
+    private final AccessAllowedForType type = AccessAllowedForType.PLAYER_OWNER;
 
     @Override
     public AccessAllowedForType getType() {
@@ -24,11 +23,13 @@ public class ForAdminAccessSupervisor extends BaseSecuritySupervisor {
     }
 
     @Override
-    protected boolean isAccessAllowed(HttpServletRequest request) {
+    public boolean isAccessAllowed(HttpServletRequest request) {
         HttpSession session = request.getSession();
         UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
-        return user != null && user.getType() == User.UserType.ADMIN;
+        UserDto userToProcess = (UserDto) session.getAttribute(AttributesContainer.USER_TO_PROCESS.toString());
+        return user != null && userToProcess != null && user.getPlayerAccountId() == userToProcess.getPlayerAccountId();
     }
+
 
     @Override
     protected Optional<BaseRedirector> getOptionalRedirector(HttpServletRequest request, HttpServletResponse response) {

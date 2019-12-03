@@ -1,16 +1,19 @@
 package by.training.command.impl;
 
 import by.training.command.ActionCommand;
+import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandType;
 import by.training.constant.AttributesContainer;
 import by.training.constant.MessagesContainer;
 import by.training.dto.UserDto;
 import by.training.service.ServiceException;
 import by.training.service.UserService;
-import by.training.servlet.ServletRouter;
+import by.training.servlet.HttpRouter;
+import by.training.servlet.ServletForwarder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -26,8 +29,8 @@ public class LogInCommand implements ActionCommand {
     }
 
     @Override
-    public ServletRouter execute(HttpServletRequest request, HttpServletResponse response) {
-        String login = request.getParameter(AttributesContainer.USERNAME.toString());
+    public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response)
+            throws ActionCommandExecutionException {        String login = request.getParameter(AttributesContainer.USERNAME.toString());
         String password = request.getParameter(AttributesContainer.PASSWORD.toString());
 
         UserDto userDto;
@@ -37,12 +40,12 @@ public class LogInCommand implements ActionCommand {
             LOGGER.error("Unable to retrieve user.", e);
             request.setAttribute(AttributesContainer.USERNAME_ERROR.toString(),
                     MessagesContainer.LOGIN_ERROR_MESSAGE);
-            return new ServletRouter(request.getContextPath());
+            return new ServletForwarder(servlet, request.getContextPath());
         }
         if (userDto == null) {
             request.setAttribute(AttributesContainer.USERNAME_OR_PASSWORD_ERROR.toString(),
                     MessagesContainer.USERNAME_OR_PASSWORD_ERROR_MESSAGE);
-            return new ServletRouter(request.getContextPath());
+            return new ServletForwarder(servlet, request.getContextPath());
         }
 
         HttpSession httpSession = request.getSession();
@@ -56,7 +59,7 @@ public class LogInCommand implements ActionCommand {
 //        String avatar = Base64.getEncoder().encodeToString(userDto.getAvatar());
 //        httpSession.setAttribute("avatar", avatar);
 
-        return new ServletRouter("/jsp/user-profile.jsp");
+        return new ServletForwarder(servlet, "/jsp/user-profile.jsp");
     }
 
     @Override

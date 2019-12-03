@@ -12,10 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
-public class ForPlayerOwnerAccessSupervisor extends BaseSecuritySupervisor {
+public class ForNonPlayerUserAccessDirector extends BaseSecurityDirector {
 
-    private static final String REDIRECT_TO = PathsContainer.ACCESS_DENIED;
-    private final AccessAllowedForType type = AccessAllowedForType.PLAYER_OWNER;
+    private static final String REDIRECT_USER_TO = PathsContainer.ACCESS_DENIED;
+    private static final String REDIRECT_NON_USER_TO = PathsContainer.LOGIN;
+    private final AccessAllowedForType type = AccessAllowedForType.NON_PLAYER_USERS;
 
     @Override
     public AccessAllowedForType getType() {
@@ -23,17 +24,19 @@ public class ForPlayerOwnerAccessSupervisor extends BaseSecuritySupervisor {
     }
 
     @Override
-    public boolean isAccessAllowed(HttpServletRequest request) {
+    protected boolean isAccessAllowed(HttpServletRequest request) {
         HttpSession session = request.getSession();
         UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
-        UserDto userToProcess = (UserDto) session.getAttribute(AttributesContainer.USER_TO_PROCESS.toString());
-        return user != null && userToProcess != null && user.getPlayerAccountId() == userToProcess.getPlayerAccountId();
+        return user == null || user.getPlayerAccountId() == 0;
     }
-
 
     @Override
     protected Optional<BaseRedirector> getOptionalRedirector(HttpServletRequest request, HttpServletResponse response) {
-        return Optional.of(new RelativePathRedirector(REDIRECT_TO));
+        HttpSession session = request.getSession();
+        UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
+        return user != null
+                ? Optional.of(new RelativePathRedirector(REDIRECT_USER_TO))
+                : Optional.of(new RelativePathRedirector(REDIRECT_NON_USER_TO));
     }
 
 }

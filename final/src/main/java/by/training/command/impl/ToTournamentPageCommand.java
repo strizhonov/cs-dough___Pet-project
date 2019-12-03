@@ -7,10 +7,12 @@ import by.training.constant.AttributesContainer;
 import by.training.dto.TournamentDto;
 import by.training.service.ServiceException;
 import by.training.service.TournamentService;
-import by.training.servlet.ServletRouter;
+import by.training.servlet.HttpRouter;
+import by.training.servlet.ServletForwarder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,13 +28,14 @@ public class ToTournamentPageCommand implements ActionCommand {
     }
 
     @Override
-    public ServletRouter execute(HttpServletRequest request, HttpServletResponse response) throws ActionCommandExecutionException {
+    public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response)
+            throws ActionCommandExecutionException {
         String sId = request.getParameter(AttributesContainer.ID.toString());
         long id = Long.parseLong(sId);
         try {
             TournamentDto tournamentDto = tournamentService.find(id);
             request.setAttribute(AttributesContainer.TOURNAMENT.toString(), tournamentDto);
-            return new ServletRouter("/jsp/tournament-page.jsp");
+            return new ServletForwarder(servlet, "/jsp/tournament-page.jsp");
         } catch (ServiceException e) {
             LOGGER.error("Unable to get tournament with " + id + " id.", e);
             throw new ActionCommandExecutionException("Unable to get tournament with " + id + " id.", e);

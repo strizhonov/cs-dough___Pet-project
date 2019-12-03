@@ -6,10 +6,12 @@ import by.training.command.ActionCommandType;
 import by.training.constant.AttributesContainer;
 import by.training.service.PlayerService;
 import by.training.service.ServiceException;
-import by.training.servlet.ServletRouter;
+import by.training.servlet.HttpRouter;
+import by.training.servlet.ServletForwarder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,7 +26,8 @@ public class JoinTournamentCommand implements ActionCommand {
     }
 
     @Override
-    public ServletRouter execute(HttpServletRequest request, HttpServletResponse response) throws ActionCommandExecutionException {
+    public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response)
+            throws ActionCommandExecutionException {
         String sPlayerId = request.getParameter(AttributesContainer.PLAYER_ID.toString());
         long playerId = Long.parseLong(sPlayerId);
         String sTournamentId = request.getParameter(AttributesContainer.TOURNAMENT_ID.toString());
@@ -35,7 +38,7 @@ public class JoinTournamentCommand implements ActionCommand {
             LOGGER.error("Unable to perform tournament joining.", e);
             throw new ActionCommandExecutionException("Unable to perform tournament joining.", e);
         }
-        return new ServletRouter("/jsp/tournament-page.jsp");
+        return new ServletForwarder(servlet, "/jsp/tournament-page.jsp");
     }
 
     @Override

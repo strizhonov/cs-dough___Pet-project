@@ -7,10 +7,12 @@ import by.training.constant.AttributesContainer;
 import by.training.dto.TournamentDto;
 import by.training.service.ServiceException;
 import by.training.service.TournamentService;
-import by.training.servlet.ServletRouter;
+import by.training.servlet.HttpRouter;
+import by.training.servlet.ServletForwarder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -26,7 +28,8 @@ public class ListTournamentsCommand implements ActionCommand {
     }
 
     @Override
-    public ServletRouter execute(HttpServletRequest request, HttpServletResponse response) throws ActionCommandExecutionException {
+    public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response)
+            throws ActionCommandExecutionException {
         try {
             List<TournamentDto> tournaments = service.findAll();
             request.setAttribute(AttributesContainer.TOURNAMENTS.toString(), tournaments);
@@ -34,7 +37,7 @@ public class ListTournamentsCommand implements ActionCommand {
             LOGGER.error("Unable to get tournaments' list.", e);
             throw new ActionCommandExecutionException("Unable to get tournaments' list.", e);
         }
-        return new ServletRouter("/jsp/tournaments.jsp");
+        return new ServletForwarder(servlet, "/jsp/tournaments.jsp");
     }
 
     public ActionCommandType getType() {

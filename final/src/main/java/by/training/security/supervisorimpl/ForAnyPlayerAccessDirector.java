@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
-public class ForAnyPlayerAccessSupervisor extends BaseSecuritySupervisor {
+public class ForAnyPlayerAccessDirector extends BaseSecurityDirector {
 
     private static final String REDIRECT_USER_TO = PathsContainer.PLAYER_CREATION;
     private static final String REDIRECT_NON_USER_TO = PathsContainer.LOGIN;

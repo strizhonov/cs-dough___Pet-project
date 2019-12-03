@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
-public interface SecuritySupervisor<SECURITY_TYPE> {
+public interface SecurityDirector<SECURITY_TYPE> {
 
     SECURITY_TYPE getType();
 

@@ -1,14 +1,18 @@
 package by.training.appentry;
 
+import by.training.command.ActionCommand;
 import by.training.command.ActionCommandProvider;
 import by.training.command.ActionCommandProviderImpl;
 import by.training.command.impl.*;
 import by.training.connection.ConnectionPool;
 import by.training.connection.ConnectionProvider;
-import by.training.connection.TransactionManager;
 import by.training.connection.TransactionManagerImpl;
 import by.training.dao.*;
-import by.training.security.SecurityService;
+import by.training.security.AccessAllowedForType;
+import by.training.security.SecurityDirector;
+import by.training.security.SecurityProvider;
+import by.training.security.SecurityProviderImpl;
+import by.training.security.supervisorimpl.*;
 import by.training.service.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -92,12 +96,12 @@ public class ApplicationLoader {
         }
         ConnectionProvider connectionProvider = connectionPool.getConnectionProvider();
 
-        TransactionManager userTransactionManager = new TransactionManagerImpl(connectionProvider);
-        TransactionManager tournamentTransactionManager = new TransactionManagerImpl(connectionProvider);
-        TransactionManager walletTransactionManager = new TransactionManagerImpl(connectionProvider);
-        TransactionManager playerTransactionManager = new TransactionManagerImpl(connectionProvider);
-        TransactionManager organizerTransactionManager = new TransactionManagerImpl(connectionProvider);
-        TransactionManager gameTransactionManager = new TransactionManagerImpl(connectionProvider);
+        TransactionManagerImpl userTransactionManager = new TransactionManagerImpl(connectionProvider);
+        TransactionManagerImpl tournamentTransactionManager = new TransactionManagerImpl(connectionProvider);
+        TransactionManagerImpl walletTransactionManager = new TransactionManagerImpl(connectionProvider);
+        TransactionManagerImpl playerTransactionManager = new TransactionManagerImpl(connectionProvider);
+        TransactionManagerImpl organizerTransactionManager = new TransactionManagerImpl(connectionProvider);
+        TransactionManagerImpl gameTransactionManager = new TransactionManagerImpl(connectionProvider);
 
         UserDao userDao = new UserDaoImpl(userTransactionManager);
         TournamentDao tournamentDao = new TournamentDaoImpl(tournamentTransactionManager);
@@ -120,33 +124,56 @@ public class ApplicationLoader {
         TournamentService tournamentService = new TournamentServiceImpl(tournamentDao, gameService, tournamentTransactionManager);
         ActionCommandProvider commandProvider = new ActionCommandProviderImpl();
 
-        ListTournamentsCommand listTournamentsCommand = new ListTournamentsCommand(tournamentService);
-        ToLoginPageCommand toLoginPageCommand = new ToLoginPageCommand();
-        RegisterCommand registerCommand = new RegisterCommand(userService);
-        LogInCommand logInCommand = new LogInCommand(userService);
-        ShowPlayerCommand showPlayerCommand = new ShowPlayerCommand(playerService);
-        CreatePlayerCommand createPlayerCommand = new CreatePlayerCommand(playerService);
-        ToPlayerCreationCommand toPlayerCreationCommand = new ToPlayerCreationCommand();
-        ToTournamentCreationCommand toTournamentCreationCommand = new ToTournamentCreationCommand();
-        CreateTournamentCommand createTournamentCommand = new CreateTournamentCommand(tournamentService);
-        CreateOrganizerCommand createOrganizerCommand = new CreateOrganizerCommand(organizerService);
-        ToOrganizerCreationCommand toOrganizerCreationCommand = new ToOrganizerCreationCommand();
-        ToTournamentPageCommand toTournamentPageCommand = new ToTournamentPageCommand(tournamentService);
-        ChangeLanguageToEnCommand changeLanguageToEnCommand = new ChangeLanguageToEnCommand();
-        ChangeLanguageToRuCommand changeLanguageToRuCommand = new ChangeLanguageToRuCommand();
-        ToUserPageCommand toUserPageCommand = new ToUserPageCommand(userService);
-        ToHomePageCommand toHomePageCommand = new ToHomePageCommand(gameService);
+        ActionCommand listTournamentsCommand = new ListTournamentsCommand(tournamentService);
+        ActionCommand toLoginPageCommand = new ToLoginPageCommand();
+        ActionCommand registerCommand = new RegisterCommand(userService);
+        ActionCommand logInCommand = new LogInCommand(userService);
+        ActionCommand showPlayerCommand = new ShowPlayerCommand(playerService);
+        ActionCommand createPlayerCommand = new CreatePlayerCommand(playerService);
+        ActionCommand toPlayerCreationCommand = new ToPlayerCreationCommand();
+        ActionCommand toTournamentCreationCommand = new ToTournamentCreationCommand();
+        ActionCommand createTournamentCommand = new CreateTournamentCommand(tournamentService);
+        ActionCommand createOrganizerCommand = new CreateOrganizerCommand(organizerService);
+        ActionCommand toOrganizerCreationCommand = new ToOrganizerCreationCommand();
+        ActionCommand toTournamentPageCommand = new ToTournamentPageCommand(tournamentService);
+        ActionCommand changeLanguageToEnCommand = new ChangeLanguageToEnCommand();
+        ActionCommand changeLanguageToRuCommand = new ChangeLanguageToRuCommand();
+        ActionCommand toUserPageCommand = new ToUserPageCommand(userService);
+        ActionCommand toHomePageCommand = new ToHomePageCommand(gameService);
 
         commandProvider.register(listTournamentsCommand, toLoginPageCommand, registerCommand, logInCommand,
                 showPlayerCommand, createPlayerCommand, toPlayerCreationCommand, toTournamentCreationCommand,
                 createTournamentCommand, createOrganizerCommand, toOrganizerCreationCommand, toTournamentPageCommand,
                 changeLanguageToEnCommand, changeLanguageToRuCommand, toUserPageCommand, toHomePageCommand);
 
-        SecurityService securityService = new SecurityServiceImpl();
+        SecurityProvider<AccessAllowedForType> securityProvider = new SecurityProviderImpl();
+        SecurityDirector<AccessAllowedForType> forAdmin = new ForAdminAccessDirector();
+        SecurityDirector<AccessAllowedForType> forAnon = new ForAnonymousAccessDirector();
+        SecurityDirector<AccessAllowedForType> forAny = new ForAnyAccessDirector();
+        SecurityDirector<AccessAllowedForType> forOrg = new ForAnyOrganizerAccessDirector();
+        SecurityDirector<AccessAllowedForType> forPlayer = new ForAnyPlayerAccessDirector();
+        SecurityDirector<AccessAllowedForType> forNonOrg = new ForNonOrganizerAccessDirector();
+        SecurityDirector<AccessAllowedForType> forNonPlayer = new ForNonPlayerUserAccessDirector();
+        SecurityDirector<AccessAllowedForType> forOrgOwner = new ForOrganizerOwnerAccessDirector();
+        SecurityDirector<AccessAllowedForType> forPlayerOwner = new ForPlayerOwnerAccessDirector();
+        SecurityDirector<AccessAllowedForType> forUser = new ForUserAccessDirector();
+        SecurityDirector<AccessAllowedForType> forUserOwner = new ForUserOwnerAccessDirector();
+
+        securityProvider.register(forAdmin);
+        securityProvider.register(forAnon);
+        securityProvider.register(forAny);
+        securityProvider.register(forOrg);
+        securityProvider.register(forPlayer);
+        securityProvider.register(forNonOrg);
+        securityProvider.register(forNonPlayer);
+        securityProvider.register(forOrgOwner);
+        securityProvider.register(forPlayerOwner);
+        securityProvider.register(forUser);
+        securityProvider.register(forUserOwner);
 
         register(connectionProvider, userDao, tournamentDao, walletDao, playerDao, organizerDao,
                 gameDao, userService, tournamentService, playerService, organizerService, gameService,
-                commandProvider, securityService);
+                commandProvider, securityProvider);
 
     }
 

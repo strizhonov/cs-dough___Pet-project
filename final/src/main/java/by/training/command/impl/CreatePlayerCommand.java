@@ -8,13 +8,15 @@ import by.training.dto.PlayerDto;
 import by.training.dto.UserDto;
 import by.training.service.PlayerService;
 import by.training.service.ServiceException;
-import by.training.servlet.ServletRouter;
+import by.training.servlet.HttpRouter;
+import by.training.servlet.ServletForwarder;
 import by.training.validation.PlayerDataValidator;
 import by.training.validation.ValidationException;
 import by.training.validation.ValidationResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -33,7 +35,7 @@ public class CreatePlayerCommand implements ActionCommand {
     }
 
     @Override
-    public ServletRouter execute(HttpServletRequest request, HttpServletResponse response)
+    public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response)
             throws ActionCommandExecutionException {
         String name = request.getParameter(AttributesContainer.NAME.toString());
         String surname = request.getParameter(AttributesContainer.SURNAME.toString());
@@ -41,7 +43,7 @@ public class CreatePlayerCommand implements ActionCommand {
         String country = request.getParameter(AttributesContainer.COUNTRY.toString());
 
         if (!isDataValid(nickname, validator, request)) {
-            return new ServletRouter(request.getContextPath());
+            return new ServletForwarder(servlet, request.getContextPath());
         }
 
         HttpSession httpSession = request.getSession();
@@ -56,7 +58,7 @@ public class CreatePlayerCommand implements ActionCommand {
 
         try {
             playerService.create(playerDto, userDto);
-            return new ServletRouter("/app?command=show_player&id=" + userDto.getPlayerAccountId());
+            return new ServletForwarder(servlet, "/app?command=show_player&id=" + userDto.getPlayerAccountId());
         } catch (ServiceException e) {
             LOGGER.error("Unable to perform player creation and user updating", e);
             throw new ActionCommandExecutionException("Unable to perform player creation and user updating", e);

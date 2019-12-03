@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
-public class ForAnyAccessSupervisor extends BaseSecuritySupervisor {
+public class ForAnyAccessDirector extends BaseSecurityDirector {
 
     private final AccessAllowedForType type = AccessAllowedForType.ANY;
 

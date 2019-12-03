@@ -10,13 +10,15 @@ import by.training.dto.UserDto;
 import by.training.entity.User;
 import by.training.service.ServiceException;
 import by.training.service.UserService;
-import by.training.servlet.ServletRouter;
+import by.training.servlet.HttpRouter;
+import by.training.servlet.ServletForwarder;
 import by.training.validation.RegistrationValidator;
 import by.training.validation.ValidationException;
 import by.training.validation.ValidationResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -36,14 +38,15 @@ public class RegisterCommand implements ActionCommand {
     }
 
     @Override
-    public ServletRouter execute(HttpServletRequest request, HttpServletResponse response) throws ActionCommandExecutionException {
+    public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response)
+            throws ActionCommandExecutionException {
         String username = request.getParameter(AttributesContainer.USERNAME.toString());
         String email = request.getParameter(AttributesContainer.EMAIL.toString());
         String password = request.getParameter(AttributesContainer.PASSWORD.toString());
         String passConfirmation = request.getParameter(AttributesContainer.PASSWORD_CONFIRMATION.toString());
 
         if (!isDataValid(validator, request, username, email, password, passConfirmation)) {
-            return new ServletRouter(request.getContextPath());
+            return new ServletForwarder(servlet, request.getContextPath());
         }
 
         HttpSession session = request.getSession();
@@ -65,7 +68,7 @@ public class RegisterCommand implements ActionCommand {
         }
 
         request.setAttribute(AttributesContainer.MESSAGE.toString(), MessagesContainer.REGISTERED_MESSAGE);
-        return new ServletRouter("/jsp/login.jsp");
+        return new ServletForwarder(servlet, "/jsp/login.jsp");
     }
 
     @Override

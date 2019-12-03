@@ -8,10 +8,12 @@ import by.training.constant.ValuesContainer;
 import by.training.dto.GameDto;
 import by.training.service.GameService;
 import by.training.service.ServiceException;
-import by.training.servlet.ServletRouter;
+import by.training.servlet.HttpRouter;
+import by.training.servlet.ServletForwarder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -27,7 +29,8 @@ public class ToHomePageCommand implements ActionCommand {
     }
 
     @Override
-    public ServletRouter execute(HttpServletRequest request, HttpServletResponse response) throws ActionCommandExecutionException {
+    public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response)
+            throws ActionCommandExecutionException {
         try {
             List<GameDto> latestGames = gameService.findLatest(ValuesContainer.HOME_PAGE_MAX_GAME_RESULTS);
             request.setAttribute(AttributesContainer.LATEST_GAMES.toString(), latestGames);
@@ -35,7 +38,7 @@ public class ToHomePageCommand implements ActionCommand {
             LOGGER.error("Unable to get games' list.", e);
             throw new ActionCommandExecutionException("Unable to get games' list.", e);
         }
-        return new ServletRouter("/jsp/home.jsp");
+        return new ServletForwarder(servlet, "/jsp/home.jsp");
     }
 
     @Override
