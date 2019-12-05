@@ -2,7 +2,11 @@ package by.training.dao;
 
 import by.training.appentry.Bean;
 import by.training.connection.ConnectionProvider;
+import by.training.dao.util.DaoMapper;
+import by.training.dao.util.DateConverter;
+import by.training.dao.util.EntityConverter;
 import by.training.dto.TournamentDto;
+import by.training.entity.Tournament;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,7 +28,7 @@ public class TournamentDaoImpl implements TournamentDao {
                     "FROM tournament " +
                     "WHERE tournament.tournament_id = ?";
     private static final String SELECT_BY_NAME =
-            "SELECT tournament.tournament_id, tournament_logo, prize_pool, buy_in, participants_number, start_date, end_date, tournament_status, organizer_id " +
+            "SELECT tournament.tournament_id, tournament_name, tournament_logo, prize_pool, buy_in, participants_number, start_date, end_date, tournament_status, organizer_id " +
                     "FROM tournament " +
                     "WHERE tournament.tournament_name = ?";
     private static final String UPDATE =
@@ -48,29 +52,26 @@ public class TournamentDaoImpl implements TournamentDao {
 
     private static final Logger LOGGER = LogManager.getLogger(TournamentDaoImpl.class);
     private ConnectionProvider provider;
-    private DaoMapper mapper;
 
     public TournamentDaoImpl(ConnectionProvider provider) {
         this.provider = provider;
-        this.mapper = new DaoMapper();
     }
 
     @Override
     public long save(TournamentDto tournamentDto) throws DaoException {
-        try {
-            Connection connection = provider.getConnection();
-            try (PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
 
-                fillSaveStatement(statement, tournamentDto);
-                statement.executeUpdate();
-                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        return generatedKeys.getLong(1);
-                    }
-                    return 0;
+            Tournament tournament = EntityConverter.fromDto(tournamentDto);
+            fillSaveStatement(statement, tournament);
+            statement.executeUpdate();
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getLong(1);
                 }
-
+                return 0;
             }
+
 
         } catch (SQLException | IOException e) {
             LOGGER.error("Unable to perform entity saving.", e);
@@ -86,15 +87,12 @@ public class TournamentDaoImpl implements TournamentDao {
 
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
-                TournamentDto tournamentDto = null;
                 if (resultSet.next()) {
-                    tournamentDto = compile(resultSet);
-                }
-                if (tournamentDto == null) {
+                    return compile(resultSet);
+                } else {
                     LOGGER.error("Unable to get tournament with " + id + " id, not found.");
                     throw new DaoException("Unable to get tournament with " + id + " id, not found.");
                 }
-                return tournamentDto;
 
             }
 
@@ -106,14 +104,13 @@ public class TournamentDaoImpl implements TournamentDao {
 
     @Override
     public boolean update(TournamentDto tournamentDto) throws DaoException {
-        try {
-            Connection connection = provider.getConnection();
-            try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE)) {
 
-                fillUpdateStatement(statement, tournamentDto);
-                return statement.executeUpdate() > 0;
+            Tournament tournament = EntityConverter.fromDto(tournamentDto);
+            fillUpdateStatement(statement, tournament);
+            return statement.executeUpdate() > 0;
 
-            }
         } catch (SQLException | IOException e) {
             LOGGER.error("Unable to perform entity updating.", e);
             throw new DaoException("Unable to perform entity updating.", e);
@@ -160,11 +157,7 @@ public class TournamentDaoImpl implements TournamentDao {
 
             statement.setString(1, name);
             try (ResultSet resultSet = statement.executeQuery()) {
-                TournamentDto tournamentDto = null;
-                if (resultSet.next()) {
-                    tournamentDto = compile(resultSet);
-                }
-                return tournamentDto;
+                return resultSet.next() ? compile(resultSet) : null;
             }
 
         } catch (SQLException e) {
@@ -213,45 +206,43 @@ public class TournamentDaoImpl implements TournamentDao {
         }
     }
 
-    private void fillSaveStatement(PreparedStatement statement, TournamentDto tournament) throws SQLException, IOException {
+    private void fillSaveStatement(PreparedStatement statement, Tournament tournament) throws SQLException, IOException {
         int i = 0;
         statement.setString(++i, tournament.getName());
-        byte[] avatar = tournament.getLogo();
-        InputStream stream = new ByteArrayInputStream(avatar);
-        statement.setBlob(++i, stream);
-        stream.close();
-        statement.setDouble(++i, tournament.getPrizePool());
-        statement.setDouble(++i, tournament.getBuiIn());
-        statement.setInt(++i, tournament.getPlayersNumber());
-        Date sqlStartDate = DaoUtil.toSqlDate(tournament.getStartDate());
-        statement.setDate(++i, sqlStartDate);
-        Date sqlEndDate = DaoUtil.toSqlDate(tournament.getEndDate());
-        statement.setDate(++i, sqlEndDate);
-        statement.setString(++i, tournament.getStatus().name());
-        statement.setLong(++i, tournament.getOrganizerId());
+        try (InputStream stream = new ByteArrayInputStream(tournament.getLogo())) {
+            statement.setBlob(++i, stream);
+            statement.setDouble(++i, tournament.getPrizePool());
+            statement.setDouble(++i, tournament.getBuiIn());
+            statement.setInt(++i, tournament.getPlayersNumber());
+            Date sqlStartDate = DateConverter.toSqlDate(tournament.getStartDate());
+            statement.setDate(++i, sqlStartDate);
+            Date sqlEndDate = DateConverter.toSqlDate(tournament.getEndDate());
+            statement.setDate(++i, sqlEndDate);
+            statement.setString(++i, tournament.getStatus().name());
+            statement.setLong(++i, tournament.getOrganizerId());
+        }
     }
 
-    private void fillUpdateStatement(PreparedStatement statement, TournamentDto tournament) throws SQLException, IOException {
+    private void fillUpdateStatement(PreparedStatement statement, Tournament tournament) throws SQLException, IOException {
         int i = 0;
         statement.setString(++i, tournament.getName());
-        byte[] avatar = tournament.getLogo();
-        InputStream stream = new ByteArrayInputStream(avatar);
-        statement.setBlob(++i, stream);
-        stream.close();
-        statement.setDouble(++i, tournament.getPrizePool());
-        statement.setDouble(++i, tournament.getBuiIn());
-        statement.setInt(++i, tournament.getPlayersNumber());
-        Date sqlStartDate = DaoUtil.toSqlDate(tournament.getStartDate());
-        statement.setDate(++i, sqlStartDate);
-        Date sqlEndDate = DaoUtil.toSqlDate(tournament.getEndDate());
-        statement.setDate(++i, sqlEndDate);
-        statement.setString(++i, tournament.getStatus().name());
-        statement.setLong(++i, tournament.getOrganizerId());
-        statement.setLong(++i, tournament.getId());
+        try (InputStream stream = new ByteArrayInputStream(tournament.getLogo())) {
+            statement.setBlob(++i, stream);
+            statement.setDouble(++i, tournament.getPrizePool());
+            statement.setDouble(++i, tournament.getBuiIn());
+            statement.setInt(++i, tournament.getPlayersNumber());
+            Date sqlStartDate = DateConverter.toSqlDate(tournament.getStartDate());
+            statement.setDate(++i, sqlStartDate);
+            Date sqlEndDate = DateConverter.toSqlDate(tournament.getEndDate());
+            statement.setDate(++i, sqlEndDate);
+            statement.setString(++i, tournament.getStatus().name());
+            statement.setLong(++i, tournament.getOrganizerId());
+            statement.setLong(++i, tournament.getId());
+        }
     }
 
     private TournamentDto compile(ResultSet resultSet) throws SQLException, DaoException {
-        TournamentDto tournament = mapper.mapTournamentDto(resultSet);
+        TournamentDto tournament = DaoMapper.mapTournamentDto(resultSet);
         List<Long> gamesIds = findAllGamesIdsByTournamentId(tournament.getId());
         List<Long> participantsIds = findAllPlayersIdsByTournamentId(tournament.getId());
         tournament.setGamesIds(gamesIds);

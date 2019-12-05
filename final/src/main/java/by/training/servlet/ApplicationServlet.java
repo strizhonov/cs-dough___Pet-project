@@ -1,5 +1,4 @@
 package by.training.servlet;
-
 import by.training.appentry.ApplicationLoader;
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
@@ -35,7 +34,7 @@ public class ApplicationServlet extends HttpServlet {
 
         try {
             HttpRouter router = command.direct(this, request, response);
-            router.dispatch(request, response);
+            router.dispatchIfNeed(request, response);
         } catch (ActionCommandExecutionException e) {
             LOGGER.error("Unable to execute command " + command.getClass().getSimpleName() + ".", e);
             throw new IllegalStateException("Unable to execute command " + command.getClass().getSimpleName() + ".", e);

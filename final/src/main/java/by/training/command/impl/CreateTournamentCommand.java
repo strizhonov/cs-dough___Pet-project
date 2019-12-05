@@ -8,7 +8,6 @@ import by.training.constant.AttributesContainer;
 import by.training.constant.ValuesContainer;
 import by.training.dto.TournamentDto;
 import by.training.dto.UserDto;
-import by.training.entity.Game;
 import by.training.service.ServiceException;
 import by.training.service.TournamentService;
 import by.training.servlet.HttpRouter;
@@ -106,20 +105,17 @@ public class CreateTournamentCommand implements ActionCommand {
         } catch (ParseException e) {
             LOGGER.warn("End date parsing failed.", e);
         }
-        String sGamesType = request.getParameter(AttributesContainer.GAME_TYPE.toString());
-        Game.GameType commonGameType = Game.GameType.fromString(sGamesType).orElse(ValuesContainer.DEFAULT_GAME_TYPE);
 
         HttpSession httpSession = request.getSession();
         UserDto userDto = (UserDto) httpSession.getAttribute(AttributesContainer.USER.toString());
 
-        return TournamentDto.Builder.aTournamentDto()
+        return new TournamentDto.Builder()
                 .name(name)
-                //  .logo(logo)
+                //.logo(logo)
                 .prizePool(prizePool)
                 .playersNumber(playersNumber)
                 .startDate(startDate)
                 .endDate(endDate)
-                .commonGameType(commonGameType)
                 .organizerId(userDto.getOrganizerId())
                 .build();
     }

@@ -1,6 +1,7 @@
 package by.training.service;
 
 import by.training.dto.PlayerDto;
+import by.training.dto.TournamentJoiningDto;
 import by.training.dto.UserDto;
 
 import java.util.List;
@@ -19,5 +20,5 @@ public interface PlayerService {
 
     PlayerDto findByNickname(String nickname) throws ServiceException;
 
-    boolean join(long playerId, long tournamentId) throws ServiceException;
+    boolean join(TournamentJoiningDto dto) throws ServiceException;
 }

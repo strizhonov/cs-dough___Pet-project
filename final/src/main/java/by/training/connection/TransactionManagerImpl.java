@@ -7,13 +7,17 @@ import org.apache.logging.log4j.Logger;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Bean
 public class TransactionManagerImpl implements TransactionManager, ConnectionProvider {
 
     private static final Logger LOGGER = LogManager.getLogger(TransactionManagerImpl.class);
-    private ThreadLocal<Connection> localConnection = new ThreadLocal<>();
-    private ConnectionProvider connectionProvider;
+    private final ThreadLocal<Connection> localConnection = new ThreadLocal<>();
+    private final Lock lock = new ReentrantLock();
+    private final ConnectionProvider connectionProvider;
 
     public TransactionManagerImpl(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
@@ -21,16 +25,15 @@ public class TransactionManagerImpl implements TransactionManager, ConnectionPro
 
     @Override
     public boolean startTransaction() throws TransactionCommonException {
+        lock.lock();
         try {
             if (localConnection.get() == null) {
                 Connection connection = connectionProvider.getConnection();
                 connection.setAutoCommit(false);
                 localConnection.set(connection);
                 return true;
-            } else {
-                LOGGER.warn("Transaction has already started.");
-                return false;
             }
+            return false;
         } catch (SQLException e) {
             LOGGER.warn("Unable to perform start of the transaction.", e);
             throw new TransactionCommonException("Unable to perform start of the transaction.", e);
@@ -39,41 +42,51 @@ public class TransactionManagerImpl implements TransactionManager, ConnectionPro
 
     @Override
     public boolean commitTransaction() throws TransactionCommonException {
-        Connection connection = localConnection.get();
         try {
+            Connection connection = localConnection.get();
             if (connection != null) {
                 connection.commit();
                 connection.close();
+                localConnection.remove();
+                return true;
             }
+            return false;
         } catch (SQLException e) {
             LOGGER.warn("Unable to perform transaction committing.", e);
             throw new TransactionCommonException("Unable to perform transaction committing.", e);
+        } finally {
+            lock.unlock();
         }
-        localConnection.remove();
-        return true;
     }
-
 
     @Override
     public boolean rollbackTransaction() {
-        Connection connection = localConnection.get();
         try {
+            Connection connection = localConnection.get();
             if (connection != null) {
                 connection.rollback();
                 connection.close();
+                localConnection.remove();
+                return true;
             }
+            return false;
         } catch (SQLException e) {
             LOGGER.warn("Unable to perform transaction rollback.", e);
             throw new TransactionRollbackException("Unable to perform transaction rollback.", e);
+        } finally {
+            lock.unlock();
         }
-        localConnection.remove();
-        return true;
     }
 
     @Override
     public Connection getConnection() throws SQLException {
-        Connection connection = localConnection.get() != null ? localConnection.get() : connectionProvider.getConnection();
+        return localConnection.get() != null
+                ? proxy()
+                : connectionProvider.getConnection();
+    }
 
+    private Connection proxy() {
+        Connection connection = localConnection.get();
         return (Connection) Proxy.newProxyInstance(connection.getClass().getClassLoader(),
                 new Class[]{Connection.class},
                 (proxy, method, args) -> {

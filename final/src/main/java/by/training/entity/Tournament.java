@@ -112,11 +112,7 @@ public class Tournament extends Entity {
         private TournamentStatus status = ValuesContainer.DEFAULT_TOURNAMENT_STATUS;
         private long organizerId;
 
-        private Builder() {
-        }
-
-        public static Builder aTournament() {
-            return new Builder();
+        public Builder() {
         }
 
         public Builder id(long id) {

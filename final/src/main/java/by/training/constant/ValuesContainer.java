@@ -1,13 +1,11 @@
 package by.training.constant;
 
 import by.training.entity.Game;
-import by.training.entity.Game.GameType;
 import by.training.entity.Tournament;
 import by.training.entity.Tournament.TournamentStatus;
 import by.training.entity.User;
 import by.training.entity.User.UserType;
 import by.training.entity.User.Language;
-import by.training.entity.Wallet;
 import by.training.entity.Wallet.*;
 
 public class ValuesContainer {
@@ -16,9 +14,8 @@ public class ValuesContainer {
      * Keep alphabetically
      */
 
-    public static final CurrencyType DEFAULT_CURRENCY = Wallet.CurrencyType.USD;
+    public static final Currency DEFAULT_CURRENCY = Currency.USD;
     public static final String DEFAULT_DATE_FORMAT = "dd-MMM-yyyy";
-    public static final GameType DEFAULT_GAME_TYPE = Game.GameType.BO3;
     public static final Language DEFAULT_LANGUAGE = User.Language.EN;
     public static final TournamentStatus DEFAULT_TOURNAMENT_STATUS = Tournament.TournamentStatus.UPCOMING;
     public static final UserType DEFAULT_USER_TYPE = User.UserType.ANONYMOUS;
@@ -29,7 +26,6 @@ public class ValuesContainer {
     public static final String REFERER = "Referer";
     public static final String RU = "ru";
     public static final String STANDARD_CHARSET_NAME = "UTF-8";
-    public static final String URI_MAIN_PATTERN = "/app";
     public static final String USERNAME_REGEX = "^[A-Za-z0-9]+$";
     public static final String XSS_PROTECTION_NAME = "X-XSS-Protection";
     public static final String XSS_PROTECTION_TYPE = "1;mode=block";

@@ -107,11 +107,7 @@ public class PlayerDto {
         private List<Long> tournamentsIds;
         private List<Long> gamesIds;
 
-        private Builder() {
-        }
-
-        public static Builder aPlayerDto() {
-            return new Builder();
+        public Builder() {
         }
 
         public Builder id(long id) {

@@ -1,19 +1,19 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <fmt:setLocale value="${language}"/>
+<fmt:setBundle basename="content"/>
 <div class="container">
     <div class="home-page">
         <div class="row">
             <div class="col-md-6 col-sm-12">
                 <div class="video-container">
                 <div class="ongoing-tournaments">
-                    <h2>LatestResults</h2>
+                    <h2><fmt:message key="latest.results"/></h2>
                     <c:forEach var="latest_game" items="${requestScope.latest_games}">
                         <tr>
                             <th><a href="${pageContext.request.contextPath}/?command=to_tournament_page&id=${latest_game.endTime}">${latest_game.endTime}</a></th>
                         </tr>
                     </c:forEach>
-<%--                    <iframe class="translation" src="https://player.twitch.tv/?channel=esl_csgo&muted=true&autoplay=false"></iframe>--%>
                 </div>
                 </div>
             </div>

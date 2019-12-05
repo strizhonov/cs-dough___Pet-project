@@ -2,8 +2,10 @@ package by.training.service;
 
 import by.training.appentry.Bean;
 import by.training.connection.TransactionManager;
+import by.training.dao.DaoException;
 import by.training.dao.PlayerDao;
 import by.training.dto.PlayerDto;
+import by.training.dto.TournamentJoiningDto;
 import by.training.dto.UserDto;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,7 +34,8 @@ public class PlayerServiceImpl extends BaseBeanService implements PlayerService 
             userService.update(userDto);
             transactionManager.commitTransaction();
             return playerId;
-        } catch (Throwable e) {
+        } catch (Exception e) {
+            transactionManager.rollbackTransaction();
             LOGGER.error("Unable to save player.", e);
             throw new ServiceException("Unable to save player.", e);
         }
@@ -41,12 +44,8 @@ public class PlayerServiceImpl extends BaseBeanService implements PlayerService 
     @Override
     public PlayerDto find(long id) throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            PlayerDto playerDto = playerDao.get(id);
-            transactionManager.commitTransaction();
-            return playerDto;
-        } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
+            return playerDao.get(id);
+        } catch (DaoException e) {
             LOGGER.error("Unable to get player.", e);
             throw new ServiceException("Unable to get player.", e);
         }
@@ -55,12 +54,8 @@ public class PlayerServiceImpl extends BaseBeanService implements PlayerService 
     @Override
     public boolean update(PlayerDto playerDto) throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            boolean success = playerDao.update(playerDto);
-            transactionManager.commitTransaction();
-            return success;
-        } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
+            return playerDao.update(playerDto);
+        } catch (DaoException e) {
             LOGGER.error("Unable to update player.", e);
             throw new ServiceException("Unable to update player.", e);
         }
@@ -69,12 +64,8 @@ public class PlayerServiceImpl extends BaseBeanService implements PlayerService 
     @Override
     public boolean delete(long id) throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            boolean success = playerDao.delete(id);
-            transactionManager.commitTransaction();
-            return success;
-        } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
+            return playerDao.delete(id);
+        } catch (DaoException e) {
             LOGGER.error("Unable to delete player.", e);
             throw new ServiceException("Unable to delete player.", e);
         }
@@ -83,12 +74,8 @@ public class PlayerServiceImpl extends BaseBeanService implements PlayerService 
     @Override
     public List<PlayerDto> findAll() throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            List<PlayerDto> result = playerDao.findAll();
-            transactionManager.commitTransaction();
-            return result;
-        } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
+            return playerDao.findAll();
+        } catch (DaoException e) {
             LOGGER.error("Players retrieving failed.", e);
             throw new ServiceException("Players retrieving failed.", e);
         }
@@ -97,26 +84,18 @@ public class PlayerServiceImpl extends BaseBeanService implements PlayerService 
     @Override
     public PlayerDto findByNickname(String nickname) throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            PlayerDto playerDto = playerDao.findByNickname(nickname);
-            transactionManager.commitTransaction();
-            return playerDto;
-        } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
+            return playerDao.findByNickname(nickname);
+        } catch (DaoException e) {
             LOGGER.error("Player retrieving failed.", e);
             throw new ServiceException("Player retrieving failed.", e);
         }
     }
 
     @Override
-    public boolean join(long playerId, long tournamentId) throws ServiceException {
+    public boolean join(TournamentJoiningDto dto) throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            boolean success = playerDao.addTournament(playerId, tournamentId);
-            transactionManager.commitTransaction();
-            return success;
+            return playerDao.addTournament(dto);
         } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
             LOGGER.error("Failed to join tournament id and player id.", e);
             throw new ServiceException("Failed to join tournament id and player id.", e);
         }

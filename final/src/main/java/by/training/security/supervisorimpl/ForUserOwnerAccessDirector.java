@@ -26,8 +26,8 @@ public class ForUserOwnerAccessDirector extends BaseSecurityDirector {
     public boolean isAccessAllowed(HttpServletRequest request) {
         HttpSession session = request.getSession();
         UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
-        UserDto userToProcess = (UserDto) session.getAttribute(AttributesContainer.USER_TO_PROCESS.toString());
-        return user != null && userToProcess != null && user.getId() == userToProcess.getId();
+        String sToProcessId = request.getParameter(AttributesContainer.ID.toString());
+        return user != null && sToProcessId != null && user.getId() == Long.parseLong(sToProcessId);
     }
 
 

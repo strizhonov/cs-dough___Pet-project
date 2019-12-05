@@ -2,7 +2,9 @@ package by.training.service;
 
 import by.training.appentry.Bean;
 import by.training.connection.TransactionManager;
+import by.training.dao.DaoException;
 import by.training.dao.UserDao;
+import by.training.dao.WalletDao;
 import by.training.dto.UserDto;
 import by.training.dto.WalletDto;
 import by.training.security.StringDataCoder;
@@ -17,13 +19,13 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
 
     private static Logger LOGGER = LogManager.getLogger(UserServiceImpl.class);
     private UserDao userDao;
-    private WalletService walletService;
+    private WalletDao walletDao;
     private StringDataCoder coder;
 
-    public UserServiceImpl(UserDao userDao, WalletService walletService, TransactionManager transactionManager) throws ServiceException {
+    public UserServiceImpl(UserDao userDao, WalletDao walletDao, TransactionManager transactionManager) throws ServiceException {
         super(transactionManager);
         this.userDao = userDao;
-        this.walletService = walletService;
+        this.walletDao = walletDao;
         try {
             this.coder = new StringDataCoder();
         } catch (GeneralSecurityException e) {
@@ -36,10 +38,6 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
     public long registerUser(UserDto userDto) throws ServiceException {
         try {
             transactionManager.startTransaction();
-            WalletDto walletDto = new WalletDto();
-            long walletId = walletService.create(walletDto);
-            userDto.setWalletId(walletId);
-
             String password = userDto.getPassword();
             if (password == null) {
                 throw new GeneralSecurityException();
@@ -48,11 +46,16 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
             String encrypted = coder.encrypt(password, passKey);
             userDto.setPassword(encrypted);
             userDto.setPasswordKey(passKey);
+            long userId = userDao.save(userDto);
 
-            long id = userDao.save(userDto);
+            WalletDto walletDto = new WalletDto();
+            walletDto.setUserId(userId);
+            walletDao.save(walletDto);
+            userDto.setBalance(walletDto.getBalance());
+            userDto.setCurrency(walletDto.getCurrency());
             transactionManager.commitTransaction();
-            return id;
-        } catch (Throwable e) {
+            return userId;
+        } catch (Exception e) {
             transactionManager.rollbackTransaction();
             LOGGER.error("User registering failed.", e);
             throw new ServiceException("User registering failed.", e);
@@ -80,7 +83,7 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
             }
             transactionManager.commitTransaction();
             return userDto;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             transactionManager.rollbackTransaction();
             LOGGER.error("User login failed.", e);
             throw new ServiceException("User login failed.", e);
@@ -91,12 +94,8 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
     @Override
     public List<UserDto> getAll() throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            List<UserDto> result = userDao.findAll();
-            transactionManager.commitTransaction();
-            return result;
-        } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
+            return userDao.findAll();
+        } catch (DaoException e) {
             LOGGER.error("Users retrieving failed.", e);
             throw new ServiceException("Users retrieving failed.", e);
         }
@@ -105,12 +104,8 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
     @Override
     public UserDto find(long id) throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            UserDto userDto = userDao.get(id);
-            transactionManager.commitTransaction();
-            return userDto;
-        } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
+            return userDao.get(id);
+        } catch (DaoException e) {
             LOGGER.error("User retrieving failed.", e);
             throw new ServiceException("User retrieving failed.", e);
         }
@@ -119,12 +114,8 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
     @Override
     public boolean delete(long id) throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            boolean success = userDao.delete(id);
-            transactionManager.commitTransaction();
-            return success;
-        } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
+            return userDao.delete(id);
+        } catch (DaoException e) {
             LOGGER.error("User deleting failed.", e);
             throw new ServiceException("User deleting failed.", e);
         }
@@ -133,12 +124,8 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
     @Override
     public boolean update(UserDto userDto) throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            boolean success = userDao.update(userDto);
-            transactionManager.commitTransaction();
-            return success;
-        } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
+            return userDao.update(userDto);
+        } catch (DaoException e) {
             LOGGER.error("User updating failed.", e);
             throw new ServiceException("User updating failed.", e);
         }
@@ -147,12 +134,8 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
     @Override
     public UserDto findByUsername(String username) throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            UserDto userDto = userDao.findByUsername(username);
-            transactionManager.commitTransaction();
-            return userDto;
-        } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
+            return userDao.findByUsername(username);
+        } catch (DaoException e) {
             LOGGER.error("User retrieving failed.", e);
             throw new ServiceException("User retrieving failed.", e);
         }
@@ -161,12 +144,8 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
     @Override
     public UserDto findByEmail(String email) throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            UserDto userDto = userDao.findByEmail(email);
-            transactionManager.commitTransaction();
-            return userDto;
-        } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
+            return userDao.findByEmail(email);
+        } catch (DaoException e) {
             LOGGER.error("User retrieving failed.", e);
             throw new ServiceException("User retrieving failed.", e);
         }

@@ -39,11 +39,7 @@ public class Organizer extends Entity {
         private byte[] logo = new byte[0];
         private long userId;
 
-        private Builder() {
-        }
-
-        public static Builder anOrganizer() {
-            return new Builder();
+        public Builder() {
         }
 
         public Builder id(long id) {

@@ -2,6 +2,7 @@ package by.training.dto;
 
 import by.training.constant.ValuesContainer;
 import by.training.entity.User;
+import by.training.entity.Wallet;
 
 public class UserDto {
 
@@ -13,9 +14,29 @@ public class UserDto {
     private String email;
     private User.UserType type = ValuesContainer.DEFAULT_USER_TYPE;
     private User.Language language = ValuesContainer.DEFAULT_LANGUAGE;
-    private long walletId;
+    private double balance = 0;
+    private Wallet.Currency currency = ValuesContainer.DEFAULT_CURRENCY;
     private long playerAccountId;
     private long organizerId;
+
+    private UserDto(Builder builder) {
+        setId(builder.id);
+        setAvatar(builder.avatar);
+        setUsername(builder.username);
+        setPassword(builder.password);
+        setPasswordKey(builder.passwordKey);
+        setEmail(builder.email);
+        setType(builder.type);
+        setLanguage(builder.language);
+        setBalance(builder.balance);
+        setCurrency(builder.currency);
+        setPlayerAccountId(builder.playerAccountId);
+        setOrganizerId(builder.organizerId);
+    }
+
+    public UserDto() {
+
+    }
 
     public long getId() {
         return id;
@@ -81,12 +102,20 @@ public class UserDto {
         this.language = language;
     }
 
-    public long getWalletId() {
-        return walletId;
+    public double getBalance() {
+        return balance;
     }
 
-    public void setWalletId(long walletId) {
-        this.walletId = walletId;
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public Wallet.Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Wallet.Currency currency) {
+        this.currency = currency;
     }
 
     public long getPlayerAccountId() {
@@ -114,86 +143,76 @@ public class UserDto {
         private String email;
         private User.UserType type = ValuesContainer.DEFAULT_USER_TYPE;
         private User.Language language = ValuesContainer.DEFAULT_LANGUAGE;
-        private long walletId;
+        private double balance;
+        private Wallet.Currency currency = ValuesContainer.DEFAULT_CURRENCY;
         private long playerAccountId;
         private long organizerId;
 
-        private Builder() {
+        public Builder() {
         }
 
-        public static Builder anUserDto() {
-            return new Builder();
-        }
-
-        public Builder id(long id) {
-            this.id = id;
+        public Builder id(long val) {
+            id = val;
             return this;
         }
 
-        public Builder avatar(byte[] avatar) {
-            this.avatar = avatar;
+        public Builder avatar(byte[] val) {
+            avatar = val;
             return this;
         }
 
-        public Builder username(String username) {
-            this.username = username;
+        public Builder username(String val) {
+            username = val;
             return this;
         }
 
-        public Builder password(String password) {
-            this.password = password;
+        public Builder password(String val) {
+            password = val;
             return this;
         }
 
-        public Builder passwordKey(String passwordKey) {
-            this.passwordKey = passwordKey;
+        public Builder passwordKey(String val) {
+            passwordKey = val;
             return this;
         }
 
-        public Builder email(String email) {
-            this.email = email;
+        public Builder email(String val) {
+            email = val;
             return this;
         }
 
-        public Builder type(User.UserType type) {
-            this.type = type;
+        public Builder type(User.UserType val) {
+            type = val;
             return this;
         }
 
-        public Builder language(User.Language language) {
-            this.language = language;
+        public Builder language(User.Language val) {
+            language = val;
             return this;
         }
 
-        public Builder walletId(long walletId) {
-            this.walletId = walletId;
+        public Builder balance(double val) {
+            balance = val;
             return this;
         }
 
-        public Builder playerAccountId(long playerAccountId) {
-            this.playerAccountId = playerAccountId;
+        public Builder currency(Wallet.Currency val) {
+            currency = val;
             return this;
         }
 
-        public Builder organizerId(long organizerId) {
-            this.organizerId = organizerId;
+        public Builder playerAccountId(long val) {
+            playerAccountId = val;
+            return this;
+        }
+
+        public Builder organizerId(long val) {
+            organizerId = val;
             return this;
         }
 
         public UserDto build() {
-            UserDto userDto = new UserDto();
-            userDto.setId(id);
-            userDto.setAvatar(avatar);
-            userDto.setUsername(username);
-            userDto.setPassword(password);
-            userDto.setPasswordKey(passwordKey);
-            userDto.setEmail(email);
-            userDto.setType(type);
-            userDto.setLanguage(language);
-            userDto.setWalletId(walletId);
-            userDto.setPlayerAccountId(playerAccountId);
-            userDto.setOrganizerId(organizerId);
-            return userDto;
+            return new UserDto(this);
         }
     }
 }

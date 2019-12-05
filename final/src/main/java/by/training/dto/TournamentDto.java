@@ -22,7 +22,6 @@ public class TournamentDto {
     private long organizerId;
     private List<Long> gamesIds = new ArrayList<>();
     private List<Long> participantsIds = new ArrayList<>();
-    private Game.GameType commonGameType;
 
     public long getId() {
         return id;
@@ -120,14 +119,6 @@ public class TournamentDto {
         this.participantsIds = participantsIds;
     }
 
-    public Game.GameType getCommonGameType() {
-        return commonGameType;
-    }
-
-    public void setCommonGameType(Game.GameType commonGameType) {
-        this.commonGameType = commonGameType;
-    }
-
     public static final class Builder {
         private long id;
         private String name;
@@ -141,13 +132,8 @@ public class TournamentDto {
         private long organizerId;
         private List<Long> gamesIds = new ArrayList<>();
         private List<Long> participantsIds = new ArrayList<>();
-        private Game.GameType commonGameType;
 
-        private Builder() {
-        }
-
-        public static Builder aTournamentDto() {
-            return new Builder();
+        public Builder() {
         }
 
         public Builder id(long id) {
@@ -210,11 +196,6 @@ public class TournamentDto {
             return this;
         }
 
-        public Builder commonGameType(Game.GameType commonGameType) {
-            this.commonGameType = commonGameType;
-            return this;
-        }
-
         public TournamentDto build() {
             TournamentDto tournamentDto = new TournamentDto();
             tournamentDto.setId(id);
@@ -229,7 +210,6 @@ public class TournamentDto {
             tournamentDto.setOrganizerId(organizerId);
             tournamentDto.setGamesIds(gamesIds);
             tournamentDto.setParticipantsIds(participantsIds);
-            tournamentDto.setCommonGameType(commonGameType);
             return tournamentDto;
         }
     }

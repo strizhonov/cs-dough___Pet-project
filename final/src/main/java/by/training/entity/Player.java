@@ -79,11 +79,7 @@ public class Player extends Entity {
         private double totalWon;
         private long userId;
 
-        private Builder() {
-        }
-
-        public static Builder aPlayer() {
-            return new Builder();
+        public Builder() {
         }
 
         public Builder id(long id) {
@@ -128,6 +124,7 @@ public class Player extends Entity {
 
         public Player build() {
             Player player = new Player();
+            player.setId(id);
             player.setName(name);
             player.setSurname(surname);
             player.setNickname(nickname);

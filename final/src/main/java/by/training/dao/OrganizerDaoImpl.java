@@ -2,7 +2,11 @@ package by.training.dao;
 
 import by.training.appentry.Bean;
 import by.training.connection.ConnectionProvider;
+import by.training.dao.util.DaoMapper;
+import by.training.dao.util.EntityConverter;
 import by.training.dto.OrganizerDto;
+import by.training.entity.Organizer;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,11 +48,9 @@ public class OrganizerDaoImpl implements OrganizerDao {
 
     private static final Logger LOGGER = LogManager.getLogger(OrganizerDaoImpl.class);
     private ConnectionProvider provider;
-    private DaoMapper mapper;
 
     public OrganizerDaoImpl(ConnectionProvider provider) {
         this.provider = provider;
-        this.mapper = new DaoMapper();
     }
 
     @Override
@@ -56,7 +58,8 @@ public class OrganizerDaoImpl implements OrganizerDao {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
 
-            fillSaveStatement(statement, organizerDto);
+            Organizer organizer = EntityConverter.fromDto(organizerDto);
+            fillSaveStatement(statement, organizer);
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -78,15 +81,12 @@ public class OrganizerDaoImpl implements OrganizerDao {
 
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
-                OrganizerDto organizerDto = null;
                 if (resultSet.next()) {
-                    organizerDto = compile(resultSet);
-                }
-                if (organizerDto == null) {
+                    return compile(resultSet);
+                } else {
                     LOGGER.error("Unable to get organizer with " + id + " id, not found.");
                     throw new DaoException("Unable to get organizer with " + id + " id, not found.");
                 }
-                return organizerDto;
             }
 
         } catch (SQLException e) {
@@ -100,7 +100,8 @@ public class OrganizerDaoImpl implements OrganizerDao {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE)) {
 
-            fillUpdateStatement(statement, organizerDto);
+            Organizer organizer = EntityConverter.fromDto(organizerDto);
+            fillUpdateStatement(statement, organizer);
             return statement.executeUpdate() > 0;
 
         } catch (SQLException | IOException e) {
@@ -162,7 +163,6 @@ public class OrganizerDaoImpl implements OrganizerDao {
         }
     }
 
-
     private List<Long> findAllTournamentsIdsByOrganizerId(long organizerId) throws DaoException {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(SELECT_ORGANIZER_TOURNAMENTS_IDS)) {
@@ -182,28 +182,27 @@ public class OrganizerDaoImpl implements OrganizerDao {
         }
     }
 
-    private void fillSaveStatement(PreparedStatement statement, OrganizerDto organizer) throws IOException, SQLException {
+    private void fillSaveStatement(PreparedStatement statement, Organizer organizer) throws IOException, SQLException {
         int i = 0;
         statement.setString(++i, organizer.getName());
-        byte[] avatar = organizer.getLogo();
-        InputStream stream = new ByteArrayInputStream(avatar);
-        statement.setBlob(++i, stream);
-        stream.close();
-        statement.setLong(++i, organizer.getUserId());
+        try (InputStream stream = new ByteArrayInputStream(organizer.getLogo())) {
+            statement.setBlob(++i, stream);
+            statement.setLong(++i, organizer.getUserId());
+        }
     }
 
-    private void fillUpdateStatement(PreparedStatement statement, OrganizerDto organizer) throws SQLException, IOException {
+    private void fillUpdateStatement(PreparedStatement statement, Organizer organizer) throws SQLException, IOException {
         int i = 0;
         statement.setString(++i, organizer.getName());
-        InputStream stream = new ByteArrayInputStream(organizer.getLogo());
-        statement.setBlob(++i, stream);
-        stream.close();
-        statement.setLong(++i, organizer.getUserId());
-        statement.setLong(++i, organizer.getId());
+        try (InputStream stream = new ByteArrayInputStream(organizer.getLogo())) {
+            statement.setBlob(++i, stream);
+            statement.setLong(++i, organizer.getUserId());
+            statement.setLong(++i, organizer.getId());
+        }
     }
 
     private OrganizerDto compile(ResultSet resultSet) throws SQLException, DaoException {
-        OrganizerDto organizerDto = mapper.mapOrganizerDto(resultSet);
+        OrganizerDto organizerDto = DaoMapper.mapOrganizerDto(resultSet);
         List<Long> tournamentsId = findAllTournamentsIdsByOrganizerId(organizerDto.getId());
         organizerDto.setTournamentsIdList(tournamentsId);
         return organizerDto;

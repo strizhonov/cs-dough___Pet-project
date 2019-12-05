@@ -2,7 +2,10 @@ package by.training.dao;
 
 import by.training.appentry.Bean;
 import by.training.connection.ConnectionProvider;
+import by.training.dao.util.EntityConverter;
+import by.training.dao.util.DaoMapper;
 import by.training.dto.WalletDto;
+import by.training.entity.Wallet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,34 +17,28 @@ import java.util.List;
 public class WalletDaoImpl implements WalletDao {
 
     private static final String INSERT =
-            "INSERT INTO wallet (currency, balance) " +
-                    "VALUES (?,?)";
+            "INSERT INTO wallet (balance, currency, user_id) " +
+                    "VALUES (?,?,?)";
     private static final String SELECT =
-            "SELECT wallet.wallet_id, currency, balance, u.user_id " +
+            "SELECT wallet.wallet_id, balance, currency, user_id " +
                     "FROM wallet " +
-                    "INNER JOIN user_account u " +
-                    "ON wallet.wallet_id = u.wallet_id " +
-                    "WHERE wallet.wallet_id = ?";
+                    "WHERE wallet_id=?";
     private static final String UPDATE =
             "UPDATE wallet " +
-                    "SET currency=?, balance=? " +
-                    "WHERE wallet_id = ?";
+                    "SET wallet_id=?, balance=?, currency=?, user_id=? " +
+                    "WHERE wallet_id=?";
     private static final String DELETE =
             "DELETE FROM wallet " +
-                    "WHERE wallet_id = ?";
+                    "WHERE wallet_id=?";
     private static final String SELECT_ALL =
-            "SELECT wallet.wallet_id, currency, balance, u.user_id " +
-                    "FROM wallet " +
-                    "INNER JOIN user_account u " +
-                    "ON wallet.wallet_id = u.wallet_id";
+            "SELECT wallet_id, balance, currency, user_id " +
+                    "FROM wallet";
 
     private static final Logger LOGGER = LogManager.getLogger(WalletDaoImpl.class);
     private ConnectionProvider provider;
-    private DaoMapper mapper;
 
     public WalletDaoImpl(ConnectionProvider provider) {
         this.provider = provider;
-        this.mapper = new DaoMapper();
     }
 
     @Override
@@ -49,7 +46,8 @@ public class WalletDaoImpl implements WalletDao {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
 
-            fillSaveStatement(statement, walletDto);
+            Wallet entity = EntityConverter.fromDto(walletDto);
+            fillSaveStatement(statement, entity);
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -73,7 +71,7 @@ public class WalletDaoImpl implements WalletDao {
             try (ResultSet resultSet = statement.executeQuery()) {
                 WalletDto walletDto = null;
                 if (resultSet.next()) {
-                    walletDto = mapper.mapWalletDto(resultSet);
+                    walletDto = DaoMapper.mapWalletDto(resultSet);
                 }
                 if (walletDto == null) {
                     LOGGER.error("Unable to get wallet with " + id + " id, not found.");
@@ -93,7 +91,8 @@ public class WalletDaoImpl implements WalletDao {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE)) {
 
-            fillUpdateStatement(statement, walletDto);
+            Wallet entity = EntityConverter.fromDto(walletDto);
+            fillUpdateStatement(statement, entity);
             return statement.executeUpdate() > 0;
 
         } catch (SQLException e) {
@@ -119,12 +118,12 @@ public class WalletDaoImpl implements WalletDao {
     @Override
     public List<WalletDto> findAll() throws DaoException {
         try (Connection connection = provider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_ALL)) {
-            ResultSet resultSet = statement.executeQuery();
+             PreparedStatement statement = connection.prepareStatement(SELECT_ALL);
+             ResultSet resultSet = statement.executeQuery()) {
 
             List<WalletDto> result = new ArrayList<>();
             while (resultSet.next()) {
-                WalletDto walletDto = mapper.mapWalletDto(resultSet);
+                WalletDto walletDto = DaoMapper.mapWalletDto(resultSet);
                 result.add(walletDto);
             }
             return result;
@@ -135,17 +134,19 @@ public class WalletDaoImpl implements WalletDao {
         }
     }
 
-    private void fillSaveStatement(PreparedStatement statement, WalletDto wallet) throws SQLException {
+    private void fillSaveStatement(PreparedStatement statement, Wallet wallet) throws SQLException {
         int i = 0;
-        statement.setString(++i, wallet.getCurrency().name());
         statement.setDouble(++i, wallet.getBalance());
+        statement.setString(++i, wallet.getCurrency().name());
+        statement.setDouble(++i, wallet.getUserId());
     }
 
 
-    private void fillUpdateStatement(PreparedStatement statement, WalletDto wallet) throws SQLException {
+    private void fillUpdateStatement(PreparedStatement statement, Wallet wallet) throws SQLException {
         int i = 0;
-        statement.setString(++i, wallet.getCurrency().name());
         statement.setDouble(++i, wallet.getBalance());
+        statement.setString(++i, wallet.getCurrency().name());
+        statement.setDouble(++i, wallet.getUserId());
         statement.setLong(++i, wallet.getId());
     }
 

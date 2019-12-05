@@ -66,11 +66,7 @@ public class GameServerDto {
         private String path;
         private long gameId;
 
-        private Builder() {
-        }
-
-        public static Builder aGameServerDto() {
-            return new Builder();
+        public Builder() {
         }
 
         public Builder id(long id) {

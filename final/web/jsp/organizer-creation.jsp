@@ -18,5 +18,7 @@
 
 
 <jsp:include page="/jsp/jsp-block/footer.jsp"/>
+<script src="${pageContext.request.contextPath}/js/preview.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/js/edit.js" type="text/javascript"></script>
 </body>
 </html>

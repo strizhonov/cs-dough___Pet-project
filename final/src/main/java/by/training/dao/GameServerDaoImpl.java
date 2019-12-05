@@ -2,7 +2,10 @@ package by.training.dao;
 
 import by.training.appentry.Bean;
 import by.training.connection.ConnectionProvider;
+import by.training.dao.util.DaoMapper;
+import by.training.dao.util.EntityConverter;
 import by.training.dto.GameServerDto;
+import by.training.entity.GameServerEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,11 +36,9 @@ public class GameServerDaoImpl implements GameServerDao {
 
     private static final Logger LOGGER = LogManager.getLogger(GameServerDaoImpl.class);
     private ConnectionProvider provider;
-    private DaoMapper mapper;
 
     public GameServerDaoImpl(ConnectionProvider provider) {
         this.provider = provider;
-        this.mapper = new DaoMapper();
     }
 
     @Override
@@ -45,7 +46,8 @@ public class GameServerDaoImpl implements GameServerDao {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
 
-            fillSaveStatement(statement, gameServerDto);
+            GameServerEntity entity = EntityConverter.fromDto(gameServerDto);
+            fillSaveStatement(statement, entity);
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -69,13 +71,11 @@ public class GameServerDaoImpl implements GameServerDao {
             try (ResultSet resultSet = statement.executeQuery()) {
                 GameServerDto gameServerDto = null;
                 if (resultSet.next()) {
-                    gameServerDto = mapper.mapGameServerDto(resultSet);
-                }
-                if (gameServerDto == null) {
+                    return DaoMapper.mapGameServerDto(resultSet);
+                } else  {
                     LOGGER.error("Unable to get game server with " + id + " id, not found.");
                     throw new DaoException("Unable to get game server with " + id + " id, not found.");
                 }
-                return gameServerDto;
             }
 
         } catch (SQLException e) {
@@ -89,7 +89,8 @@ public class GameServerDaoImpl implements GameServerDao {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE)) {
 
-            fillUpdateStatement(statement, gameServerDto);
+            GameServerEntity entity = EntityConverter.fromDto(gameServerDto);
+            fillUpdateStatement(statement, entity);
             return statement.executeUpdate() > 0;
 
         } catch (SQLException e) {
@@ -120,7 +121,7 @@ public class GameServerDaoImpl implements GameServerDao {
 
             List<GameServerDto> result = new ArrayList<>();
             while (resultSet.next()) {
-                GameServerDto gameServerDto = mapper.mapGameServerDto(resultSet);
+                GameServerDto gameServerDto = DaoMapper.mapGameServerDto(resultSet);
                 result.add(gameServerDto);
             }
             return result;
@@ -131,7 +132,7 @@ public class GameServerDaoImpl implements GameServerDao {
         }
     }
 
-    private void fillSaveStatement(PreparedStatement statement, GameServerDto gameServer) throws SQLException {
+    private void fillSaveStatement(PreparedStatement statement, GameServerEntity gameServer) throws SQLException {
         int i = 0;
         statement.setInt(++i, gameServer.getPointsToWin());
         statement.setInt(++i, gameServer.getPlayerOnePoints());
@@ -140,7 +141,7 @@ public class GameServerDaoImpl implements GameServerDao {
         statement.setLong(++i, gameServer.getGameId());
     }
 
-    private void fillUpdateStatement(PreparedStatement statement, GameServerDto gameServer) throws SQLException {
+    private void fillUpdateStatement(PreparedStatement statement, GameServerEntity gameServer) throws SQLException {
         int i = 0;
         statement.setInt(++i, gameServer.getPointsToWin());
         statement.setInt(++i, gameServer.getPlayerOnePoints());

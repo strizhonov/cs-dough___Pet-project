@@ -18,8 +18,13 @@ public class ServletForwarder implements HttpRouter {
     }
 
     @Override
-    public void dispatch(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void dispatchIfNeed(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         RequestDispatcher dispatcher = servlet.getServletContext().getRequestDispatcher(path);
-        dispatcher.forward(request, response);
+        try {
+            dispatcher.forward(request, response);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
     }
 }

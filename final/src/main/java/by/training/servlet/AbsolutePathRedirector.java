@@ -11,7 +11,7 @@ public class AbsolutePathRedirector extends BaseRedirector {
     }
 
     @Override
-    public void dispatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void dispatchIfNeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.sendRedirect(path);
     }
 }

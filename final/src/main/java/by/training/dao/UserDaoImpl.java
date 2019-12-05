@@ -2,7 +2,11 @@ package by.training.dao;
 
 import by.training.appentry.Bean;
 import by.training.connection.ConnectionProvider;
+import by.training.dao.util.EntityConverter;
+import by.training.dao.util.DaoMapper;
+import by.training.dto.LoginDto;
 import by.training.dto.UserDto;
+import by.training.entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,35 +21,43 @@ import java.util.List;
 public class UserDaoImpl implements UserDao {
 
     private static final String INSERT =
-            "INSERT INTO user_account (account_avatar, username, user_password, password_key, user_email, user_type, language, wallet_id) " +
-                    "VALUES (?,?,?,?,?,?,?,?)";
+            "INSERT INTO user_account (account_avatar, username, user_password, password_key, user_email, user_type, lang) " +
+                    "VALUES (?,?,?,?,?,?,?)";
     private static final String SELECT =
-            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, language, wallet_id, p.player_id, o.organizer_id " +
+            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.balance, w.currency, p.player_id, o.organizer_id " +
                     "FROM user_account " +
+                    "INNER JOIN wallet w " +
+                    "ON user_account.user_id = w.user_id " +
                     "LEFT JOIN player p " +
                     "ON user_account.user_id = p.user_account_id " +
                     "LEFT JOIN organizer o " +
                     "ON user_account.user_id = o.user_account_id " +
                     "WHERE user_account.user_id=?";
     private static final String SELECT_BY_USERNAME =
-            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, language, wallet_id, p.player_id, o.organizer_id " +
+            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.balance, w.currency, p.player_id, o.organizer_id " +
                     "FROM user_account " +
+                    "INNER JOIN wallet w " +
+                    "ON user_account.user_id = w.user_id " +
                     "LEFT JOIN player p " +
                     "ON user_account.user_id = p.user_account_id " +
                     "LEFT JOIN organizer o " +
                     "ON user_account.user_id = o.user_account_id " +
                     "WHERE username=?";
     private static final String SELECT_BY_EMAIL =
-            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_type, language  wallet_id, p.player_id, o.organizer_id " +
+            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.balance, w.currency, p.player_id, o.organizer_id " +
                     "FROM user_account " +
+                    "INNER JOIN wallet w " +
+                    "ON user_account.user_id = w.user_id " +
                     "LEFT JOIN player p " +
                     "ON user_account.user_id = p.user_account_id " +
                     "LEFT JOIN organizer o " +
                     "ON user_account.user_id = o.user_account_id " +
                     "WHERE user_email=?";
     private static final String SELECT_BY_USERNAME_AND_PASSWORD =
-            "SELECT user_account.user_id, account_avatar, password_key, user_email, user_type, language, wallet_id, p.player_id, o.organizer_id " +
+            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.balance, w.currency, p.player_id, o.organizer_id " +
                     "FROM user_account " +
+                    "INNER JOIN wallet w " +
+                    "ON user_account.user_id = w.user_id " +
                     "LEFT JOIN player p " +
                     "ON user_account.user_id = p.user_account_id " +
                     "LEFT JOIN organizer o " +
@@ -53,14 +65,16 @@ public class UserDaoImpl implements UserDao {
                     "WHERE username=? AND user_password=?";
     private static final String UPDATE =
             "UPDATE user_account " +
-                    "SET account_avatar=?, username=?, user_password=?, password_key=?, user_email=?, user_type=?, language=?, wallet_id=? " +
+                    "SET account_avatar=?, username=?, user_password=?, password_key=?, user_email=?, user_type=?, lang=? " +
                     "WHERE user_id = ?";
     private static final String DELETE =
             "DELETE FROM user_account " +
                     "WHERE user_id = ?";
-    private static final String SELECT_ALL_FOR =
-            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, language, wallet_id, p.player_id, o.organizer_id " +
+    private static final String SELECT_ALL =
+            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.balance, w.currency, p.player_id, o.organizer_id " +
                     "FROM user_account " +
+                    "INNER JOIN wallet w " +
+                    "ON user_account.user_id = w.user_id " +
                     "LEFT JOIN player p " +
                     "ON user_account.user_id = p.user_account_id " +
                     "LEFT JOIN organizer o " +
@@ -68,11 +82,9 @@ public class UserDaoImpl implements UserDao {
 
     private static final Logger LOGGER = LogManager.getLogger(UserDaoImpl.class);
     private ConnectionProvider provider;
-    private DaoMapper mapper;
 
     public UserDaoImpl(ConnectionProvider provider) {
         this.provider = provider;
-        this.mapper = new DaoMapper();
     }
 
     @Override
@@ -80,7 +92,8 @@ public class UserDaoImpl implements UserDao {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
 
-            fillSaveStatement(statement, userDto);
+            User entity = EntityConverter.fromDto(userDto);
+            fillSaveStatement(statement, entity);
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -102,15 +115,12 @@ public class UserDaoImpl implements UserDao {
 
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
-                UserDto userDto = null;
                 if (resultSet.next()) {
-                    userDto = mapper.mapUserDto(resultSet);
-                }
-                if (userDto == null) {
+                    return DaoMapper.mapUserDto(resultSet);
+                } else  {
                     LOGGER.error("Unable to get user with " + id + " id, not found.");
                     throw new DaoException("Unable to get user with " + id + " id not found.");
                 }
-                return userDto;
             }
 
         } catch (SQLException e) {
@@ -124,7 +134,8 @@ public class UserDaoImpl implements UserDao {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE)) {
 
-            fillUpdateStatement(statement, userDto);
+            User entity = EntityConverter.fromDto(userDto);
+            fillUpdateStatement(statement, entity);
             return statement.executeUpdate() > 0;
 
         } catch (SQLException | IOException e) {
@@ -150,12 +161,12 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<UserDto> findAll() throws DaoException {
         try (Connection connection = provider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_ALL_FOR);
+             PreparedStatement statement = connection.prepareStatement(SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
 
             List<UserDto> result = new ArrayList<>();
             if (resultSet.next()) {
-                UserDto userDto = mapper.mapUserDto(resultSet);
+                UserDto userDto = DaoMapper.mapUserDto(resultSet);
                 result.add(userDto);
             }
             return result;
@@ -167,17 +178,17 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public UserDto login(String login, String password) throws DaoException {
+    public UserDto login(LoginDto loginDto) throws DaoException {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(SELECT_BY_USERNAME_AND_PASSWORD)) {
 
             int i = 0;
-            statement.setString(++i, login);
-            statement.setString(++i, password);
+            statement.setString(++i, loginDto.getUsername());
+            statement.setString(++i, loginDto.getPassword());
             try (ResultSet resultSet = statement.executeQuery()) {
                 UserDto userDto = null;
                 if (resultSet.next()) {
-                    userDto = mapper.mapUserDto(resultSet);
+                    userDto = DaoMapper.mapUserDto(resultSet);
                 }
                 if (userDto == null) {
                     LOGGER.error("Unable to login, user not found.");
@@ -200,11 +211,10 @@ public class UserDaoImpl implements UserDao {
             int i = 0;
             statement.setString(++i, username);
             try (ResultSet resultSet = statement.executeQuery()) {
-                UserDto userDto = null;
                 if (resultSet.next()) {
-                    userDto = mapper.mapUserDto(resultSet);
+                    return DaoMapper.mapUserDto(resultSet);
                 }
-                return userDto;
+                return null;
             }
 
         } catch (SQLException e) {
@@ -223,7 +233,7 @@ public class UserDaoImpl implements UserDao {
             try (ResultSet resultSet = statement.executeQuery()) {
                 UserDto userDto = null;
                 if (resultSet.next()) {
-                    userDto = mapper.mapUserDto(resultSet);
+                    userDto = DaoMapper.mapUserDto(resultSet);
                 }
                 return userDto;
             }
@@ -234,36 +244,34 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    private void fillSaveStatement(PreparedStatement statement, UserDto user) throws SQLException, IOException {
+    private void fillSaveStatement(PreparedStatement statement, User user) throws SQLException, IOException {
         int i = 0;
         byte[] avatar = user.getAvatar();
-        InputStream stream = new ByteArrayInputStream(avatar);
-        statement.setBlob(++i, stream);
-        stream.close();
-        statement.setString(++i, user.getUsername());
-        statement.setString(++i, user.getPassword());
-        statement.setString(++i, user.getPasswordKey());
-        statement.setString(++i, user.getEmail());
-        statement.setString(++i, user.getType().name());
-        statement.setString(++i, user.getLanguage().name());
-        statement.setLong(++i, user.getWalletId());
+        try (InputStream stream = new ByteArrayInputStream(avatar)) {
+            statement.setBlob(++i, stream);
+            statement.setString(++i, user.getUsername());
+            statement.setString(++i, user.getPassword());
+            statement.setString(++i, user.getPasswordKey());
+            statement.setString(++i, user.getEmail());
+            statement.setString(++i, user.getType().name());
+            statement.setString(++i, user.getLanguage().name());
+        }
     }
 
 
-    private void fillUpdateStatement(PreparedStatement statement, UserDto user) throws SQLException, IOException {
+    private void fillUpdateStatement(PreparedStatement statement, User user) throws SQLException, IOException {
         int i = 0;
         byte[] avatar = user.getAvatar();
-        InputStream stream = new ByteArrayInputStream(avatar);
-        statement.setBlob(++i, stream);
-        stream.close();
-        statement.setString(++i, user.getUsername());
-        statement.setString(++i, user.getPassword());
-        statement.setString(++i, user.getPasswordKey());
-        statement.setString(++i, user.getEmail());
-        statement.setString(++i, user.getType().name());
-        statement.setString(++i, user.getLanguage().name());
-        statement.setLong(++i, user.getWalletId());
-        statement.setLong(++i, user.getId());
+        try (InputStream stream = new ByteArrayInputStream(avatar)) {
+            statement.setBlob(++i, stream);
+            statement.setString(++i, user.getUsername());
+            statement.setString(++i, user.getPassword());
+            statement.setString(++i, user.getPasswordKey());
+            statement.setString(++i, user.getEmail());
+            statement.setString(++i, user.getType().name());
+            statement.setString(++i, user.getLanguage().name());
+            statement.setLong(++i, user.getId());
+        }
     }
 
 }

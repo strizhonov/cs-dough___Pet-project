@@ -14,7 +14,21 @@ public class User extends Entity {
     private String email;
     private UserType type = ValuesContainer.DEFAULT_USER_TYPE;
     private Language language = ValuesContainer.DEFAULT_LANGUAGE;
-    private long walletId;
+
+
+    public User() {
+    }
+
+    private User(Builder builder) {
+        setId(builder.id);
+        setAvatar(builder.avatar);
+        setUsername(builder.username);
+        setPassword(builder.password);
+        setPasswordKey(builder.passwordKey);
+        setEmail(builder.email);
+        setType(builder.type);
+        setLanguage(builder.language);
+    }
 
     public enum UserType {
         ANONYMOUS, USER, ADMIN;
@@ -36,16 +50,9 @@ public class User extends Entity {
         }
 
         public Language getSwitched() {
-            if (this == EN) {
-                return RU;
-            } else {
-                return EN;
-            }
+            return this == EN ? RU : EN;
         }
 
-    }
-
-    public User() {
     }
 
     public byte[] getAvatar() {
@@ -104,17 +111,8 @@ public class User extends Entity {
         this.language = language;
     }
 
-    public long getWalletId() {
-        return walletId;
-    }
-
-    public void setWalletId(long walletId) {
-        this.walletId = walletId;
-    }
-
-
     public static final class Builder {
-        protected long id;
+        private long id;
         private byte[] avatar = new byte[0];
         private String username;
         private String password;
@@ -122,72 +120,52 @@ public class User extends Entity {
         private String email;
         private UserType type = ValuesContainer.DEFAULT_USER_TYPE;
         private Language language = ValuesContainer.DEFAULT_LANGUAGE;
-        private long walletId;
 
-        private Builder() {
+        public Builder() {
         }
 
-        public static Builder anUser() {
-            return new Builder();
-        }
-
-        public Builder id(long id) {
-            this.id = id;
+        public Builder id(long val) {
+            id = val;
             return this;
         }
 
-        public Builder avatar(byte[] avatar) {
-            this.avatar = avatar;
+        public Builder avatar(byte[] val) {
+            avatar = val;
             return this;
         }
 
-        public Builder username(String username) {
-            this.username = username;
+        public Builder username(String val) {
+            username = val;
             return this;
         }
 
-        public Builder password(String password) {
-            this.password = password;
+        public Builder password(String val) {
+            password = val;
             return this;
         }
 
-        public Builder passwordKey(String passwordKey) {
-            this.passwordKey = passwordKey;
+        public Builder passwordKey(String val) {
+            passwordKey = val;
             return this;
         }
 
-        public Builder email(String email) {
-            this.email = email;
+        public Builder email(String val) {
+            email = val;
             return this;
         }
 
-        public Builder type(UserType type) {
-            this.type = type;
+        public Builder type(UserType val) {
+            type = val;
             return this;
         }
 
-        public Builder language(Language language) {
-            this.language = language;
-            return this;
-        }
-
-        public Builder walletId(long walletId) {
-            this.walletId = walletId;
+        public Builder language(Language val) {
+            language = val;
             return this;
         }
 
         public User build() {
-            User user = new User();
-            user.setId(id);
-            user.setAvatar(avatar);
-            user.setUsername(username);
-            user.setPassword(password);
-            user.setPasswordKey(passwordKey);
-            user.setEmail(email);
-            user.setType(type);
-            user.setLanguage(language);
-            user.setWalletId(walletId);
-            return user;
+            return new User(this);
         }
     }
 }

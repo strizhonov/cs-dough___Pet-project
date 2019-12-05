@@ -2,7 +2,11 @@ package by.training.dao;
 
 import by.training.appentry.Bean;
 import by.training.connection.ConnectionProvider;
+import by.training.dao.util.DaoMapper;
+import by.training.dao.util.DateConverter;
+import by.training.dao.util.EntityConverter;
 import by.training.dto.GameDto;
+import by.training.entity.Game;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,11 +43,9 @@ public class GameDaoImpl implements GameDao {
 
     private static final Logger LOGGER = LogManager.getLogger(GameDaoImpl.class);
     private ConnectionProvider provider;
-    private DaoMapper mapper;
 
     public GameDaoImpl(ConnectionProvider provider) {
         this.provider = provider;
-        this.mapper = new DaoMapper();
     }
 
     @Override
@@ -51,7 +53,8 @@ public class GameDaoImpl implements GameDao {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
 
-            fillSaveStatement(statement, gameDto);
+            Game game = EntityConverter.fromDto(gameDto);
+            fillSaveStatement(statement, game);
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -68,18 +71,17 @@ public class GameDaoImpl implements GameDao {
 
     @Override
     public long saveNew(GameDto gameDto) throws DaoException {
-        try {
-            Connection connection = provider.getConnection();
-            try (PreparedStatement statement = connection.prepareStatement(INSERT_NEW, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(INSERT_NEW, Statement.RETURN_GENERATED_KEYS)) {
 
-                fillNewSaveStatement(statement, gameDto);
-                statement.executeUpdate();
-                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        return generatedKeys.getLong(1);
-                    }
-                    return 0;
+            Game game = EntityConverter.fromDto(gameDto);
+            fillNewSaveStatement(statement, game);
+            statement.executeUpdate();
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getLong(1);
                 }
+                return 0;
             }
 
         } catch (SQLException e) {
@@ -96,15 +98,12 @@ public class GameDaoImpl implements GameDao {
 
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
-                GameDto gameDto = null;
                 if (resultSet.next()) {
-                    gameDto = mapper.mapGameDto(resultSet);
-                }
-                if (gameDto == null) {
+                    return DaoMapper.mapGameDto(resultSet);
+                } else {
                     LOGGER.error("Unable to get game with " + id + " id, not found.");
                     throw new DaoException("Unable to get game with " + id + " id, not found.");
                 }
-                return gameDto;
             }
 
         } catch (SQLException e) {
@@ -118,7 +117,8 @@ public class GameDaoImpl implements GameDao {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE)) {
 
-            fillUpdateStatement(statement, gameDto);
+            Game game = EntityConverter.fromDto(gameDto);
+            fillUpdateStatement(statement, game);
             return statement.executeUpdate() > 0;
 
         } catch (SQLException e) {
@@ -149,7 +149,7 @@ public class GameDaoImpl implements GameDao {
 
             List<GameDto> result = new ArrayList<>();
             while (resultSet.next()) {
-                GameDto gameDto = mapper.mapGameDto(resultSet);
+                GameDto gameDto = DaoMapper.mapGameDto(resultSet);
                 result.add(gameDto);
             }
             return result;
@@ -160,33 +160,12 @@ public class GameDaoImpl implements GameDao {
         }
     }
 
-
-    @Override
-    public List<GameDto> findLatest(int maxGameResults) throws DaoException {
-        try (Connection connection = provider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_ALL);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            List<GameDto> result = new ArrayList<>();
-            while (resultSet.next()) {
-                GameDto gameDto = mapper.mapGameDto(resultSet);
-                result.add(gameDto);
-            }
-
-            return result;
-
-        } catch (SQLException e) {
-            LOGGER.error("Unable to perform entities retrieving.", e);
-            throw new DaoException("Unable to perform entities retrieving.", e);
-        }
-    }
-
-    private void fillSaveStatement(PreparedStatement statement, GameDto game) throws SQLException {
+    private void fillSaveStatement(PreparedStatement statement, Game game) throws SQLException {
         int i = 0;
         statement.setInt(++i, game.getBracketIndex());
-        java.sql.Date sqlStartTime = DaoUtil.toSqlDate(game.getStartTime());
+        java.sql.Date sqlStartTime = DateConverter.toSqlDate(game.getStartTime());
         statement.setDate(++i, sqlStartTime);
-        java.sql.Date sqlEndTime = DaoUtil.toSqlDate(game.getEndTime());
+        java.sql.Date sqlEndTime = DateConverter.toSqlDate(game.getEndTime());
         statement.setDate(++i, sqlEndTime);
         statement.setLong(++i, game.getFirstPlayerId());
         statement.setLong(++i, game.getSecondPlayerId());
@@ -194,18 +173,18 @@ public class GameDaoImpl implements GameDao {
         statement.setLong(++i, game.getTournamentId());
     }
 
-    private void fillNewSaveStatement(PreparedStatement statement, GameDto game) throws SQLException {
+    private void fillNewSaveStatement(PreparedStatement statement, Game game) throws SQLException {
         int i = 0;
         statement.setInt(++i, game.getBracketIndex());
         statement.setLong(++i, game.getTournamentId());
     }
 
-    private void fillUpdateStatement(PreparedStatement statement, GameDto game) throws SQLException {
+    private void fillUpdateStatement(PreparedStatement statement, Game game) throws SQLException {
         int i = 0;
         statement.setInt(++i, game.getBracketIndex());
-        java.sql.Date sqlStartTime = DaoUtil.toSqlDate(game.getStartTime());
+        java.sql.Date sqlStartTime = DateConverter.toSqlDate(game.getStartTime());
         statement.setDate(++i, sqlStartTime);
-        java.sql.Date sqlEndTime = DaoUtil.toSqlDate(game.getEndTime());
+        java.sql.Date sqlEndTime = DateConverter.toSqlDate(game.getEndTime());
         statement.setDate(++i, sqlEndTime);
         statement.setLong(++i, game.getFirstPlayerId());
         statement.setLong(++i, game.getSecondPlayerId());

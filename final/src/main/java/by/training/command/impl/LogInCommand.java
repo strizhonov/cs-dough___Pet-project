@@ -32,7 +32,8 @@ public class LogInCommand implements ActionCommand {
 
     @Override
     public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response)
-            throws ActionCommandExecutionException {        String login = request.getParameter(AttributesContainer.USERNAME.toString());
+            throws ActionCommandExecutionException {
+        String login = request.getParameter(AttributesContainer.USERNAME.toString());
         String password = request.getParameter(AttributesContainer.PASSWORD.toString());
 
         UserDto userDto;
@@ -42,7 +43,7 @@ public class LogInCommand implements ActionCommand {
             LOGGER.error("Unable to retrieve user.", e);
             request.setAttribute(AttributesContainer.USERNAME_ERROR.toString(),
                     MessagesContainer.LOGIN_ERROR_MESSAGE);
-            return new ServletForwarder(servlet, request.getContextPath());
+            return new RelativePathRedirector("/");
         }
         if (userDto == null) {
             request.setAttribute(AttributesContainer.USERNAME_OR_PASSWORD_ERROR.toString(),
@@ -54,14 +55,11 @@ public class LogInCommand implements ActionCommand {
         httpSession.setAttribute(AttributesContainer.USER_ROLE.toString(), userDto.getType().name());
         httpSession.setAttribute(AttributesContainer.USER.toString(), userDto);
         httpSession.setAttribute(AttributesContainer.USER.toString(), userDto);
-        request.setAttribute(AttributesContainer.USER_TO_PROCESS.toString(), userDto);
 
         String lang = userDto.getLanguage().name();
         httpSession.setAttribute(AttributesContainer.LANGUAGE.toString(), lang);
-//        String avatar = Base64.getEncoder().encodeToString(userDto.getAvatar());
-//        httpSession.setAttribute("avatar", avatar);
 
-        return new ServletForwarder(servlet, "/jsp/user-profile.jsp");
+        return new RelativePathRedirector("/?command=to_user_page&id=" + userDto.getId());
     }
 
     @Override

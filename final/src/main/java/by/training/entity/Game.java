@@ -9,20 +9,20 @@ public class Game extends Entity {
     private int bracketIndex;
     private Date startTime;
     private Date endTime;
-    private GameType type = GameType.BO3;
     private long firstPlayerId;
     private long secondPlayerId;
     private long winnerId;
     private long tournamentId;
 
-    public enum GameType {
-        BO1, BO3;
-
-        public static Optional<GameType> fromString(String type) {
-            return Stream.of(GameType.values())
-                    .filter(t -> t.name().equalsIgnoreCase(type))
-                    .findFirst();
-        }
+    private Game(Builder builder) {
+        setId(builder.id);
+        setBracketIndex(builder.bracketIndex);
+        setStartTime(builder.startTime);
+        setEndTime(builder.endTime);
+        setFirstPlayerId(builder.firstPlayerId);
+        setSecondPlayerId(builder.secondPlayerId);
+        setWinnerId(builder.winnerId);
+        setTournamentId(builder.tournamentId);
     }
 
     public Game() {
@@ -50,14 +50,6 @@ public class Game extends Entity {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
-    }
-
-    public GameType getType() {
-        return type;
-    }
-
-    public void setType(GameType type) {
-        this.type = type;
     }
 
     public long getFirstPlayerId() {
@@ -92,82 +84,61 @@ public class Game extends Entity {
         this.tournamentId = tournamentId;
     }
 
-    public static final class GameBuilder {
+    public static final class Builder {
         private long id;
         private int bracketIndex;
         private Date startTime;
         private Date endTime;
-        private GameType type = GameType.BO3;
         private long firstPlayerId;
         private long secondPlayerId;
         private long winnerId;
         private long tournamentId;
 
-        private GameBuilder() {
+        public Builder() {
         }
 
-        public static GameBuilder aGame() {
-            return new GameBuilder();
-        }
-
-        public GameBuilder id(long id) {
-            this.id = id;
+        public Builder id(long val) {
+            id = val;
             return this;
         }
 
-        public GameBuilder bracketIndex(int bracketIndex) {
-            this.bracketIndex = bracketIndex;
+        public Builder bracketIndex(int val) {
+            bracketIndex = val;
             return this;
         }
 
-        public GameBuilder startTime(Date startTime) {
-            this.startTime = startTime;
+        public Builder startTime(Date val) {
+            startTime = val;
             return this;
         }
 
-        public GameBuilder endTime(Date endTime) {
-            this.endTime = endTime;
+        public Builder endTime(Date val) {
+            endTime = val;
             return this;
         }
 
-        public GameBuilder type(GameType type) {
-            this.type = type;
+        public Builder firstPlayerId(long val) {
+            firstPlayerId = val;
             return this;
         }
 
-        public GameBuilder firstPlayerId(long firstPlayerId) {
-            this.firstPlayerId = firstPlayerId;
+        public Builder secondPlayerId(long val) {
+            secondPlayerId = val;
             return this;
         }
 
-        public GameBuilder secondPlayerId(long secondPlayerId) {
-            this.secondPlayerId = secondPlayerId;
+        public Builder winnerId(long val) {
+            winnerId = val;
             return this;
         }
 
-        public GameBuilder winnerId(long winnerId) {
-            this.winnerId = winnerId;
-            return this;
-        }
-
-        public GameBuilder tournamentId(long tournamentId) {
-            this.tournamentId = tournamentId;
+        public Builder tournamentId(long val) {
+            tournamentId = val;
             return this;
         }
 
         public Game build() {
-            Game game = new Game();
-            game.setId(id);
-            game.setId(id);
-            game.setBracketIndex(bracketIndex);
-            game.setStartTime(startTime);
-            game.setEndTime(endTime);
-            game.setType(type);
-            game.setFirstPlayerId(firstPlayerId);
-            game.setSecondPlayerId(secondPlayerId);
-            game.setWinnerId(winnerId);
-            game.setTournamentId(tournamentId);
-            return game;
+            return new Game(this);
         }
     }
 }

@@ -13,6 +13,11 @@ import by.training.servlet.ServletForwarder;
 import by.training.validation.OrganizerDataValidator;
 import by.training.validation.ValidationException;
 import by.training.validation.ValidationResult;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,6 +25,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 public class CreateOrganizerCommand implements ActionCommand {
@@ -36,23 +44,33 @@ public class CreateOrganizerCommand implements ActionCommand {
 
     @Override
     public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response) throws ActionCommandExecutionException {
-        String name = request.getParameter(AttributesContainer.NAME.toString());
 
-        if (!isDataValid(name, validator, request)) {
-            return new ServletForwarder(servlet, request.getContextPath());
-        }
-
-        HttpSession httpSession = request.getSession();
-        UserDto userDto = (UserDto) httpSession.getAttribute(AttributesContainer.USER.toString());
-        OrganizerDto organizerDto = OrganizerDto.Builder.anOrganizerDto()
-                .name(name)
-                .userId(userDto.getId())
-                .build();
-
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload sfu = new ServletFileUpload(factory);
         try {
+            List<FileItem> items = sfu.parseRequest(request);
+            byte[] logo = items.get(0).get();
+            if (logo == null || logo.length == 0) {
+                File file = new File(servlet.getServletContext().getRealPath("/img/blank-logo.jpg"));
+                InputStream is = new FileInputStream(file);
+                logo = IOUtils.toByteArray(is);
+            }
+            String name = items.get(1).getString();
+            if (!isDataValid(name, validator, request)) {
+                return new ServletForwarder(servlet, request.getContextPath());
+            }
+
+            HttpSession httpSession = request.getSession();
+            UserDto userDto = (UserDto) httpSession.getAttribute(AttributesContainer.USER.toString());
+            OrganizerDto organizerDto = OrganizerDto.Builder.anOrganizerDto()
+                    .name(name)
+                    .logo(logo)
+                    .userId(userDto.getId())
+                    .build();
+
             organizerService.create(organizerDto, userDto);
-            return new ServletForwarder(servlet, "/jsp/user-profile.jsp");
-        } catch (ServiceException e) {
+            return new ServletForwarder(servlet, "/?command=to_user_page&id=" + userDto.getId());
+        } catch (ServiceException | IOException | FileUploadException  e) {
             LOGGER.error("Unable to perform organizer creation and user updating.", e);
             throw new ActionCommandExecutionException("Unable to perform organizer creation and user updating.", e);
         }

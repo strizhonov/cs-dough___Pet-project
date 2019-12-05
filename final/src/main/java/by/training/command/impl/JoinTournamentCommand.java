@@ -4,6 +4,7 @@ import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandType;
 import by.training.constant.AttributesContainer;
+import by.training.dto.TournamentJoiningDto;
 import by.training.service.PlayerService;
 import by.training.service.ServiceException;
 import by.training.servlet.HttpRouter;
@@ -32,8 +33,9 @@ public class JoinTournamentCommand implements ActionCommand {
         long playerId = Long.parseLong(sPlayerId);
         String sTournamentId = request.getParameter(AttributesContainer.TOURNAMENT_ID.toString());
         long tournamentId = Long.parseLong(sTournamentId);
+        TournamentJoiningDto dto = new TournamentJoiningDto(playerId, tournamentId);
         try {
-            playerService.join(playerId, tournamentId);
+            playerService.join(dto);
         } catch (ServiceException e) {
             LOGGER.error("Unable to perform tournament joining.", e);
             throw new ActionCommandExecutionException("Unable to perform tournament joining.", e);

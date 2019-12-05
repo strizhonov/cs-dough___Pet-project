@@ -27,12 +27,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ApplicationLoader {
 
     private static final Logger LOGGER = LogManager.getLogger(ApplicationLoader.class);
-
     private final AtomicBoolean initialized = new AtomicBoolean();
     private Map<Class<?>, Object> registered = new HashMap<>();
 
     private ApplicationLoader() {
-
     }
 
     private static class InstanceHolder {
@@ -40,7 +38,7 @@ public class ApplicationLoader {
     }
 
     public static ApplicationLoader getInstance() {
-        return ApplicationLoader.InstanceHolder.INSTANCE;
+        return InstanceHolder.INSTANCE;
     }
 
     public Object get(Class<?> clazz) {
@@ -96,32 +94,26 @@ public class ApplicationLoader {
         }
         ConnectionProvider connectionProvider = connectionPool.getConnectionProvider();
 
-        TransactionManagerImpl userTransactionManager = new TransactionManagerImpl(connectionProvider);
-        TransactionManagerImpl tournamentTransactionManager = new TransactionManagerImpl(connectionProvider);
-        TransactionManagerImpl walletTransactionManager = new TransactionManagerImpl(connectionProvider);
-        TransactionManagerImpl playerTransactionManager = new TransactionManagerImpl(connectionProvider);
-        TransactionManagerImpl organizerTransactionManager = new TransactionManagerImpl(connectionProvider);
-        TransactionManagerImpl gameTransactionManager = new TransactionManagerImpl(connectionProvider);
+        TransactionManagerImpl transactionManager = new TransactionManagerImpl(connectionProvider);
 
-        UserDao userDao = new UserDaoImpl(userTransactionManager);
-        TournamentDao tournamentDao = new TournamentDaoImpl(tournamentTransactionManager);
-        WalletDao walletDao = new WalletDaoImpl(walletTransactionManager);
-        PlayerDao playerDao = new PlayerDaoImpl(playerTransactionManager);
-        OrganizerDao organizerDao = new OrganizerDaoImpl(organizerTransactionManager);
-        GameDao gameDao = new GameDaoImpl(gameTransactionManager);
+        UserDao userDao = new UserDaoImpl(transactionManager);
+        TournamentDao tournamentDao = new TournamentDaoImpl(transactionManager);
+        WalletDao walletDao = new WalletDaoImpl(transactionManager);
+        PlayerDao playerDao = new PlayerDaoImpl(transactionManager);
+        OrganizerDao organizerDao = new OrganizerDaoImpl(transactionManager);
+        GameDao gameDao = new GameDaoImpl(transactionManager);
 
-        WalletService walletService = new WalletServiceImpl(walletTransactionManager, walletDao);
         UserService userService;
         try {
-            userService = new UserServiceImpl(userDao, walletService, userTransactionManager);
+            userService = new UserServiceImpl(userDao, walletDao, transactionManager);
         } catch (ServiceException e) {
             LOGGER.error("User Service initialization failed.", e);
             throw new ApplicationLoaderException("User Service initialization failed.", e);
         }
-        PlayerService playerService = new PlayerServiceImpl(playerDao, userService, playerTransactionManager);
-        OrganizerService organizerService = new OrganizerServiceImpl(organizerDao, userService, organizerTransactionManager);
-        GameService gameService = new GameServiceImpl(gameDao, gameTransactionManager);
-        TournamentService tournamentService = new TournamentServiceImpl(tournamentDao, gameService, tournamentTransactionManager);
+        PlayerService playerService = new PlayerServiceImpl(playerDao, userService, transactionManager);
+        OrganizerService organizerService = new OrganizerServiceImpl(organizerDao, userDao, transactionManager);
+        GameService gameService = new GameServiceImpl(gameDao, transactionManager);
+        TournamentService tournamentService = new TournamentServiceImpl(tournamentDao, gameDao, transactionManager);
         ActionCommandProvider commandProvider = new ActionCommandProviderImpl();
 
         ActionCommand listTournamentsCommand = new ListTournamentsCommand(tournamentService);
@@ -140,11 +132,14 @@ public class ApplicationLoader {
         ActionCommand changeLanguageToRuCommand = new ChangeLanguageToRuCommand();
         ActionCommand toUserPageCommand = new ToUserPageCommand(userService);
         ActionCommand toHomePageCommand = new ToHomePageCommand(gameService);
+        ActionCommand saveUserPhoto = new UploadUserPhotoCommand(userService);
+        ActionCommand getUserPhoto = new GetUserPhotoCommand(userService);
 
         commandProvider.register(listTournamentsCommand, toLoginPageCommand, registerCommand, logInCommand,
                 showPlayerCommand, createPlayerCommand, toPlayerCreationCommand, toTournamentCreationCommand,
                 createTournamentCommand, createOrganizerCommand, toOrganizerCreationCommand, toTournamentPageCommand,
-                changeLanguageToEnCommand, changeLanguageToRuCommand, toUserPageCommand, toHomePageCommand);
+                changeLanguageToEnCommand, changeLanguageToRuCommand, toUserPageCommand, toHomePageCommand,
+                saveUserPhoto, getUserPhoto);
 
         SecurityProvider securityProvider = new SecurityProviderImpl();
         SecurityDirector forAdmin = new ForAdminAccessDirector();

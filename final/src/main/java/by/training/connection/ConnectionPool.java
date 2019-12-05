@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -29,12 +30,12 @@ public class ConnectionPool implements AutoCloseable {
     private static final String EXECUTOR_DELAY_KEY = "terminator.executor.delay";
     private static final String EXECUTOR_PERIOD_KEY = "terminator.executor.period";
     private static final String EXECUTOR_TIME_UNIT_KEY = "terminator.executor.period.time.unit";
-    private static final String CONNECTION_WAITING_TIMEOUT_MS_KEY = "max.connection.waiting.time.out.ms";
 
     private final AtomicBoolean initialized = new AtomicBoolean();
     private final List<Connection> available = new ArrayList<>();
     private final Map<Connection, Date> borrowed = new HashMap<>();
     private final Lock lock = new ReentrantLock();
+    private final Condition empty = lock.newCondition();
     private final ConnectionProvider connectionProvider = new ConnectionProxyProvider(this);
     private final ScheduledExecutorService terminatorExecutorService = Executors.newSingleThreadScheduledExecutor();
     private int poolSize;
@@ -95,9 +96,7 @@ public class ConnectionPool implements AutoCloseable {
         try {
             while (available.isEmpty()) {
                 if (borrowed.size() == poolSize) {
-                    String sWaitingTimeout = resourceBundle.getString(CONNECTION_WAITING_TIMEOUT_MS_KEY);
-                    long waitingTimeout = Long.parseLong(sWaitingTimeout);
-                    wait(waitingTimeout);
+                    empty.await();
                 }
                 if (borrowed.size() < poolSize) {
                     connection = getConnectionFromDriver();
@@ -121,6 +120,7 @@ public class ConnectionPool implements AutoCloseable {
         try {
             if (borrowed.remove(connection) != null) {
                 available.add(connection);
+                empty.signal();
             }
         } finally {
             lock.unlock();

@@ -8,5 +8,4 @@ public interface GameDao extends CrudDao<GameDto> {
 
     long saveNew(GameDto gameDto) throws DaoException;
 
-    List<GameDto> findLatest(int maxGameResults) throws DaoException;
 }

@@ -60,11 +60,7 @@ public class GameServerEntity extends Entity {
         private String path;
         private long gameId;
 
-        private Builder() {
-        }
-
-        public static Builder aGameServerEntity() {
-            return new Builder();
+        public Builder() {
         }
 
         public Builder id(long id) {

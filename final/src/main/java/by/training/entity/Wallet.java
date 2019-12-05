@@ -7,20 +7,29 @@ import java.util.stream.Stream;
 
 public class Wallet extends Entity {
 
-    private double balance = 0;
-    private CurrencyType currency = ValuesContainer.DEFAULT_CURRENCY;
+    private double balance;
+    private Currency currency = ValuesContainer.DEFAULT_CURRENCY;
+    private long userId;
 
-    public enum CurrencyType {
+    public Wallet() {
+    }
+
+    private Wallet(Builder builder) {
+        setId(builder.id);
+        setBalance(builder.balance);
+        setCurrency(builder.currency);
+        setUserId(builder.userId);
+    }
+
+
+    public enum Currency {
         EUR, USD, BYN;
 
-        public static Optional<CurrencyType> fromString(String type) {
-            return Stream.of(CurrencyType.values())
+        public static Optional<Currency> fromString(String type) {
+            return Stream.of(Currency.values())
                     .filter(t -> t.name().equalsIgnoreCase(type))
                     .findFirst();
         }
-    }
-
-    public Wallet() {
     }
 
     public double getBalance() {
@@ -31,47 +40,53 @@ public class Wallet extends Entity {
         this.balance = balance;
     }
 
-    public CurrencyType getCurrency() {
+    public Currency getCurrency() {
         return currency;
     }
 
-    public void setCurrency(CurrencyType currency) {
+    public void setCurrency(Currency currency) {
         this.currency = currency;
     }
 
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
     public static final class Builder {
-        protected long id;
-        private double balance = 0;
-        private CurrencyType currency = ValuesContainer.DEFAULT_CURRENCY;
+        private long id;
+        private double balance;
+        private Currency currency;
+        private long userId;
 
-        private Builder() {
+        public Builder() {
         }
 
-        public static Builder aWallet() {
-            return new Builder();
-        }
-
-        public Builder id(long id) {
-            this.id = id;
+        public Builder id(long val) {
+            id = val;
             return this;
         }
 
-        public Builder balance(double balance) {
-            this.balance = balance;
+        public Builder balance(double val) {
+            balance = val;
             return this;
         }
 
-        public Builder currency(CurrencyType currency) {
-            this.currency = currency;
+        public Builder currency(Currency val) {
+            currency = val;
+            return this;
+        }
+
+        public Builder userId(long val) {
+            userId = val;
             return this;
         }
 
         public Wallet build() {
-            Wallet wallet = new Wallet();
-            wallet.setId(id);
-            wallet.setBalance(balance);
-            wallet.setCurrency(currency);
-            return wallet;
+            return new Wallet(this);
         }
     }
 }

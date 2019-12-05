@@ -48,7 +48,7 @@ public class CreatePlayerCommand implements ActionCommand {
 
         HttpSession httpSession = request.getSession();
         UserDto userDto = (UserDto) httpSession.getAttribute(AttributesContainer.USER.toString());
-        PlayerDto playerDto = PlayerDto.Builder.aPlayerDto()
+        PlayerDto playerDto = new PlayerDto.Builder()
                 .name(name)
                 .surname(surname)
                 .nickname(nickname)

@@ -11,7 +11,5 @@ public interface GameService {
 
     boolean update(GameDto gameDto) throws ServiceException;
 
-    void fill(TournamentDto tournamentDto) throws ServiceException;
-
     List<GameDto> findLatest(int maxGameResults) throws ServiceException;
 }

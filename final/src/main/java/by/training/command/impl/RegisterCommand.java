@@ -8,6 +8,7 @@ import by.training.constant.MessagesContainer;
 import by.training.constant.ValuesContainer;
 import by.training.dto.UserDto;
 import by.training.entity.User;
+import by.training.resourse.ImageConverter;
 import by.training.service.ServiceException;
 import by.training.service.UserService;
 import by.training.servlet.HttpRouter;
@@ -23,6 +24,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 public class RegisterCommand implements ActionCommand {
@@ -41,29 +44,32 @@ public class RegisterCommand implements ActionCommand {
     @Override
     public HttpRouter direct(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response)
             throws ActionCommandExecutionException {
-        String username = request.getParameter(AttributesContainer.USERNAME.toString());
-        String email = request.getParameter(AttributesContainer.EMAIL.toString());
-        String password = request.getParameter(AttributesContainer.PASSWORD.toString());
-        String passConfirmation = request.getParameter(AttributesContainer.PASSWORD_CONFIRMATION.toString());
-
-        if (!isDataValid(validator, request, username, username, email, email, password, password, passConfirmation)) {
-            return new RelativePathRedirector(response.getHeader(ValuesContainer.REFERER));
-        }
-
-        HttpSession session = request.getSession();
-        String localeName = (String) session.getAttribute(AttributesContainer.LOCALE.toString());
-        User.Language language = User.Language.fromLocaleString(localeName).orElse(ValuesContainer.DEFAULT_LANGUAGE);
-
-        UserDto userDto = UserDto.Builder.anUserDto()
-                .username(username)
-                .email(email)
-                .password(password)
-                .language(language)
-                .build();
-
         try {
+            byte[] defAvatar = ImageConverter.fromImg(servlet.getServletContext().getRealPath("/") + "/img/nobody.jpg", "jpg");
+            String username = request.getParameter(AttributesContainer.USERNAME.toString());
+            String email = request.getParameter(AttributesContainer.EMAIL.toString());
+            String password = request.getParameter(AttributesContainer.PASSWORD.toString());
+            String passConfirmation = request.getParameter(AttributesContainer.PASSWORD_CONFIRMATION.toString());
+
+            if (!isDataValid(validator, request, username, username, email, email, password, password, passConfirmation)) {
+                return new RelativePathRedirector(response.getHeader(ValuesContainer.REFERER));
+            }
+
+            HttpSession session = request.getSession();
+            String localeName = (String) session.getAttribute(AttributesContainer.LOCALE.toString());
+            User.Language language = User.Language.fromLocaleString(localeName).orElse(ValuesContainer.DEFAULT_LANGUAGE);
+
+            UserDto userDto = new UserDto.Builder()
+                    .username(username)
+                    .email(email)
+                    .avatar(defAvatar)
+                    .password(password)
+                    .language(language)
+                    .build();
+
+
             userService.registerUser(userDto);
-        } catch (ServiceException e) {
+        } catch (ServiceException | IOException | URISyntaxException e) {
             LOGGER.error("User registration failed.", e);
             throw new ActionCommandExecutionException("User registration failed.", e);
         }

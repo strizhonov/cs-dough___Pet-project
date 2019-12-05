@@ -7,7 +7,7 @@ public class WalletDto {
 
     private long id;
     private double balance = 0;
-    private Wallet.CurrencyType currency = ValuesContainer.DEFAULT_CURRENCY;
+    private Wallet.Currency currency = ValuesContainer.DEFAULT_CURRENCY;
     private long userId;
 
     public long getId() {
@@ -26,11 +26,11 @@ public class WalletDto {
         this.balance = balance;
     }
 
-    public Wallet.CurrencyType getCurrency() {
+    public Wallet.Currency getCurrency() {
         return currency;
     }
 
-    public void setCurrency(Wallet.CurrencyType currency) {
+    public void setCurrency(Wallet.Currency currency) {
         this.currency = currency;
     }
 
@@ -45,7 +45,7 @@ public class WalletDto {
     public static final class Builder {
         private long id;
         private double balance = 0;
-        private Wallet.CurrencyType currency = ValuesContainer.DEFAULT_CURRENCY;
+        private Wallet.Currency currency = ValuesContainer.DEFAULT_CURRENCY;
         private long userId;
 
         private Builder() {
@@ -65,7 +65,7 @@ public class WalletDto {
             return this;
         }
 
-        public Builder currency(Wallet.CurrencyType currency) {
+        public Builder currency(Wallet.Currency currency) {
             this.currency = currency;
             return this;
         }

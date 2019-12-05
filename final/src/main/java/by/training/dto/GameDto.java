@@ -112,11 +112,7 @@ public class GameDto {
         private long tournamentId;
         private long gameServerId;
 
-        private Builder() {
-        }
-
-        public static Builder aGameDto() {
-            return new Builder();
+        public Builder() {
         }
 
         public Builder id(long id) {

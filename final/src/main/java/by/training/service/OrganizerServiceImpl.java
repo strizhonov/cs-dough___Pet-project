@@ -2,7 +2,9 @@ package by.training.service;
 
 import by.training.appentry.Bean;
 import by.training.connection.TransactionManager;
+import by.training.dao.DaoException;
 import by.training.dao.OrganizerDao;
+import by.training.dao.UserDao;
 import by.training.dto.OrganizerDto;
 import by.training.dto.UserDto;
 import org.apache.logging.log4j.LogManager;
@@ -13,12 +15,12 @@ public class OrganizerServiceImpl extends BaseBeanService implements OrganizerSe
 
     private static Logger LOGGER = LogManager.getLogger(OrganizerServiceImpl.class);
     private OrganizerDao organizerDao;
-    private UserService userService;
+    private UserDao userDao;
 
-    public OrganizerServiceImpl(OrganizerDao organizerDao, UserService userService, TransactionManager transactionManager) {
+    public OrganizerServiceImpl(OrganizerDao organizerDao, UserDao userDao, TransactionManager transactionManager) {
         super(transactionManager);
         this.organizerDao = organizerDao;
-        this.userService = userService;
+        this.userDao = userDao;
     }
 
     public long create(OrganizerDto organizerDto, UserDto userDto) throws ServiceException {
@@ -26,10 +28,10 @@ public class OrganizerServiceImpl extends BaseBeanService implements OrganizerSe
             transactionManager.startTransaction();
             long organizerId = organizerDao.save(organizerDto);
             userDto.setOrganizerId(organizerId);
-            userService.update(userDto);
+            userDao.update(userDto);
             transactionManager.commitTransaction();
             return organizerId;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             transactionManager.rollbackTransaction();
             LOGGER.error("Organizer registering failed.", e);
             throw new ServiceException("Organizer registering failed.", e);
@@ -39,12 +41,8 @@ public class OrganizerServiceImpl extends BaseBeanService implements OrganizerSe
     @Override
     public OrganizerDto find(long id) throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            OrganizerDto organizerDto = organizerDao.get(id);
-            transactionManager.commitTransaction();
-            return organizerDto;
-        } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
+            return organizerDao.get(id);
+        } catch (DaoException e) {
             LOGGER.error("Organizer retrieving failed.", e);
             throw new ServiceException("Organizer retrieving failed.", e);
         }
@@ -53,12 +51,8 @@ public class OrganizerServiceImpl extends BaseBeanService implements OrganizerSe
     @Override
     public OrganizerDto findByName(String name) throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            OrganizerDto organizerDto = organizerDao.findByName(name);
-            transactionManager.commitTransaction();
-            return organizerDto;
-        } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
+            return organizerDao.findByName(name);
+        } catch (DaoException e) {
             LOGGER.error("Organizer retrieving failed.", e);
             throw new ServiceException("Organizer retrieving failed.", e);
         }
@@ -67,12 +61,8 @@ public class OrganizerServiceImpl extends BaseBeanService implements OrganizerSe
     @Override
     public boolean update(OrganizerDto organizerDto) throws ServiceException {
         try {
-            transactionManager.startTransaction();
-            boolean success = organizerDao.update(organizerDto);
-            transactionManager.commitTransaction();
-            return success;
-        } catch (Throwable e) {
-            transactionManager.rollbackTransaction();
+            return organizerDao.update(organizerDto);
+        } catch (DaoException e) {
             LOGGER.error("Organizer updating failed.", e);
             throw new ServiceException("Organizer updating failed.", e);
         }

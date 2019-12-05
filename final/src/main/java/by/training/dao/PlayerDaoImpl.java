@@ -2,7 +2,11 @@ package by.training.dao;
 
 import by.training.appentry.Bean;
 import by.training.connection.ConnectionProvider;
+import by.training.dao.util.DaoMapper;
+import by.training.dao.util.EntityConverter;
+import by.training.dto.TournamentJoiningDto;
 import by.training.dto.PlayerDto;
+import by.training.entity.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,11 +56,9 @@ public class PlayerDaoImpl implements PlayerDao {
 
     private static final Logger LOGGER = LogManager.getLogger(PlayerDaoImpl.class);
     private ConnectionProvider provider;
-    private DaoMapper mapper;
 
     public PlayerDaoImpl(ConnectionProvider provider) {
         this.provider = provider;
-        this.mapper = new DaoMapper();
     }
 
     @Override
@@ -64,7 +66,8 @@ public class PlayerDaoImpl implements PlayerDao {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
 
-            fillSaveStatement(statement, playerDto);
+            Player player = EntityConverter.fromDto(playerDto);
+            fillSaveStatement(statement, player);
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -86,15 +89,12 @@ public class PlayerDaoImpl implements PlayerDao {
 
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
-                PlayerDto playerDto = null;
                 if (resultSet.next()) {
-                    playerDto = compile(resultSet);
-                }
-                if (playerDto == null) {
+                    return compile(resultSet);
+                } else  {
                     LOGGER.error("Unable to get player with " + id + " id, not found.");
                     throw new DaoException("Unable to get player with " + id + " id, not found.");
                 }
-                return playerDto;
             }
 
         } catch (SQLException e) {
@@ -108,7 +108,8 @@ public class PlayerDaoImpl implements PlayerDao {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE)) {
 
-            fillUpdateStatement(statement, playerDto);
+            Player player = EntityConverter.fromDto(playerDto);
+            fillUpdateStatement(statement, player);
             return statement.executeUpdate() > 0;
 
         } catch (SQLException | IOException e) {
@@ -172,13 +173,13 @@ public class PlayerDaoImpl implements PlayerDao {
     }
 
     @Override
-    public boolean addTournament(long playerId, long tournamentId) throws DaoException {
+    public boolean addTournament(TournamentJoiningDto dto) throws DaoException {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(PARTICIPANT_INSERT, Statement.RETURN_GENERATED_KEYS)) {
 
             int i = 0;
-            statement.setLong(++i, playerId);
-            statement.setLong(++i, tournamentId);
+            statement.setLong(++i, dto.getPlayerId());
+            statement.setLong(++i, dto.getTournamentId());
             return statement.executeUpdate() > 0;
 
         } catch (SQLException e) {
@@ -229,37 +230,35 @@ public class PlayerDaoImpl implements PlayerDao {
         }
     }
 
-    private void fillSaveStatement(PreparedStatement statement, PlayerDto player) throws SQLException, IOException {
+    private void fillSaveStatement(PreparedStatement statement, Player player) throws SQLException, IOException {
         int i = 0;
         statement.setString(++i, player.getName());
         statement.setString(++i, player.getSurname());
         statement.setString(++i, player.getNickname());
-        byte[] avatar = player.getPhoto();
-        InputStream stream = new ByteArrayInputStream(avatar);
-        statement.setBlob(++i, stream);
-        stream.close();
-        statement.setString(++i, player.getCountry());
-        statement.setDouble(++i, player.getTotalWon());
-        statement.setLong(++i, player.getUserId());
+        try (InputStream stream = new ByteArrayInputStream(player.getPhoto());) {
+            statement.setBlob(++i, stream);
+            statement.setString(++i, player.getCountry());
+            statement.setDouble(++i, player.getTotalWon());
+            statement.setLong(++i, player.getUserId());
+        }
     }
 
-    private void fillUpdateStatement(PreparedStatement statement, PlayerDto player) throws SQLException, IOException {
+    private void fillUpdateStatement(PreparedStatement statement, Player player) throws SQLException, IOException {
         int i = 0;
         statement.setString(++i, player.getName());
         statement.setString(++i, player.getSurname());
         statement.setString(++i, player.getNickname());
-        byte[] avatar = player.getPhoto();
-        InputStream stream = new ByteArrayInputStream(avatar);
-        statement.setBlob(++i, stream);
-        stream.close();
-        statement.setString(++i, player.getCountry());
-        statement.setDouble(++i, player.getTotalWon());
-        statement.setLong(++i, player.getUserId());
-        statement.setLong(++i, player.getId());
+        try (InputStream stream = new ByteArrayInputStream(player.getPhoto());) {
+            statement.setBlob(++i, stream);
+            statement.setString(++i, player.getCountry());
+            statement.setDouble(++i, player.getTotalWon());
+            statement.setLong(++i, player.getUserId());
+            statement.setLong(++i, player.getId());
+        }
     }
 
     private PlayerDto compile(ResultSet resultSet) throws SQLException, DaoException {
-        PlayerDto playerDto = mapper.mapPlayerDto(resultSet);
+        PlayerDto playerDto = DaoMapper.mapPlayerDto(resultSet);
         List<Long> tournamentsIds = findTournamentsIdsByPlayerId(playerDto.getId());
         List<Long> gamesIds = findGamesIdsByPlayerId(playerDto.getId());
         playerDto.setGamesIds(gamesIds);
