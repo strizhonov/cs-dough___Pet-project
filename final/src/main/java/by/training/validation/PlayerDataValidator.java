@@ -2,18 +2,18 @@ package by.training.validation;
 
 import by.training.constant.AttributesContainer;
 import by.training.constant.MessagesContainer;
-import by.training.service.PlayerService;
-import by.training.service.ServiceException;
+import by.training.common.ServiceException;
+import by.training.user.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class PlayerDataValidator extends BaseInputValidator {
 
     private static final Logger LOGGER = LogManager.getLogger(PlayerDataValidator.class);
-    private PlayerService playerService;
+    private UserService userService;
 
-    public PlayerDataValidator(PlayerService playerService) {
-        this.playerService = playerService;
+    public PlayerDataValidator(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class PlayerDataValidator extends BaseInputValidator {
     public ValidationResult nicknameUniqueness(String nickname) throws ValidationException {
         ValidationResult result = new ValidationResult();
         try {
-            if (playerService.findByNickname(nickname) != null) {
+            if (userService.findPlayerByNickname(nickname) != null) {
                 result.addIfAbsent(AttributesContainer.NICKNAME_ERROR.toString(),
                         MessagesContainer.NICKNAME_UNIQUENESS_ERROR_MESSAGE);
             }

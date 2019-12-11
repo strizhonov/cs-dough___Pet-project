@@ -2,10 +2,10 @@ package by.training.connection;
 
 public interface TransactionManager {
 
-    boolean startTransaction() throws TransactionCommonException;
+    void startTransaction() throws TransactionException;
 
-    boolean commitTransaction() throws TransactionCommonException;
+    void commitTransaction() throws TransactionException;
 
-    boolean rollbackTransaction();
+    void rollbackTransaction();
 
 }

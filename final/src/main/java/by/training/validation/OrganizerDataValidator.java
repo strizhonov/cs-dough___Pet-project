@@ -2,18 +2,18 @@ package by.training.validation;
 
 import by.training.constant.AttributesContainer;
 import by.training.constant.MessagesContainer;
-import by.training.service.OrganizerService;
-import by.training.service.ServiceException;
+import by.training.common.ServiceException;
+import by.training.user.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class OrganizerDataValidator extends BaseInputValidator {
 
     private static final Logger LOGGER = LogManager.getLogger(OrganizerDataValidator.class);
-    private OrganizerService organizerService;
+    private UserService userService;
 
-    public OrganizerDataValidator(OrganizerService organizerService) {
-        this.organizerService = organizerService;
+    public OrganizerDataValidator(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class OrganizerDataValidator extends BaseInputValidator {
     public ValidationResult nameUniqueness(String name) throws ValidationException {
         ValidationResult result = new ValidationResult();
         try {
-            if (organizerService.findByName(name) != null) {
+            if (userService.findOrganizerByName(name) != null) {
                 result.addIfAbsent(AttributesContainer.NAME_ERROR.toString(),
                         MessagesContainer.NAME_UNIQUENESS_ERROR_MESSAGE);
             }

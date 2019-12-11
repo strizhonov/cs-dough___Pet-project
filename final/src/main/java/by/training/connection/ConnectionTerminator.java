@@ -12,8 +12,8 @@ import java.util.Map;
 public class ConnectionTerminator implements Runnable {
 
     private static final Logger LOGGER = LogManager.getLogger(ConnectionTerminator.class);
-    private Map<Connection, Date> borrowed;
-    private long msConnectionLifetime;
+    private final Map<Connection, Date> borrowed;
+    private final long msConnectionLifetime;
 
     public ConnectionTerminator(Map<Connection, Date> borrowed, long msConnectionLifetime) {
         this.borrowed = borrowed;

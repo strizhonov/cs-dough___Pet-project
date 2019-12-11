@@ -1,13 +1,13 @@
 package by.training.connection;
 
-import by.training.appentry.Bean;
+import by.training.constant.AttributesContainer;
+import by.training.core.Bean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -24,52 +24,48 @@ public class TransactionManagerImpl implements TransactionManager, ConnectionPro
     }
 
     @Override
-    public boolean startTransaction() throws TransactionCommonException {
+    public void startTransaction() throws TransactionException {
         lock.lock();
         try {
             if (localConnection.get() == null) {
                 Connection connection = connectionProvider.getConnection();
                 connection.setAutoCommit(false);
                 localConnection.set(connection);
-                return true;
             }
-            return false;
         } catch (SQLException e) {
             LOGGER.warn("Unable to perform start of the transaction.", e);
-            throw new TransactionCommonException("Unable to perform start of the transaction.", e);
+            throw new TransactionException("Unable to perform start of the transaction.", e);
         }
     }
 
     @Override
-    public boolean commitTransaction() throws TransactionCommonException {
+    public void commitTransaction() throws TransactionException {
         try {
             Connection connection = localConnection.get();
             if (connection != null) {
                 connection.commit();
+                connection.setAutoCommit(true);
                 connection.close();
                 localConnection.remove();
-                return true;
             }
-            return false;
         } catch (SQLException e) {
             LOGGER.warn("Unable to perform transaction committing.", e);
-            throw new TransactionCommonException("Unable to perform transaction committing.", e);
+            throw new TransactionException("Unable to perform transaction committing.", e);
         } finally {
             lock.unlock();
         }
     }
 
     @Override
-    public boolean rollbackTransaction() {
+    public void rollbackTransaction() {
         try {
             Connection connection = localConnection.get();
             if (connection != null) {
                 connection.rollback();
+                connection.setAutoCommit(true);
                 connection.close();
                 localConnection.remove();
-                return true;
             }
-            return false;
         } catch (SQLException e) {
             LOGGER.warn("Unable to perform transaction rollback.", e);
             throw new TransactionRollbackException("Unable to perform transaction rollback.", e);
@@ -90,7 +86,7 @@ public class TransactionManagerImpl implements TransactionManager, ConnectionPro
         return (Connection) Proxy.newProxyInstance(connection.getClass().getClassLoader(),
                 new Class[]{Connection.class},
                 (proxy, method, args) -> {
-                    if ("close".equals(method.getName())) {
+                    if (AttributesContainer.CLOSE.toString().equals(method.getName())) {
                         LOGGER.info("Method close of proxy called.");
                         return null;
                     } else {

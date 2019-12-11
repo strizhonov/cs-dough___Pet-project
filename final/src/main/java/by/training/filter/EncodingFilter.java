@@ -1,39 +1,45 @@
 package by.training.filter;
 
-import by.training.constant.ValuesContainer;
+import by.training.core.AppSetting;
+import by.training.core.ApplicationContext;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpFilter;
 import java.io.IOException;
 
-@WebFilter(urlPatterns = {"/*"}, initParams = {@WebInitParam(name = "encoding",
-        value = ValuesContainer.STANDARD_CHARSET_NAME)})
+@WebFilter(urlPatterns = {"/*"})
 public class EncodingFilter extends HttpFilter {
 
-    private String encoding;
+    private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
 
     @Override
     public void init(FilterConfig fConfig) {
-        encoding = fConfig.getInitParameter("encoding");
+
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        String codeRequest = request.getCharacterEncoding();
 
-        if (encoding != null && !encoding.equalsIgnoreCase(codeRequest)) {
-            request.setCharacterEncoding(encoding);
-            response.setCharacterEncoding(encoding);
+        String standardCharset = setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME);
+
+        String requestEncoding = request.getCharacterEncoding();
+        if (!standardCharset.equalsIgnoreCase(requestEncoding)) {
+            request.setCharacterEncoding(standardCharset);
         }
+
+        String responseEncoding = response.getCharacterEncoding();
+        if (!standardCharset.equalsIgnoreCase(responseEncoding)) {
+            response.setCharacterEncoding(standardCharset);
+        }
+
         chain.doFilter(request, response);
     }
 
     @Override
     public void destroy() {
-        encoding = null;
+
     }
 
 }

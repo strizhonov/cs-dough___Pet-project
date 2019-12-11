@@ -2,8 +2,8 @@ package by.training.validation;
 
 import by.training.constant.AttributesContainer;
 import by.training.constant.MessagesContainer;
-import by.training.service.ServiceException;
-import by.training.service.TournamentService;
+import by.training.common.ServiceException;
+import by.training.tournament.TournamentService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

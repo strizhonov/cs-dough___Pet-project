@@ -2,9 +2,10 @@ package by.training.validation;
 
 import by.training.constant.AttributesContainer;
 import by.training.constant.MessagesContainer;
-import by.training.constant.ValuesContainer;
-import by.training.service.ServiceException;
-import by.training.service.UserService;
+import by.training.core.AppSetting;
+import by.training.common.ServiceException;
+import by.training.core.ApplicationContext;
+import by.training.user.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
 public class RegistrationValidator extends BaseInputValidator {
 
     private static final Logger LOGGER = LogManager.getLogger(RegistrationValidator.class);
+    private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
     private UserService userService;
 
     public RegistrationValidator(UserService userService) {
@@ -44,7 +46,7 @@ public class RegistrationValidator extends BaseInputValidator {
     @Validation
     private ValidationResult usernameCorrectness(String username) {
         ValidationResult result = new ValidationResult();
-        Pattern pattern = Pattern.compile(ValuesContainer.USERNAME_REGEX);
+        Pattern pattern = Pattern.compile(setting.get(AppSetting.SettingName.USERNAME_REGEXP));
         Matcher matcher = pattern.matcher(username);
         if (!matcher.find()) {
             result.add(AttributesContainer.USERNAME_ERROR.toString(),
@@ -71,7 +73,7 @@ public class RegistrationValidator extends BaseInputValidator {
     @Validation
     private ValidationResult emailCorrectness(String email) {
         ValidationResult result = new ValidationResult();
-        Pattern pattern = Pattern.compile(ValuesContainer.EMAIL_REGEX, Pattern.CASE_INSENSITIVE);
+        Pattern pattern = Pattern.compile(setting.get(AppSetting.SettingName.EMAIL_REGEXP), Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(email);
         if (!matcher.find()) {
             result.add(AttributesContainer.EMAIL_ERROR.toString(),
@@ -98,7 +100,7 @@ public class RegistrationValidator extends BaseInputValidator {
     @Validation
     private ValidationResult passwordCorrectness(String password) {
         ValidationResult result = new ValidationResult();
-        Pattern pattern = Pattern.compile(ValuesContainer.PASSWORD_REGEX);
+        Pattern pattern = Pattern.compile(setting.get(AppSetting.SettingName.PASSWORD_REGEXP));
         Matcher matcher = pattern.matcher(password);
         if (!matcher.find()) {
             result.add(AttributesContainer.PASSWORD_ERROR.toString(),

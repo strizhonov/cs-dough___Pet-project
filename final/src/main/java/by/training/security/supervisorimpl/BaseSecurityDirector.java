@@ -1,22 +1,21 @@
 package by.training.security.supervisorimpl;
 
-import by.training.security.AccessAllowedForType;
 import by.training.security.SecurityDirector;
-import by.training.servlet.BaseRedirector;
+import by.training.servlet.HttpRespondent;
+import by.training.servlet.HttpRouter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 public abstract class BaseSecurityDirector implements SecurityDirector {
 
     @Override
-    public Optional<BaseRedirector> direct(HttpServletRequest request, HttpServletResponse response) {
-        return isAccessAllowed(request) ? Optional.empty() : getOptionalRedirector(request, response);
+    public HttpRouter direct(HttpServletRequest request, HttpServletResponse response) {
+        return isAccessAllowed(request) ? new HttpRespondent() : getHttpRouter(request, response);
     }
 
     protected abstract boolean isAccessAllowed(HttpServletRequest request);
 
-    protected abstract Optional<BaseRedirector> getOptionalRedirector(HttpServletRequest request, HttpServletResponse response);
+    protected abstract HttpRouter getHttpRouter(HttpServletRequest request, HttpServletResponse response);
 
 }

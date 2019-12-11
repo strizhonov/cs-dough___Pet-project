@@ -1,14 +1,14 @@
 package by.training.security;
 
-import by.training.appentry.Bean;
 import by.training.command.ActionCommand;
+import by.training.core.Bean;
 
 import java.util.EnumMap;
 
 @Bean
 public class SecurityProviderImpl implements SecurityProvider {
 
-    private EnumMap<AccessAllowedForType, SecurityDirector> registered;
+    private final EnumMap<AccessAllowedForType, SecurityDirector> registered;
 
     public SecurityProviderImpl() {
         this.registered = new EnumMap<>(AccessAllowedForType.class);

@@ -1,20 +1,20 @@
 package by.training.security.supervisorimpl;
 
 import by.training.constant.AttributesContainer;
-import by.training.constant.ValuesContainer;
-import by.training.dto.UserDto;
+import by.training.constant.PathsContainer;
+import by.training.servlet.HttpForwarder;
+import by.training.servlet.HttpRouter;
+import by.training.user.UserDto;
 import by.training.security.AccessAllowedForType;
-import by.training.servlet.BaseRedirector;
-import by.training.servlet.RelativePathRedirector;
+import by.training.servlet.HttpRedirector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.Optional;
 
 public class ForAnonymousAccessDirector extends BaseSecurityDirector {
 
-    private static final String REDIRECT_TO = ValuesContainer.REFERER;
+    private static final String REDIRECT_TO = PathsContainer.ACCESS_DENIED;
     private final AccessAllowedForType type = AccessAllowedForType.ANONYMOUS;
 
     @Override
@@ -30,7 +30,7 @@ public class ForAnonymousAccessDirector extends BaseSecurityDirector {
     }
 
     @Override
-    protected Optional<BaseRedirector> getOptionalRedirector(HttpServletRequest request, HttpServletResponse response) {
-        return Optional.of(new RelativePathRedirector(response.getHeader(REDIRECT_TO)));
+    protected HttpRouter getHttpRouter(HttpServletRequest request, HttpServletResponse response) {
+        return new HttpRedirector(request.getContextPath() + REDIRECT_TO);
     }
 }

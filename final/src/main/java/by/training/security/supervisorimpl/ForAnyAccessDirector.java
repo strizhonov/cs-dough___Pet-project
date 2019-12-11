@@ -1,7 +1,8 @@
 package by.training.security.supervisorimpl;
 
 import by.training.security.AccessAllowedForType;
-import by.training.servlet.BaseRedirector;
+import by.training.servlet.HttpRespondent;
+import by.training.servlet.HttpRouter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +23,7 @@ public class ForAnyAccessDirector extends BaseSecurityDirector {
     }
 
     @Override
-    protected Optional<BaseRedirector> getOptionalRedirector(HttpServletRequest request, HttpServletResponse response) {
-        return Optional.empty();
+    protected HttpRouter getHttpRouter(HttpServletRequest request, HttpServletResponse response) {
+        return new HttpRespondent();
     }
 }

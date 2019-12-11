@@ -1,5 +1,5 @@
 package by.training.servlet;
-import by.training.appentry.ApplicationLoader;
+import by.training.core.ApplicationContext;
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandProvider;
@@ -29,11 +29,11 @@ public class ApplicationServlet extends HttpServlet {
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ActionCommandProvider commandProvider
-                = (ActionCommandProvider) ApplicationLoader.getInstance().get(ActionCommandProviderImpl.class);
+                = (ActionCommandProvider) ApplicationContext.getInstance().get(ActionCommandProviderImpl.class);
         ActionCommand command = commandProvider.get(request);
 
         try {
-            HttpRouter router = command.direct(this, request, response);
+            HttpRouter router = command.direct(request, response);
             router.dispatchIfNeed(request, response);
         } catch (ActionCommandExecutionException e) {
             LOGGER.error("Unable to execute command " + command.getClass().getSimpleName() + ".", e);

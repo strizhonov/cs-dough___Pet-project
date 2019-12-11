@@ -1,6 +1,6 @@
 package by.training.security;
 
-import by.training.servlet.BaseRedirector;
+import by.training.servlet.HttpRouter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,6 +10,6 @@ public interface SecurityDirector {
 
     AccessAllowedForType getType();
 
-    Optional<BaseRedirector> direct(HttpServletRequest request, HttpServletResponse response);
+    HttpRouter direct(HttpServletRequest request, HttpServletResponse response);
 
 }

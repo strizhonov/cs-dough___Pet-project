@@ -1,7 +1,8 @@
 package by.training.command;
 
-import by.training.appentry.Bean;
-import by.training.command.impl.DefaultActionCommand;
+import by.training.common.DefaultActionCommand;
+import by.training.constant.AttributesContainer;
+import by.training.core.Bean;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.EnumMap;
@@ -9,8 +10,8 @@ import java.util.EnumMap;
 @Bean
 public class ActionCommandProviderImpl implements ActionCommandProvider {
 
-    private EnumMap<ActionCommandType, ActionCommand> registered;
-    private ActionCommand defaultCommand;
+    private final EnumMap<ActionCommandType, ActionCommand> registered;
+    private final ActionCommand defaultCommand;
 
     public ActionCommandProviderImpl() {
         this.registered = new EnumMap<>(ActionCommandType.class);
@@ -19,7 +20,7 @@ public class ActionCommandProviderImpl implements ActionCommandProvider {
 
     @Override
     public ActionCommand get(HttpServletRequest request) {
-        String param = request.getParameter("command");
+        String param = request.getParameter(AttributesContainer.COMMAND.toString());
         return ActionCommandType.from(param).map(registered::get).orElse(defaultCommand);
     }
 

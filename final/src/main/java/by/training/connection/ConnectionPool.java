@@ -1,5 +1,8 @@
 package by.training.connection;
 
+import by.training.core.AppSetting;
+import by.training.core.ApplicationContext;
+import by.training.core.Bean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,21 +19,10 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-
-public class ConnectionPool implements AutoCloseable {
+@Bean
+public final class ConnectionPool implements AutoCloseable {
 
     private static final Logger LOGGER = LogManager.getLogger(ConnectionPool.class);
-
-    private static final String DB_PROPERTIES_FILE = "database";
-    private static final String DB_DRIVER_KEY = "driver";
-    private static final String USER_KEY = "user";
-    private static final String PASSWORD_KEY = "password";
-    private static final String URL_KEY = "url";
-    private static final String CONNECTION_LIFETIME_MS_KEY = "connection.lifetime.ms";
-    private static final String EXECUTOR_DELAY_KEY = "terminator.executor.delay";
-    private static final String EXECUTOR_PERIOD_KEY = "terminator.executor.period";
-    private static final String EXECUTOR_TIME_UNIT_KEY = "terminator.executor.period.time.unit";
-
     private final AtomicBoolean initialized = new AtomicBoolean();
     private final List<Connection> available = new ArrayList<>();
     private final Map<Connection, Date> borrowed = new HashMap<>();
@@ -38,8 +30,8 @@ public class ConnectionPool implements AutoCloseable {
     private final Condition empty = lock.newCondition();
     private final ConnectionProvider connectionProvider = new ConnectionProxyProvider(this);
     private final ScheduledExecutorService terminatorExecutorService = Executors.newSingleThreadScheduledExecutor();
+    private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
     private int poolSize;
-    private ResourceBundle resourceBundle;
 
     private ConnectionPool() {
 
@@ -56,7 +48,6 @@ public class ConnectionPool implements AutoCloseable {
     public void init(int poolSize) throws SQLException {
         if (!initialized.get()) {
             this.poolSize = poolSize;
-            initProperties();
 
             register();
             initConnections(poolSize);
@@ -127,27 +118,23 @@ public class ConnectionPool implements AutoCloseable {
         }
     }
 
-    private void initProperties() {
-        resourceBundle = ResourceBundle.getBundle(DB_PROPERTIES_FILE);
-    }
-
     private void initConnectionTerminator() {
-        String sConnectionLifetime = resourceBundle.getString(CONNECTION_LIFETIME_MS_KEY);
+        String sConnectionLifetime = setting.get(AppSetting.SettingName.CONNECTION_POOL_SIZE);
         long connectionLifetime = Long.parseLong(sConnectionLifetime);
         Runnable runnable = new ConnectionTerminator(borrowed, connectionLifetime);
 
-        String sExecutorDelay = resourceBundle.getString(EXECUTOR_DELAY_KEY);
+        String sExecutorDelay = setting.get(AppSetting.SettingName.TERMINATOR_EXECUTOR_DELAY);
         long executorDelay = Long.parseLong(sExecutorDelay);
-        String sExecutorPeriod = resourceBundle.getString(EXECUTOR_PERIOD_KEY);
+        String sExecutorPeriod = setting.get(AppSetting.SettingName.TERMINATOR_EXECUTOR_PERIOD);
         long executorPeriod = Long.parseLong(sExecutorPeriod);
-        String sExecutorTimeUnit = resourceBundle.getString(EXECUTOR_TIME_UNIT_KEY);
+        String sExecutorTimeUnit = setting.get(AppSetting.SettingName.TERMINATOR_EXECUTOR_TIME_UNIT);
         TimeUnit executorTimeUnit = TimeUnit.valueOf(sExecutorTimeUnit);
 
         terminatorExecutorService.scheduleAtFixedRate(runnable, executorDelay, executorPeriod, executorTimeUnit);
     }
 
     private void register() throws SQLException {
-        String dbDriver = resourceBundle.getString(DB_DRIVER_KEY);
+        String dbDriver = setting.get(AppSetting.SettingName.DB_DRIVER);
         try {
             Class.forName(dbDriver);
         } catch (ClassNotFoundException e) {
@@ -172,9 +159,9 @@ public class ConnectionPool implements AutoCloseable {
     }
 
     private Connection getConnectionFromDriver() throws SQLException {
-        String url = resourceBundle.getString(URL_KEY);
-        String user = resourceBundle.getString(USER_KEY);
-        String password = resourceBundle.getString(PASSWORD_KEY);
+        String url = setting.get(AppSetting.SettingName.DB_URL);
+        String user = setting.get(AppSetting.SettingName.DB_USER);
+        String password = setting.get(AppSetting.SettingName.DB_PASSWORD);
 
         return DriverManager.getConnection(url, user, password);
     }
