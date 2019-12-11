@@ -37,7 +37,7 @@ public class ForNonOrganizerAccessDirector extends BaseSecurityDirector {
         UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
         return user != null
                 ? new HttpRedirector(request.getContextPath() + REDIRECT_USER_TO + user.getOrganizerId())
-                : new HttpRedirector(request.getContextPath() + REDIRECT_NON_USER_TO);
+                : new HttpForwarder(REDIRECT_NON_USER_TO);
     }
 
 }

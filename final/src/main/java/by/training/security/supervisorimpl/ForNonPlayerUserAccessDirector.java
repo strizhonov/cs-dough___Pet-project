@@ -28,7 +28,7 @@ public class ForNonPlayerUserAccessDirector extends BaseSecurityDirector {
     protected boolean isAccessAllowed(HttpServletRequest request) {
         HttpSession session = request.getSession();
         UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
-        return user == null || user.getPlayerAccountId() == 0;
+        return user != null && user.getPlayerAccountId() == 0;
     }
 
     @Override
@@ -36,8 +36,8 @@ public class ForNonPlayerUserAccessDirector extends BaseSecurityDirector {
         HttpSession session = request.getSession();
         UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
         return user != null
-                ? new HttpRedirector(request.getContextPath() + REDIRECT_USER_TO + user.getPlayerAccountId())
-                : new HttpRedirector(request.getContextPath() + REDIRECT_NON_USER_TO);
+                ? new HttpRedirector(request.getContextPath() + REDIRECT_USER_TO)
+                : new HttpForwarder(REDIRECT_NON_USER_TO);
     }
 
 }

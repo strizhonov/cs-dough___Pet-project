@@ -15,6 +15,7 @@ public class HttpRedirector implements HttpRouter {
     @Override
     public void dispatchIfNeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.sendRedirect(path);
+
     }
 }
 
