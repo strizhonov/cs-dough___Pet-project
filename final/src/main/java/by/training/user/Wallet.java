@@ -1,9 +1,10 @@
 package by.training.user;
 
-import by.training.core.AppSetting;
-import by.training.common.Entity;
 import by.training.core.ApplicationContext;
+import by.training.core.Entity;
+import by.training.resourse.AppSetting;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -13,8 +14,17 @@ public class Wallet extends Entity {
     private Currency currency = Currency.getDefault();
     private long userId;
 
+
     public Wallet() {
     }
+
+
+    public Wallet(double balance, Currency currency, long userId) {
+        this.balance = balance;
+        this.currency = currency;
+        this.userId = userId;
+    }
+
 
     private Wallet(Builder builder) {
         setId(builder.id);
@@ -29,6 +39,11 @@ public class Wallet extends Entity {
 
         public static Currency getDefault() {
             AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
+
+            if (setting == null) {
+                return null;
+            }
+
             return fromString(setting.get(AppSetting.SettingName.DEFAULT_CURRENCY)).orElse(null);
         }
 
@@ -38,6 +53,7 @@ public class Wallet extends Entity {
                     .findFirst();
         }
     }
+
 
     public double getBalance() {
         return balance;
@@ -62,6 +78,35 @@ public class Wallet extends Entity {
     public void setUserId(long userId) {
         this.userId = userId;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Wallet wallet = (Wallet) o;
+        return Double.compare(wallet.balance, balance) == 0 &&
+                userId == wallet.userId &&
+                currency == wallet.currency;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(balance, currency, userId);
+    }
+
+
+    @Override
+    public String toString() {
+        return "Wallet{" +
+                "balance=" + balance +
+                ", currency=" + currency +
+                ", userId=" + userId +
+                ", id=" + id +
+                '}';
+    }
+
 
     public static final class Builder {
         private long id;
@@ -96,4 +141,5 @@ public class Wallet extends Entity {
             return new Wallet(this);
         }
     }
+
 }

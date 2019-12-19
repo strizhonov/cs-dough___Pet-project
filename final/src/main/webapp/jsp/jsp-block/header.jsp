@@ -1,14 +1,17 @@
-<%@ page contentType="text/html;charset=utf-8" pageEncoding="utf-8" %>
+<%@ page contentType="text/html;charset=utf-8"
+         pageEncoding="utf-8"
+         import="by.training.resourse.PathsContainer" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <fmt:setLocale value="${language}"/>
-<fmt:setBundle basename="content"/>
+<fmt:setBundle basename="i18n"/>
 <header class="site-header container">
     <div class="row">
         <form action="${pageContext.request.contextPath}" method="post">
             <div class="col-md-3">
                 <div class="site-branding">
-                    <a href="${pageContext.request.contextPath}/?command=to_home_page"><h1>CS:DOUGH</h1></a>
+                    <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_HOME_PAGE}"><h1>CS:DOUGH</h1>
+                    </a>
                     <h6><fmt:message key="app.description"/></h6>
                 </div>
             </div>
@@ -16,53 +19,50 @@
                 <nav class="main-navigation">
                     <ul class="main-menu">
                         <li class="languages">
-                            <a href="${pageContext.request.contextPath}/?command=change_language_to_<fmt:message key="lang"/>">
+                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_CHANGE_LANGUAGE}<fmt:message key="lang"/>">
                                 <fmt:message key="lang"/>
                             </a>
                         </li>
                         <li><a class="menu-button"
-                               href="${pageContext.request.contextPath}/?command=to_home_page"><fmt:message
+                               href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_HOME_PAGE}"><fmt:message
                                 key="home"/></a></li>
-                        <c:if test="${sessionScope.userRole eq 'ADMIN'}">
+                        <c:if test="${user.type == 'ADMIN'}">
                             <li><a class="menu-button"
-                                   href="${pageContext.request.contextPath}/?command=list_users"><fmt:message
+                                   href="${pageContext.request.contextPath}${PathsContainer.COMMAND_LIST_USERS}"><fmt:message
                                     key="users"/></a></li>
                         </c:if>
                         <li><a class="menu-button"
-                               href="${pageContext.request.contextPath}/?command=list_games"><fmt:message
+                               href="${pageContext.request.contextPath}${PathsContainer.COMMAND_LIST_GAMES}"><fmt:message
                                 key="games"/></a>
                         </li>
                         <li><a class="menu-button"
-                               href="${pageContext.request.contextPath}/?command=list_tournaments"><fmt:message
+                               href="${pageContext.request.contextPath}${PathsContainer.COMMAND_LIST_TOURNAMENTS}"><fmt:message
                                 key="tournaments"/></a>
                         </li>
                         <li><a class="menu-button"
-                               href="${pageContext.request.contextPath}/?command=list_players"><fmt:message
+                               href="${pageContext.request.contextPath}${PathsContainer.COMMAND_LIST_PLAYERS}"><fmt:message
                                 key="players"/></a>
                         </li>
                         <c:if test="${sessionScope.user == null}">
                             <li><a class="login-button"
-                                   href="${pageContext.request.contextPath}/?command=to_login_page"><fmt:message
+                                   href="${pageContext.request.contextPath}/jsp/login.jsp"><fmt:message
                                     key="sign.in"/></a></li>
                         </c:if>
                         <c:if test="${sessionScope.user != null}">
                             <li class="ico-dropdown">
                                 <img class="small-avatar"
-                                     src="${pageContext.request.contextPath}/?command=get_user_photo&id=${sessionScope.user.id}"
+                                     src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_USER_PHOTO}${sessionScope.user.id}"
                                      alt="">
                                 <div class="ico-dropdown-content">
-                                    <a href="${pageContext.request.contextPath}/?command=to_user_page&id=${sessionScope.user.id}"><fmt:message
+                                    <a href="${pageContext.request.contextPath}/jsp/user-profile.jsp"><fmt:message
                                             key="profile"/></a>
-                                    <a href="${pageContext.request.contextPath}/?command=log_out"><fmt:message
+                                    <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_LOG_OUT}"><fmt:message
                                             key="log.out"/></a>
                                 </div>
-
-
                             </li>
                         </c:if>
                     </ul>
                 </nav>
-
             </div>
         </form>
     </div>

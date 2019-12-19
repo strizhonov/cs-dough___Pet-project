@@ -10,6 +10,6 @@ public interface SecurityDirector {
 
     AccessAllowedForType getType();
 
-    HttpRouter direct(HttpServletRequest request, HttpServletResponse response);
+    Optional<HttpRouter> direct(HttpServletRequest request, HttpServletResponse response);
 
 }

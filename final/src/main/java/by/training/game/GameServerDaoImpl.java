@@ -1,11 +1,11 @@
 package by.training.game;
 
-import by.training.common.EntityNotFoundException;
-import by.training.core.Bean;
 import by.training.connection.ConnectionProvider;
-import by.training.common.DaoException;
+import by.training.core.Bean;
+import by.training.core.DaoException;
+import by.training.core.EntityNotFoundException;
 import by.training.util.DaoMapper;
-import by.training.util.EntityConverter;
+import by.training.util.EntityDtoConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,40 +19,55 @@ public class GameServerDaoImpl implements GameServerDao {
     private static final String INSERT =
             "INSERT INTO gameserver (points_to_win, player_one_points, player_two_points, server_path, game_id) " +
                     "VALUES (?,?,?,?,?)";
+
     private static final String SELECT =
             "SELECT game_server_id, points_to_win, player_one_points, player_two_points, server_path, game_id " +
                     "FROM gameserver " +
+                    "WHERE game_server_id = ?";
+
+    private static final String SELECT_BY_GAME =
+            "SELECT game_server_id, points_to_win, player_one_points, player_two_points, server_path, game_id " +
+                    "FROM gameserver " +
                     "WHERE game_id = ?";
+
     private static final String UPDATE =
             "UPDATE gameserver " +
                     "SET points_to_win=?, player_one_points=?, player_two_points=?, server_path=?, game_id=? " +
                     "WHERE game_server_id = ?";
+
     private static final String DELETE =
             "DELETE FROM gameserver " +
                     "WHERE game_server_id = ?";
+
     private static final String SELECT_ALL =
             "SELECT game_server_id, points_to_win, player_one_points, player_two_points, server_path, game_id " +
                     "FROM gameserver";
 
+
     private static final Logger LOGGER = LogManager.getLogger(GameServerDaoImpl.class);
     private final ConnectionProvider provider;
+
 
     public GameServerDaoImpl(ConnectionProvider provider) {
         this.provider = provider;
     }
+
 
     @Override
     public long save(GameServerDto gameServerDto) throws DaoException {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
 
-            GameServerEntity entity = EntityConverter.fromDto(gameServerDto);
+            GameServer entity = EntityDtoConverter.fromDto(gameServerDto);
             fillSaveStatement(statement, entity);
             statement.executeUpdate();
+
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+
                 if (generatedKeys.next()) {
                     return generatedKeys.getLong(1);
                 }
+
                 return 0;
             }
 
@@ -62,6 +77,7 @@ public class GameServerDaoImpl implements GameServerDao {
         }
     }
 
+
     @Override
     public GameServerDto get(long id) throws DaoException {
         try (Connection connection = provider.getConnection();
@@ -69,12 +85,14 @@ public class GameServerDaoImpl implements GameServerDao {
 
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
+
                 if (resultSet.next()) {
                     return DaoMapper.mapGameServerDto(resultSet);
-                } else  {
+                } else {
                     LOGGER.error("Unable to get game server with " + id + " id, not found.");
                     throw new EntityNotFoundException("Unable to get game server with " + id + " id, not found.");
                 }
+
             }
 
         } catch (SQLException e) {
@@ -83,12 +101,13 @@ public class GameServerDaoImpl implements GameServerDao {
         }
     }
 
+
     @Override
     public boolean update(GameServerDto gameServerDto) throws DaoException {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE)) {
 
-            GameServerEntity entity = EntityConverter.fromDto(gameServerDto);
+            GameServer entity = EntityDtoConverter.fromDto(gameServerDto);
             fillUpdateStatement(statement, entity);
             return statement.executeUpdate() > 0;
 
@@ -97,6 +116,7 @@ public class GameServerDaoImpl implements GameServerDao {
             throw new DaoException("Unable to perform entity updating.", e);
         }
     }
+
 
     @Override
     public boolean delete(long id) throws DaoException {
@@ -112,6 +132,7 @@ public class GameServerDaoImpl implements GameServerDao {
         }
     }
 
+
     @Override
     public List<GameServerDto> findAll() throws DaoException {
         try (Connection connection = provider.getConnection();
@@ -119,10 +140,12 @@ public class GameServerDaoImpl implements GameServerDao {
              ResultSet resultSet = statement.executeQuery()) {
 
             List<GameServerDto> result = new ArrayList<>();
+
             while (resultSet.next()) {
                 GameServerDto gameServerDto = DaoMapper.mapGameServerDto(resultSet);
                 result.add(gameServerDto);
             }
+
             return result;
 
         } catch (SQLException e) {
@@ -131,7 +154,32 @@ public class GameServerDaoImpl implements GameServerDao {
         }
     }
 
-    private void fillSaveStatement(PreparedStatement statement, GameServerEntity gameServer) throws SQLException {
+
+    @Override
+    public GameServerDto getByGameId(long gameId) throws DaoException {
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SELECT_BY_GAME)) {
+
+            statement.setLong(1, gameId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    return DaoMapper.mapGameServerDto(resultSet);
+                } else {
+                    LOGGER.error("Unable to get game server with  id, not found.");
+                    throw new EntityNotFoundException("Unable to get game server with id, not found.");
+                }
+
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error("Unable to perform entity retrieving.", e);
+            throw new DaoException("Unable to perform entity retrieving.", e);
+        }
+    }
+
+
+    private void fillSaveStatement(PreparedStatement statement, GameServer gameServer) throws SQLException {
         int i = 0;
         statement.setInt(++i, gameServer.getPointsToWin());
         statement.setInt(++i, gameServer.getPlayerOnePoints());
@@ -140,7 +188,8 @@ public class GameServerDaoImpl implements GameServerDao {
         statement.setLong(++i, gameServer.getGameId());
     }
 
-    private void fillUpdateStatement(PreparedStatement statement, GameServerEntity gameServer) throws SQLException {
+
+    private void fillUpdateStatement(PreparedStatement statement, GameServer gameServer) throws SQLException {
         int i = 0;
         statement.setInt(++i, gameServer.getPointsToWin());
         statement.setInt(++i, gameServer.getPlayerOnePoints());
@@ -149,6 +198,5 @@ public class GameServerDaoImpl implements GameServerDao {
         statement.setLong(++i, gameServer.getGameId());
         statement.setLong(++i, gameServer.getId());
     }
-
 
 }

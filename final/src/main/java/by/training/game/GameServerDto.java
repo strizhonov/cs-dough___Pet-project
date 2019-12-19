@@ -1,8 +1,11 @@
 package by.training.game;
 
-import by.training.common.BaseDto;
+import java.io.Serializable;
+import java.util.Objects;
 
-public class GameServerDto extends BaseDto {
+public class GameServerDto implements Serializable {
+
+    private static final long serialVersionUID = 4L;
 
     private long id;
     private int pointsToWin;
@@ -10,6 +13,21 @@ public class GameServerDto extends BaseDto {
     private int playerTwoPoints;
     private String path;
     private long gameId;
+
+
+    public GameServerDto() {
+    }
+
+
+    public GameServerDto(long id, int pointsToWin, int playerOnePoints, int playerTwoPoints, String path, long gameId) {
+        this.id = id;
+        this.pointsToWin = pointsToWin;
+        this.playerOnePoints = playerOnePoints;
+        this.playerTwoPoints = playerTwoPoints;
+        this.path = path;
+        this.gameId = gameId;
+    }
+
 
     public long getId() {
         return id;
@@ -57,6 +75,39 @@ public class GameServerDto extends BaseDto {
 
     public void setGameId(long gameId) {
         this.gameId = gameId;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameServerDto that = (GameServerDto) o;
+        return id == that.id &&
+                pointsToWin == that.pointsToWin &&
+                playerOnePoints == that.playerOnePoints &&
+                playerTwoPoints == that.playerTwoPoints &&
+                gameId == that.gameId &&
+                Objects.equals(path, that.path);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, pointsToWin, playerOnePoints, playerTwoPoints, path, gameId);
+    }
+
+
+    @Override
+    public String toString() {
+        return "GameServerDto{" +
+                "id=" + id +
+                ", pointsToWin=" + pointsToWin +
+                ", playerOnePoints=" + playerOnePoints +
+                ", playerTwoPoints=" + playerTwoPoints +
+                ", path='" + path + '\'' +
+                ", gameId=" + gameId +
+                '}';
     }
 
 
@@ -112,4 +163,5 @@ public class GameServerDto extends BaseDto {
             return gameServerDto;
         }
     }
+
 }

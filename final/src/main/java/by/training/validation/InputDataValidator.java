@@ -1,7 +1,7 @@
 package by.training.validation;
 
-public interface InputDataValidator {
+public interface InputDataValidator<T> {
 
-    ValidationResult validate(String... strings) throws ValidationException;
+    ValidationResult validate(T data) throws ValidationException;
 
 }

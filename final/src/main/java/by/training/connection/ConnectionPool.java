@@ -1,8 +1,8 @@
 package by.training.connection;
 
-import by.training.core.AppSetting;
 import by.training.core.ApplicationContext;
 import by.training.core.Bean;
+import by.training.resourse.AppSetting;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +20,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Bean
-public final class ConnectionPool implements AutoCloseable {
+public class ConnectionPool implements AutoCloseable {
 
     private static final Logger LOGGER = LogManager.getLogger(ConnectionPool.class);
     private final AtomicBoolean initialized = new AtomicBoolean();
@@ -33,12 +33,9 @@ public final class ConnectionPool implements AutoCloseable {
     private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
     private int poolSize;
 
+
     private ConnectionPool() {
 
-    }
-
-    private static class InstanceHolder {
-        private static final ConnectionPool INSTANCE = new ConnectionPool();
     }
 
     public static ConnectionPool getInstance() {
@@ -165,5 +162,10 @@ public final class ConnectionPool implements AutoCloseable {
 
         return DriverManager.getConnection(url, user, password);
     }
+
+    private static class InstanceHolder {
+        private static final ConnectionPool INSTANCE = new ConnectionPool();
+    }
+
 
 }

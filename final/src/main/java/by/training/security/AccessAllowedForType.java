@@ -1,14 +1,13 @@
 package by.training.security;
 
 public enum AccessAllowedForType {
-    ANY,
+    ADMIN,
     ANONYMOUS,
+    ANY,
+    ANY_ORGANIZER,
+    ANY_PLAYER,
     NON_ORGANIZER_USERS,
     NON_PLAYER_USERS,
-    USER,
-    ORGANIZER_OWNER,
-    PLAYER_OWNER,
-    PLAYER,
-    ORGANIZER,
-    ADMIN
+    TOURNAMENT_OWNER,
+    USER
 }

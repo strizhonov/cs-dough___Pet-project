@@ -1,7 +1,7 @@
 package by.training.filter;
 
-import by.training.core.AppSetting;
 import by.training.core.ApplicationContext;
+import by.training.resourse.AppSetting;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -13,10 +13,12 @@ public class EncodingFilter extends HttpFilter {
 
     private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
 
+
     @Override
     public void init(FilterConfig fConfig) {
 
     }
+
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -36,6 +38,7 @@ public class EncodingFilter extends HttpFilter {
 
         chain.doFilter(request, response);
     }
+
 
     @Override
     public void destroy() {

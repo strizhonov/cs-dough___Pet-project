@@ -1,50 +1,48 @@
 package by.training.game;
 
-import java.util.Date;
+import by.training.core.Entity;
 
-public class GameServer {
+import java.util.Objects;
 
-    private final String path;
-    private final int pointsToWin;
-    private int playerOnePoints = 0;
-    private int playerTwoPoints = 0;
-    private Date endTime;
+public class GameServer extends Entity {
 
-    public GameServer(int pointsToWin) {
-        this.path = generatePath();
+    private static final long serialVersionUID = 4L;
+
+    private int pointsToWin;
+    private int playerOnePoints;
+    private int playerTwoPoints;
+    private String path;
+    private long gameId;
+
+    public GameServer() {
+    }
+
+
+    public GameServer(int pointsToWin, int playerOnePoints, int playerTwoPoints, String path, long gameId) {
         this.pointsToWin = pointsToWin;
+        this.playerOnePoints = playerOnePoints;
+        this.playerTwoPoints = playerTwoPoints;
+        this.path = path;
+        this.gameId = gameId;
     }
 
-    private String generatePath() {
-        return "fake_path";
+
+    private GameServer(Builder builder) {
+        setId(builder.id);
+        setPointsToWin(builder.pointsToWin);
+        setPlayerOnePoints(builder.playerOnePoints);
+        setPlayerTwoPoints(builder.playerTwoPoints);
+        setPath(builder.path);
+        setGameId(builder.gameId);
     }
 
-    public boolean increaseFirstPlayerPoints() {
-        if (playerOnePoints < pointsToWin) {
-            playerOnePoints++;
-            return true;
-        } else if (playerOnePoints == pointsToWin) {
-            endTime = new Date();
-        }
-        return false;
-    }
-
-    public boolean increaseSecondPlayerPoints() {
-        if (playerTwoPoints < pointsToWin) {
-            playerTwoPoints++;
-            return true;
-        } else if (playerTwoPoints == pointsToWin) {
-            endTime = new Date();
-        }
-        return false;
-    }
-
-    public String getPath() {
-        return path;
-    }
 
     public int getPointsToWin() {
         return pointsToWin;
+    }
+
+    public void setPointsToWin(int pointsToWin) {
+        this.pointsToWin = pointsToWin;
     }
 
     public int getPlayerOnePoints() {
@@ -63,11 +61,99 @@ public class GameServer {
         this.playerTwoPoints = playerTwoPoints;
     }
 
-    public Date getEndTime() {
-        return endTime;
+    public String getPath() {
+        return path;
     }
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+    public void setPath(String path) {
+        this.path = path;
     }
+
+    public long getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(long gameId) {
+        this.gameId = gameId;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameServer that = (GameServer) o;
+        return pointsToWin == that.pointsToWin &&
+                playerOnePoints == that.playerOnePoints &&
+                playerTwoPoints == that.playerTwoPoints &&
+                gameId == that.gameId &&
+                Objects.equals(path, that.path);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pointsToWin, playerOnePoints, playerTwoPoints, path, gameId);
+    }
+
+
+    @Override
+    public String toString() {
+        return "GameServerEntity{" +
+                "pointsToWin=" + pointsToWin +
+                ", playerOnePoints=" + playerOnePoints +
+                ", playerTwoPoints=" + playerTwoPoints +
+                ", path='" + path + '\'' +
+                ", gameId=" + gameId +
+                ", id=" + id +
+                '}';
+    }
+
+
+    public static final class Builder {
+        private long id;
+        private int pointsToWin;
+        private int playerOnePoints;
+        private int playerTwoPoints;
+        private String path;
+        private long gameId;
+
+        public Builder() {
+        }
+
+        public Builder id(long val) {
+            id = val;
+            return this;
+        }
+
+        public Builder pointsToWin(int val) {
+            pointsToWin = val;
+            return this;
+        }
+
+        public Builder playerOnePoints(int val) {
+            playerOnePoints = val;
+            return this;
+        }
+
+        public Builder playerTwoPoints(int val) {
+            playerTwoPoints = val;
+            return this;
+        }
+
+        public Builder path(String val) {
+            path = val;
+            return this;
+        }
+
+        public Builder gameId(long val) {
+            gameId = val;
+            return this;
+        }
+
+        public GameServer build() {
+            return new GameServer(this);
+        }
+    }
+
 }

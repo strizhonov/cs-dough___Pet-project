@@ -1,41 +1,70 @@
+<%@ page contentType="text/html;charset=utf-8"
+         pageEncoding="utf-8"
+         import="by.training.resourse.PathsContainer" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<fmt:setLocale value="${language}"/>
+<fmt:setBundle basename="i18n"/>
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
-            <div>
-                <h2 style="margin-bottom: 20px;">Our events:</h2>
-            </div>
-            <div>
-                <a href="">
-
-                </a>
-            </div>
+            <c:choose>
+                <c:when test="${custom_header != null}">
+                    <div>
+                        <h2 style="margin-bottom: 20px;">${custom_header}</h2>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div>
+                        <h2 style="margin-bottom: 20px;"><fmt:message key="events"/>:</h2>
+                    </div>
+                </c:otherwise>
+            </c:choose>
             <table class="generic-table">
                 <thead>
                 <tr>
-                    <th>AVA</th>
-                    <th>Tournament</th>
-                    <th>Prize pool</th>
-                    <th>Status</th>
-                    <th>Total Teams</th>
-                    <th>Teams Registered</th>
+                    <th></th>
+                    <th><fmt:message key="name"/></th>
+                    <th><fmt:message key="prize.pool.usd"/></th>
+                    <th><fmt:message key="buy.in.usd"/></th>
+                    <th><fmt:message key="slots"/></th>
+                    <th><fmt:message key="registered"/></th>
+                    <th><fmt:message key="status"/></th>
                 </tr>
                 </thead>
                 <tbody>
                 <c:forEach var="tournament" items="${requestScope.tournaments}">
                     <tr>
-                        <th><a href="${pageContext.request.contextPath}/?command=to_tournament_page&id=${tournament.id}">AVA</a></th>
-                        <th><a href="${pageContext.request.contextPath}/?command=to_tournament_page&id=${tournament.id}">${tournament.name}</a></th>
-                        <th><a href="${pageContext.request.contextPath}/?command=to_tournament_page&id=${tournament.id}">${tournament.prizePool}</a></th>
-                        <th><a href="${pageContext.request.contextPath}/?command=to_tournament_page&id=${tournament.id}">${tournament.status}</a></th>
-                        <th><a href="${pageContext.request.contextPath}/?command=to_tournament_page&id=${tournament.id}">2</a></th>
-                        <th><a href="${pageContext.request.contextPath}/?command=to_tournament_page&id=${tournament.id}">2</a></th>
+                        <th>
+                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_TOURNAMENT_PAGE}${tournament.id}">
+                                <img class="generic-table-img"
+                                     src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_TOURNAMENT_LOGO}${tournament.id}"
+                                     alt="">
+                            </a>
+                        </th>
+                        <th>
+                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_TOURNAMENT_PAGE}${tournament.id}">${tournament.name}</a>
+                        </th>
+                        <th>
+                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_TOURNAMENT_PAGE}${tournament.id}">${tournament.prizePool}</a>
+                        </th>
+                        <th>
+                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_TOURNAMENT_PAGE}${tournament.id}">${tournament.buyIn}</a>
+                        </th>
+                        <th>
+                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_TOURNAMENT_PAGE}${tournament.id}">${tournament.playersNumber}</a>
+                        </th>
+                        <th>
+                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_TOURNAMENT_PAGE}${tournament.id}">${tournament.participantsIds.size()}</a>
+                        </th>
+                        <th>
+                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_TOURNAMENT_PAGE}${tournament.id}">${tournament.status}</a>
+                        </th>
                     </tr>
                 </c:forEach>
                 </tbody>
             </table>
         </div>
-
     </div>
 </div>
 

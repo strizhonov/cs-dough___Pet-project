@@ -1,10 +1,20 @@
 package by.training.game;
 
-import by.training.common.CrudDao;
-import by.training.common.DaoException;
+import by.training.core.CrudDao;
+import by.training.core.DaoException;
 
-public interface GameDao extends CrudDao<GameDto> {
+import java.util.List;
 
-    void saveNew(GameDto gameDto) throws DaoException;
+public interface GameDao extends CrudDao<PlainGameDto> {
+
+    ComplexGameDto getComplex(long gameId) throws DaoException;
+
+    ComplexGameDto getComplexByBracketIndex(int nextGameIndex, long tournamentId) throws DaoException;
+
+    List<ComplexGameDto> findAllComplex() throws DaoException;
+
+    List<ComplexGameDto> findAllComplexOfPlayer(long id) throws DaoException;
+
+    List<ComplexGameDto> findAllComplexOfTournament(long tournamentId) throws DaoException;
 
 }

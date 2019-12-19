@@ -1,13 +1,17 @@
 package by.training.user;
 
-import by.training.core.AppSetting;
-import by.training.common.Entity;
 import by.training.core.ApplicationContext;
+import by.training.core.Entity;
+import by.training.resourse.AppSetting;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public class User extends Entity {
+
+    private static final long serialVersionUID = 4L;
 
     private byte[] avatar = new byte[0];
     private String username;
@@ -21,6 +25,18 @@ public class User extends Entity {
     public User() {
     }
 
+
+    public User(byte[] avatar, String username, String password, String passwordKey, String email, UserType type,
+                Language language) {
+        this.avatar = Arrays.copyOf(avatar, avatar.length);
+        this.username = username;
+        this.password = password;
+        this.passwordKey = passwordKey;
+        this.email = email;
+        this.type = type;
+        this.language = language;
+    }
+
     private User(Builder builder) {
         setId(builder.id);
         setAvatar(builder.avatar);
@@ -32,14 +48,23 @@ public class User extends Entity {
         setLanguage(builder.language);
     }
 
-    public enum UserType {
-        ANONYMOUS, USER, ADMIN;
 
-        private static final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
+    public enum UserType {
+
+        USER, ADMIN;
+
 
         public static UserType getDefault() {
+            AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
+
+            if (setting == null) {
+                return null;
+            }
+
             return fromString(setting.get(AppSetting.SettingName.DEFAULT_USER_TYPE)).orElse(null);
+
         }
+
 
         public static Optional<UserType> fromString(String type) {
             return Stream.of(UserType.values())
@@ -48,13 +73,23 @@ public class User extends Entity {
         }
     }
 
+
     public enum Language {
+
         EN, RU;
+
 
         public static Language getDefault() {
             AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
+
+            if (setting == null) {
+                return null;
+            }
+
             return fromLocaleString(setting.get(AppSetting.SettingName.DEFAULT_LANGUAGE)).orElse(null);
+
         }
+
 
         public static Optional<Language> fromLocaleString(String type) {
             return Stream.of(Language.values())
@@ -62,18 +97,23 @@ public class User extends Entity {
                     .findFirst();
         }
 
-        public Language getSwitched() {
-            return this == EN ? RU : EN;
-        }
-
     }
 
+
     public byte[] getAvatar() {
-        return avatar;
+        if (this.avatar == null) {
+            return null;
+        } else {
+            return Arrays.copyOf(avatar, avatar.length);
+        }
     }
 
     public void setAvatar(byte[] avatar) {
-        this.avatar = avatar;
+        if (avatar == null) {
+            this.avatar = null;
+        } else {
+            this.avatar = Arrays.copyOf(avatar, avatar.length);
+        }
     }
 
     public String getUsername() {
@@ -124,6 +164,45 @@ public class User extends Entity {
         this.language = language;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Arrays.equals(avatar, user.avatar) &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(passwordKey, user.passwordKey) &&
+                Objects.equals(email, user.email) &&
+                type == user.type &&
+                language == user.language;
+    }
+
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(username, password, passwordKey, email, type, language);
+        result = 31 * result + Arrays.hashCode(avatar);
+        return result;
+    }
+
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "avatar=" + Arrays.toString(avatar) +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", passwordKey='" + passwordKey + '\'' +
+                ", email='" + email + '\'' +
+                ", type=" + type +
+                ", language=" + language +
+                ", id=" + id +
+                '}';
+    }
+
+
     public static final class Builder {
         private long id;
         private byte[] avatar = new byte[0];
@@ -143,7 +222,11 @@ public class User extends Entity {
         }
 
         public Builder avatar(byte[] val) {
-            avatar = val;
+            if (val == null) {
+                avatar = null;
+            } else {
+                avatar = Arrays.copyOf(val, val.length);
+            }
             return this;
         }
 

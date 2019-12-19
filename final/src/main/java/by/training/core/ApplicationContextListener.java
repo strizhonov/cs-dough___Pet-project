@@ -12,11 +12,13 @@ public class ApplicationContextListener implements ServletContextListener {
 
     private final static Logger LOGGER = LogManager.getLogger(ApplicationContextListener.class);
 
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ApplicationContext.getInstance().init();
         LOGGER.info("Context was initialized.");
     }
+
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {

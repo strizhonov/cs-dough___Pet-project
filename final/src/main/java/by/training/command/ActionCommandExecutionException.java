@@ -10,5 +10,4 @@ public class ActionCommandExecutionException extends Exception {
         super(message, cause);
     }
 
-
 }

@@ -1,10 +1,14 @@
 package by.training.user;
 
-public class LoginDto {
+import java.io.Serializable;
+import java.util.Objects;
+
+public class LoginDto implements Serializable {
+
+    private static final long serialVersionUID = 4L;
 
     private String username;
     private String password;
-    private String passwordKey;
 
     public String getUsername() {
         return username;
@@ -22,11 +26,30 @@ public class LoginDto {
         this.password = password;
     }
 
-    public String getPasswordKey() {
-        return passwordKey;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LoginDto loginDto = (LoginDto) o;
+        return Objects.equals(username, loginDto.username) &&
+                Objects.equals(password, loginDto.password);
     }
 
-    public void setPasswordKey(String passwordKey) {
-        this.passwordKey = passwordKey;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, password);
     }
+
+
+    @Override
+    public String toString() {
+        return "LoginDto{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
+
 }
+

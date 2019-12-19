@@ -15,17 +15,22 @@ public class ConnectionTerminator implements Runnable {
     private final Map<Connection, Date> borrowed;
     private final long msConnectionLifetime;
 
+
     public ConnectionTerminator(Map<Connection, Date> borrowed, long msConnectionLifetime) {
         this.borrowed = borrowed;
         this.msConnectionLifetime = msConnectionLifetime;
     }
 
+
     @Override
     public void run() {
+
         long current = new Date().getTime();
 
         Iterator<Map.Entry<Connection, Date>> iterator = borrowed.entrySet().iterator();
+
         while (iterator.hasNext()) {
+
             Map.Entry<Connection, Date> entry = iterator.next();
             long creation = entry.getValue().getTime();
 
@@ -34,10 +39,14 @@ public class ConnectionTerminator implements Runnable {
             }
 
             try {
+
                 Connection connection = entry.getKey();
-                connection.rollback();
+                if (!connection.getAutoCommit()) {
+                    connection.rollback();
+                }
                 connection.close();
                 iterator.remove();
+
             } catch (SQLException e) {
                 LOGGER.error("Unable to close connection.", e);
             }

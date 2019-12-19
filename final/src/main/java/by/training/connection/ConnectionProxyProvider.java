@@ -1,7 +1,7 @@
 package by.training.connection;
 
-import by.training.constant.AttributesContainer;
 import by.training.core.Bean;
+import by.training.resourse.AttributesContainer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,9 +15,11 @@ public class ConnectionProxyProvider implements ConnectionProvider {
     private static final Logger LOGGER = LogManager.getLogger(ConnectionProxyProvider.class);
     private final ConnectionPool connectionPool;
 
+
     public ConnectionProxyProvider(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
+
 
     @Override
     public Connection getConnection() throws SQLException {
@@ -38,4 +40,5 @@ public class ConnectionProxyProvider implements ConnectionProvider {
                     }
                 });
     }
+
 }

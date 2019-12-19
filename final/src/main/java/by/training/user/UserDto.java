@@ -1,7 +1,13 @@
 package by.training.user;
 
 
-public class UserDto {
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Objects;
+
+public class UserDto implements Serializable {
+
+    private static final long serialVersionUID = 4L;
 
     private long id;
     private byte[] avatar = new byte[0];
@@ -11,10 +17,34 @@ public class UserDto {
     private String email;
     private User.UserType type = User.UserType.getDefault();
     private User.Language language = User.Language.getDefault();
-    private double balance ;
-    private Wallet.Currency currency = Wallet.Currency.getDefault();
+    private long walletId;
     private long playerAccountId;
     private long organizerId;
+
+
+    public UserDto() {
+
+    }
+
+
+    public UserDto(long id, byte[] avatar, String username, String password, String passwordKey, String email,
+                   User.UserType type, User.Language language, long walletId, long playerAccountId, long organizerId) {
+        this.id = id;
+        if (avatar == null) {
+            this.avatar = null;
+        } else {
+            this.avatar = Arrays.copyOf(avatar, avatar.length);
+        }
+        this.username = username;
+        this.password = password;
+        this.passwordKey = passwordKey;
+        this.email = email;
+        this.type = type;
+        this.language = language;
+        this.walletId = walletId;
+        this.playerAccountId = playerAccountId;
+        this.organizerId = organizerId;
+    }
 
     private UserDto(Builder builder) {
         setId(builder.id);
@@ -25,14 +55,14 @@ public class UserDto {
         setEmail(builder.email);
         setType(builder.type);
         setLanguage(builder.language);
-        setBalance(builder.balance);
-        setCurrency(builder.currency);
+        setWalletId(builder.walletId);
         setPlayerAccountId(builder.playerAccountId);
         setOrganizerId(builder.organizerId);
     }
 
-    public UserDto() {
 
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
     public long getId() {
@@ -44,11 +74,19 @@ public class UserDto {
     }
 
     public byte[] getAvatar() {
-        return avatar;
+        if (avatar == null) {
+            return null;
+        } else {
+            return Arrays.copyOf(avatar, avatar.length);
+        }
     }
 
     public void setAvatar(byte[] avatar) {
-        this.avatar = avatar;
+        if (avatar == null) {
+            this.avatar = null;
+        } else {
+            this.avatar = Arrays.copyOf(avatar, avatar.length);
+        }
     }
 
     public String getUsername() {
@@ -99,20 +137,12 @@ public class UserDto {
         this.language = language;
     }
 
-    public double getBalance() {
-        return balance;
+    public long getWalletId() {
+        return walletId;
     }
 
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
-
-    public Wallet.Currency getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(Wallet.Currency currency) {
-        this.currency = currency;
+    public void setWalletId(long walletId) {
+        this.walletId = walletId;
     }
 
     public long getPlayerAccountId() {
@@ -131,17 +161,62 @@ public class UserDto {
         this.organizerId = organizerId;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDto userDto = (UserDto) o;
+        return id == userDto.id &&
+                walletId == userDto.walletId &&
+                playerAccountId == userDto.playerAccountId &&
+                organizerId == userDto.organizerId &&
+                Arrays.equals(avatar, userDto.avatar) &&
+                Objects.equals(username, userDto.username) &&
+                Objects.equals(password, userDto.password) &&
+                Objects.equals(passwordKey, userDto.passwordKey) &&
+                Objects.equals(email, userDto.email) &&
+                type == userDto.type &&
+                language == userDto.language;
+    }
+
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(id, username, password, passwordKey, email, type, language, walletId, playerAccountId, organizerId);
+        result = 31 * result + Arrays.hashCode(avatar);
+        return result;
+    }
+
+
+    @Override
+    public String toString() {
+        return "UserDto{" +
+                "id=" + id +
+                ", avatar=" + Arrays.toString(avatar) +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", passwordKey='" + passwordKey + '\'' +
+                ", email='" + email + '\'' +
+                ", type=" + type +
+                ", language=" + language +
+                ", walletId=" + walletId +
+                ", playerAccountId=" + playerAccountId +
+                ", organizerId=" + organizerId +
+                '}';
+    }
+
+
     public static final class Builder {
         private long id;
-        private byte[] avatar = new byte[0];
+        private byte[] avatar;
         private String username;
         private String password;
         private String passwordKey;
         private String email;
-        private User.UserType type = User.UserType.getDefault();
-        private User.Language language = User.Language.getDefault();
-        private double balance;
-        private Wallet.Currency currency = Wallet.Currency.getDefault();
+        private User.UserType type;
+        private User.Language language;
+        private long walletId;
         private long playerAccountId;
         private long organizerId;
 
@@ -154,7 +229,7 @@ public class UserDto {
         }
 
         public Builder avatar(byte[] val) {
-            avatar = val;
+            avatar = Arrays.copyOf(val, val.length);
             return this;
         }
 
@@ -188,13 +263,8 @@ public class UserDto {
             return this;
         }
 
-        public Builder balance(double val) {
-            balance = val;
-            return this;
-        }
-
-        public Builder currency(Wallet.Currency val) {
-            currency = val;
+        public Builder walletId(long val) {
+            walletId = val;
             return this;
         }
 
@@ -212,4 +282,6 @@ public class UserDto {
             return new UserDto(this);
         }
     }
+
+
 }

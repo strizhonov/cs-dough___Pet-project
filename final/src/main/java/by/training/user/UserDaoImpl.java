@@ -1,10 +1,10 @@
 package by.training.user;
 
-import by.training.core.Bean;
 import by.training.connection.ConnectionProvider;
-import by.training.common.DaoException;
-import by.training.util.EntityConverter;
+import by.training.core.Bean;
+import by.training.core.DaoException;
 import by.training.util.DaoMapper;
+import by.training.util.EntityDtoConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,8 +21,9 @@ public class UserDaoImpl implements UserDao {
     private static final String INSERT =
             "INSERT INTO user_account (account_avatar, username, user_password, password_key, user_email, user_type, lang) " +
                     "VALUES (?,?,?,?,?,?,?)";
+
     private static final String SELECT =
-            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.balance, w.currency, p.player_id, o.organizer_id " +
+            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.wallet_id, p.player_id, o.organizer_id " +
                     "FROM user_account " +
                     "INNER JOIN wallet w " +
                     "ON user_account.user_id = w.user_id " +
@@ -31,45 +32,18 @@ public class UserDaoImpl implements UserDao {
                     "LEFT JOIN organizer o " +
                     "ON user_account.user_id = o.user_account_id " +
                     "WHERE user_account.user_id=?";
-    private static final String SELECT_BY_USERNAME =
-            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.balance, w.currency, p.player_id, o.organizer_id " +
-                    "FROM user_account " +
-                    "INNER JOIN wallet w " +
-                    "ON user_account.user_id = w.user_id " +
-                    "LEFT JOIN player p " +
-                    "ON user_account.user_id = p.user_account_id " +
-                    "LEFT JOIN organizer o " +
-                    "ON user_account.user_id = o.user_account_id " +
-                    "WHERE username=?";
-    private static final String SELECT_BY_EMAIL =
-            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.balance, w.currency, p.player_id, o.organizer_id " +
-                    "FROM user_account " +
-                    "INNER JOIN wallet w " +
-                    "ON user_account.user_id = w.user_id " +
-                    "LEFT JOIN player p " +
-                    "ON user_account.user_id = p.user_account_id " +
-                    "LEFT JOIN organizer o " +
-                    "ON user_account.user_id = o.user_account_id " +
-                    "WHERE user_email=?";
-    private static final String SELECT_BY_USERNAME_AND_PASSWORD =
-            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.balance, w.currency, p.player_id, o.organizer_id " +
-                    "FROM user_account " +
-                    "INNER JOIN wallet w " +
-                    "ON user_account.user_id = w.user_id " +
-                    "LEFT JOIN player p " +
-                    "ON user_account.user_id = p.user_account_id " +
-                    "LEFT JOIN organizer o " +
-                    "ON user_account.user_id = o.user_account_id " +
-                    "WHERE username=? AND user_password=?";
+
     private static final String UPDATE =
             "UPDATE user_account " +
                     "SET account_avatar=?, username=?, user_password=?, password_key=?, user_email=?, user_type=?, lang=? " +
                     "WHERE user_id = ?";
+
     private static final String DELETE =
             "DELETE FROM user_account " +
                     "WHERE user_id = ?";
+
     private static final String SELECT_ALL =
-            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.balance, w.currency, p.player_id, o.organizer_id " +
+            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.wallet_id, p.player_id, o.organizer_id " +
                     "FROM user_account " +
                     "INNER JOIN wallet w " +
                     "ON user_account.user_id = w.user_id " +
@@ -78,25 +52,65 @@ public class UserDaoImpl implements UserDao {
                     "LEFT JOIN organizer o " +
                     "ON user_account.user_id = o.user_account_id";
 
+
+    private static final String SELECT_BY_USERNAME =
+            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.wallet_id, p.player_id, o.organizer_id " +
+                    "FROM user_account " +
+                    "INNER JOIN wallet w " +
+                    "ON user_account.user_id = w.user_id " +
+                    "LEFT JOIN player p " +
+                    "ON user_account.user_id = p.user_account_id " +
+                    "LEFT JOIN organizer o " +
+                    "ON user_account.user_id = o.user_account_id " +
+                    "WHERE username=?";
+
+    private static final String SELECT_BY_EMAIL =
+            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.wallet_id, p.player_id, o.organizer_id " +
+                    "FROM user_account " +
+                    "INNER JOIN wallet w " +
+                    "ON user_account.user_id = w.user_id " +
+                    "LEFT JOIN player p " +
+                    "ON user_account.user_id = p.user_account_id " +
+                    "LEFT JOIN organizer o " +
+                    "ON user_account.user_id = o.user_account_id " +
+                    "WHERE user_email=?";
+
+    private static final String SELECT_BY_USERNAME_AND_PASSWORD =
+            "SELECT user_account.user_id, account_avatar, username, user_password, password_key, user_email, user_type, lang, w.wallet_id, p.player_id, o.organizer_id " +
+                    "FROM user_account " +
+                    "INNER JOIN wallet w " +
+                    "ON user_account.user_id = w.user_id " +
+                    "LEFT JOIN player p " +
+                    "ON user_account.user_id = p.user_account_id " +
+                    "LEFT JOIN organizer o " +
+                    "ON user_account.user_id = o.user_account_id " +
+                    "WHERE username=? AND user_password=?";
+
+
     private static final Logger LOGGER = LogManager.getLogger(UserDaoImpl.class);
-    private ConnectionProvider provider;
+    private final ConnectionProvider provider;
+
 
     public UserDaoImpl(ConnectionProvider provider) {
         this.provider = provider;
     }
+
 
     @Override
     public long save(UserDto userDto) throws DaoException {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
 
-            User entity = EntityConverter.fromDto(userDto);
+            User entity = EntityDtoConverter.fromDto(userDto);
             fillSaveStatement(statement, entity);
             statement.executeUpdate();
+
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+
                 if (generatedKeys.next()) {
                     return generatedKeys.getLong(1);
                 }
+
                 return 0;
             }
 
@@ -106,16 +120,19 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+
     @Override
     public UserDto get(long id) throws DaoException {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(SELECT)) {
 
             statement.setLong(1, id);
+
             try (ResultSet resultSet = statement.executeQuery()) {
+
                 if (resultSet.next()) {
                     return DaoMapper.mapUserDto(resultSet);
-                } else  {
+                } else {
                     LOGGER.error("Unable to get user with " + id + " id, not found.");
                     throw new DaoException("Unable to get user with " + id + " id not found.");
                 }
@@ -127,12 +144,13 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+
     @Override
     public boolean update(UserDto userDto) throws DaoException {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE)) {
 
-            User entity = EntityConverter.fromDto(userDto);
+            User entity = EntityDtoConverter.fromDto(userDto);
             fillUpdateStatement(statement, entity);
             return statement.executeUpdate() > 0;
 
@@ -141,6 +159,7 @@ public class UserDaoImpl implements UserDao {
             throw new DaoException("Unable to perform entity updating.", e);
         }
     }
+
 
     @Override
     public boolean delete(long id) throws DaoException {
@@ -156,6 +175,7 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+
     @Override
     public List<UserDto> findAll() throws DaoException {
         try (Connection connection = provider.getConnection();
@@ -163,10 +183,12 @@ public class UserDaoImpl implements UserDao {
              ResultSet resultSet = statement.executeQuery()) {
 
             List<UserDto> result = new ArrayList<>();
+
             if (resultSet.next()) {
                 UserDto userDto = DaoMapper.mapUserDto(resultSet);
                 result.add(userDto);
             }
+
             return result;
 
         } catch (SQLException e) {
@@ -174,6 +196,7 @@ public class UserDaoImpl implements UserDao {
             throw new DaoException("Unable to perform all entities retrieving.", e);
         }
     }
+
 
     @Override
     public UserDto login(LoginDto loginDto) throws DaoException {
@@ -183,15 +206,19 @@ public class UserDaoImpl implements UserDao {
             int i = 0;
             statement.setString(++i, loginDto.getUsername());
             statement.setString(++i, loginDto.getPassword());
+
             try (ResultSet resultSet = statement.executeQuery()) {
                 UserDto userDto = null;
+
                 if (resultSet.next()) {
                     userDto = DaoMapper.mapUserDto(resultSet);
                 }
+
                 if (userDto == null) {
                     LOGGER.error("Unable to login, user not found.");
                     throw new DaoException("Unable to login, user not found.");
                 }
+
                 return userDto;
             }
 
@@ -201,6 +228,7 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+
     @Override
     public UserDto findByUsername(String username) throws DaoException {
         try (Connection connection = provider.getConnection();
@@ -209,9 +237,11 @@ public class UserDaoImpl implements UserDao {
             int i = 0;
             statement.setString(++i, username);
             try (ResultSet resultSet = statement.executeQuery()) {
+
                 if (resultSet.next()) {
                     return DaoMapper.mapUserDto(resultSet);
                 }
+
                 return null;
             }
 
@@ -221,6 +251,7 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+
     @Override
     public UserDto findByEmail(String email) throws DaoException {
         try (Connection connection = provider.getConnection();
@@ -228,11 +259,14 @@ public class UserDaoImpl implements UserDao {
 
             int i = 0;
             statement.setString(++i, email);
+
             try (ResultSet resultSet = statement.executeQuery()) {
+
                 UserDto userDto = null;
                 if (resultSet.next()) {
                     userDto = DaoMapper.mapUserDto(resultSet);
                 }
+
                 return userDto;
             }
 
@@ -242,10 +276,6 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    @Override
-    public boolean updatePlayerId(UserDto userDto) throws DaoException {
-        return false;
-    }
 
     private void fillSaveStatement(PreparedStatement statement, User user) throws SQLException, IOException {
         int i = 0;

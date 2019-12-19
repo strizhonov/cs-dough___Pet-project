@@ -1,7 +1,7 @@
 package by.training.connection;
 
-import by.training.constant.AttributesContainer;
 import by.training.core.Bean;
+import by.training.resourse.AttributesContainer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,9 +19,11 @@ public class TransactionManagerImpl implements TransactionManager, ConnectionPro
     private final Lock lock = new ReentrantLock();
     private final ConnectionProvider connectionProvider;
 
+
     public TransactionManagerImpl(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
     }
+
 
     @Override
     public void startTransaction() throws TransactionException {
@@ -37,6 +39,7 @@ public class TransactionManagerImpl implements TransactionManager, ConnectionPro
             throw new TransactionException("Unable to perform start of the transaction.", e);
         }
     }
+
 
     @Override
     public void commitTransaction() throws TransactionException {
@@ -56,13 +59,13 @@ public class TransactionManagerImpl implements TransactionManager, ConnectionPro
         }
     }
 
+
     @Override
     public void rollbackTransaction() {
         try {
             Connection connection = localConnection.get();
             if (connection != null) {
                 connection.rollback();
-                connection.setAutoCommit(true);
                 connection.close();
                 localConnection.remove();
             }
@@ -74,12 +77,14 @@ public class TransactionManagerImpl implements TransactionManager, ConnectionPro
         }
     }
 
+
     @Override
     public Connection getConnection() throws SQLException {
         return localConnection.get() != null
                 ? proxy()
                 : connectionProvider.getConnection();
     }
+
 
     private Connection proxy() {
         Connection connection = localConnection.get();

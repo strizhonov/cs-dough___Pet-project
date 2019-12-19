@@ -7,6 +7,6 @@ import java.io.IOException;
 
 public interface HttpRouter {
 
-    void dispatchIfNeed(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException;
-    
+    void dispatch(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException;
+
 }

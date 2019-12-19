@@ -1,46 +1,101 @@
 package by.training.tournament;
 
-import by.training.core.AppSetting;
-import by.training.common.Entity;
 import by.training.core.ApplicationContext;
+import by.training.core.Entity;
+import by.training.resourse.AppSetting;
 
-import java.util.Date;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public class Tournament extends Entity {
 
-    private String name;
+    private static final long serialVersionUID = 4L;
+
     private byte[] logo = new byte[0];
+    private String name;
     private double prizePool;
-    private double buiIn;
-    private int playersNumber;
-    private Date startDate;
-    private Date endDate;
+    private double organizerRewardPercentage;
+    private double buyIn;
+    private int participantsNumber;
     private TournamentStatus status = TournamentStatus.getDefault();
     private long organizerId;
 
+
+    public Tournament() {
+    }
+
+
+    public Tournament(byte[] logo, String name, double prizePool, double organizerRewardPercentage, double buyIn,
+                      int participantsNumber, TournamentStatus status, long organizerId) {
+        if (logo == null) {
+            this.logo = null;
+        } else {
+            this.logo = Arrays.copyOf(logo, logo.length);
+        }
+        this.name = name;
+        this.prizePool = prizePool;
+        this.organizerRewardPercentage = organizerRewardPercentage;
+        this.buyIn = buyIn;
+        this.participantsNumber = participantsNumber;
+        this.status = status;
+        this.organizerId = organizerId;
+    }
+
+    private Tournament(Builder builder) {
+        setId(builder.id);
+        setLogo(builder.logo);
+        setName(builder.name);
+        setPrizePool(builder.prizePool);
+        setOrganizerRewardPercentage(builder.reward);
+        setBuyIn(builder.buyIn);
+        setParticipantsNumber(builder.participantsNumber);
+        setStatus(builder.status);
+        setOrganizerId(builder.organizerId);
+    }
+
+
     public enum TournamentStatus {
+
         UPCOMING, ONGOING, FINISHED;
 
+
         public static TournamentStatus getDefault() {
+
             AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
+
+            if (setting == null) {
+                return null;
+            }
+
             return fromString(setting.get(AppSetting.SettingName.DEFAULT_TOURNAMENT_STATUS)).orElse(null);
         }
+
 
         public static Optional<TournamentStatus> fromString(String type) {
             return Stream.of(TournamentStatus.values())
                     .filter(t -> t.name().equalsIgnoreCase(type))
                     .findFirst();
         }
+
     }
 
-    public double getBuiIn() {
-        return buiIn;
+
+    public byte[] getLogo() {
+        if (logo == null) {
+            return null;
+        } else {
+            return Arrays.copyOf(logo, logo.length);
+        }
     }
 
-    public void setBuiIn(double buiIn) {
-        this.buiIn = buiIn;
+    public void setLogo(byte[] logo) {
+        if (logo == null) {
+            this.logo = null;
+        } else {
+            this.logo = Arrays.copyOf(logo, logo.length);
+        }
     }
 
     public String getName() {
@@ -51,14 +106,6 @@ public class Tournament extends Entity {
         this.name = name;
     }
 
-    public byte[] getLogo() {
-        return logo;
-    }
-
-    public void setLogo(byte[] logo) {
-        this.logo = logo;
-    }
-
     public double getPrizePool() {
         return prizePool;
     }
@@ -67,28 +114,28 @@ public class Tournament extends Entity {
         this.prizePool = prizePool;
     }
 
-    public int getPlayersNumber() {
-        return playersNumber;
+    public double getOrganizerRewardPercentage() {
+        return organizerRewardPercentage;
     }
 
-    public void setPlayersNumber(int playersNumber) {
-        this.playersNumber = playersNumber;
+    public void setOrganizerRewardPercentage(double organizerRewardPercentage) {
+        this.organizerRewardPercentage = organizerRewardPercentage;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public double getBuyIn() {
+        return buyIn;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setBuyIn(double buyIn) {
+        this.buyIn = buyIn;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public int getParticipantsNumber() {
+        return participantsNumber;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setParticipantsNumber(int participantsNumber) {
+        this.participantsNumber = participantsNumber;
     }
 
     public TournamentStatus getStatus() {
@@ -107,85 +154,112 @@ public class Tournament extends Entity {
         this.organizerId = organizerId;
     }
 
-    public static final class Builder {
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tournament that = (Tournament) o;
+        return Double.compare(that.prizePool, prizePool) == 0 &&
+                Double.compare(that.organizerRewardPercentage, organizerRewardPercentage) == 0 &&
+                Double.compare(that.buyIn, buyIn) == 0 &&
+                participantsNumber == that.participantsNumber &&
+                organizerId == that.organizerId &&
+                Arrays.equals(logo, that.logo) &&
+                Objects.equals(name, that.name) &&
+                status == that.status;
+    }
+
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(name, prizePool, organizerRewardPercentage, buyIn, participantsNumber, status, organizerId);
+        result = 31 * result + Arrays.hashCode(logo);
+        return result;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Tournament{" +
+                "logo=" + Arrays.toString(logo) +
+                ", name='" + name + '\'' +
+                ", prizePool=" + prizePool +
+                ", reward=" + organizerRewardPercentage +
+                ", buyIn=" + buyIn +
+                ", participantsNumber=" + participantsNumber +
+                ", status=" + status +
+                ", organizerId=" + organizerId +
+                ", id=" + id +
+                '}';
+    }
+
+
+    public static final class Builder {
         private long id;
-        private String name;
         private byte[] logo = new byte[0];
+        private String name;
         private double prizePool;
-        private double buiIn;
-        private int playersNumber;
-        private Date startDate;
-        private Date endDate;
+        private double reward;
+        private double buyIn;
+        private int participantsNumber;
         private TournamentStatus status = TournamentStatus.getDefault();
         private long organizerId;
 
         public Builder() {
         }
 
-        public Builder id(long id) {
-            this.id = id;
+        public Builder id(long val) {
+            id = val;
             return this;
         }
 
-        public Builder name(String name) {
-            this.name = name;
+        public Builder logo(byte[] val) {
+            if (val == null) {
+                this.logo = null;
+            } else {
+                this.logo = Arrays.copyOf(logo, logo.length);
+            }
             return this;
         }
 
-        public Builder logo(byte[] logo) {
-            this.logo = logo;
+        public Builder name(String val) {
+            name = val;
             return this;
         }
 
-        public Builder prizePool(double prizePool) {
-            this.prizePool = prizePool;
+        public Builder prizePool(double val) {
+            prizePool = val;
             return this;
         }
 
-        public Builder buiIn(double buiIn) {
-            this.buiIn = buiIn;
+        public Builder reward(double val) {
+            reward = val;
             return this;
         }
 
-        public Builder playersNumber(int playersNumber) {
-            this.playersNumber = playersNumber;
+        public Builder buyIn(double val) {
+            buyIn = val;
             return this;
         }
 
-        public Builder startDate(Date startDate) {
-            this.startDate = startDate;
+        public Builder participantsNumber(int val) {
+            participantsNumber = val;
             return this;
         }
 
-        public Builder endDate(Date endDate) {
-            this.endDate = endDate;
+        public Builder status(TournamentStatus val) {
+            status = val;
             return this;
         }
 
-        public Builder status(TournamentStatus status) {
-            this.status = status;
-            return this;
-        }
-
-        public Builder organizerId(long organizerId) {
-            this.organizerId = organizerId;
+        public Builder organizerId(long val) {
+            organizerId = val;
             return this;
         }
 
         public Tournament build() {
-            Tournament tournament = new Tournament();
-            tournament.setId(id);
-            tournament.setName(name);
-            tournament.setLogo(logo);
-            tournament.setPrizePool(prizePool);
-            tournament.setBuiIn(buiIn);
-            tournament.setPlayersNumber(playersNumber);
-            tournament.setStartDate(startDate);
-            tournament.setEndDate(endDate);
-            tournament.setStatus(status);
-            tournament.setOrganizerId(organizerId);
-            return tournament;
+            return new Tournament(this);
         }
     }
 }

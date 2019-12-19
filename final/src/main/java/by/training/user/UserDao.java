@@ -1,7 +1,7 @@
 package by.training.user;
 
-import by.training.common.CrudDao;
-import by.training.common.DaoException;
+import by.training.core.CrudDao;
+import by.training.core.DaoException;
 
 public interface UserDao extends CrudDao<UserDto> {
 
@@ -11,5 +11,4 @@ public interface UserDao extends CrudDao<UserDto> {
 
     UserDto findByEmail(String email) throws DaoException;
 
-    boolean updatePlayerId(UserDto userDto) throws DaoException;
 }

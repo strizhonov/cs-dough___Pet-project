@@ -1,43 +1,94 @@
 package by.training.validation;
 
-import by.training.constant.AttributesContainer;
-import by.training.constant.MessagesContainer;
-import by.training.common.ServiceException;
-import by.training.user.UserService;
+import by.training.core.ApplicationContext;
+import by.training.core.ServiceException;
+import by.training.organizer.OrganizerService;
+import by.training.organizer.OrganizerValidationDto;
+import by.training.resourse.AppSetting;
+import by.training.resourse.AttributesContainer;
+import by.training.resourse.LocalizationManager;
+import by.training.resourse.ValidationRegexp;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class OrganizerDataValidator extends BaseInputValidator {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class OrganizerDataValidator implements InputDataValidator<OrganizerValidationDto> {
 
     private static final Logger LOGGER = LogManager.getLogger(OrganizerDataValidator.class);
-    private UserService userService;
+    private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
+    private final OrganizerService organizerService;
+    private final LocalizationManager localizationManager;
 
-    public OrganizerDataValidator(UserService userService) {
-        this.userService = userService;
+
+    public OrganizerDataValidator(OrganizerService organizerService, LocalizationManager localizationManager) {
+        this.organizerService = organizerService;
+        this.localizationManager = localizationManager;
     }
+
 
     @Override
-    public ValidationResult validate(String... strings) throws ValidationException {
-        if (!isArgsCountValid(strings)) {
-            LOGGER.error("Illegal number of arguments to validate.");
-            throw new ValidationException("Illegal number of arguments to validate.");
+    public ValidationResult validate(OrganizerValidationDto dto) throws ValidationException {
+        ValidationResult logoSize = logoSize(dto.getLogoSize());
+        if (!logoSize.isValid()) {
+            return logoSize;
         }
-        int i = -1;
-        return nameUniqueness(strings[++i]);
+
+        ValidationResult nameCorrectness = nameCorrectness(dto.getName());
+        if (!nameCorrectness.isValid()) {
+            return nameCorrectness;
+        }
+
+        ValidationResult nameUniqueness = nameUniqueness(dto.getName());
+        if (!nameUniqueness.isValid()) {
+            return nameUniqueness;
+        }
+
+        return new ValidationResult();
     }
 
-    @Validation
+
+    public ValidationResult logoSize(long size) {
+        ValidationResult result = new ValidationResult();
+
+        String sAllowedSize = setting.get(AppSetting.SettingName.IMAGE_ALLOWED_SIZE);
+        if (size > Long.parseLong(sAllowedSize)) {
+            result.addIfAbsent(AttributesContainer.IMAGE_SIZE_ERROR.toString(),
+                    localizationManager.getValue(AttributesContainer.IMAGE_SIZE_ERROR.toString()));
+        }
+
+        return result;
+    }
+
+
+    public ValidationResult nameCorrectness(String name) {
+        ValidationResult result = new ValidationResult();
+
+        Pattern pattern = Pattern.compile(ValidationRegexp.ORGANIZER_NAME_REGEXP);
+        Matcher matcher = pattern.matcher(name);
+
+        if (!matcher.find()) {
+            result.add(AttributesContainer.ORGANIZER_NAME_CORRECTNESS_ERROR.toString(),
+                    localizationManager.getValue(AttributesContainer.ORGANIZER_NAME_CORRECTNESS_ERROR.toString()));
+        }
+        return result;
+    }
+
+
     public ValidationResult nameUniqueness(String name) throws ValidationException {
         ValidationResult result = new ValidationResult();
+
         try {
-            if (userService.findOrganizerByName(name) != null) {
-                result.addIfAbsent(AttributesContainer.NAME_ERROR.toString(),
-                        MessagesContainer.NAME_UNIQUENESS_ERROR_MESSAGE);
+            if (organizerService.findByName(name) != null) {
+                result.add(AttributesContainer.ORGANIZER_NAME_UNIQUENESS_ERROR.toString(),
+                        localizationManager.getValue(AttributesContainer.ORGANIZER_NAME_UNIQUENESS_ERROR.toString()));
             }
         } catch (ServiceException e) {
             LOGGER.error("Organizer's name validation failed.", e);
             throw new ValidationException("Organizer's name validation failed.", e);
         }
+
         return result;
     }
 

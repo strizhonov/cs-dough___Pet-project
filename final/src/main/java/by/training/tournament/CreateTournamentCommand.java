@@ -1,16 +1,20 @@
 package by.training.tournament;
 
-
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandType;
-import by.training.constant.AttributesContainer;
-import by.training.constant.PathsContainer;
-import by.training.servlet.HttpRedirector;
-import by.training.user.UserDto;
-import by.training.common.ServiceException;
-import by.training.servlet.HttpRouter;
+import by.training.core.ApplicationContext;
+import by.training.core.ServiceException;
+import by.training.resourse.AppSetting;
+import by.training.resourse.AttributesContainer;
+import by.training.resourse.LocalizationManager;
+import by.training.resourse.PathsContainer;
 import by.training.servlet.HttpForwarder;
+import by.training.servlet.HttpRedirector;
+import by.training.servlet.HttpRouter;
+import by.training.user.UserDto;
+import by.training.util.TournamentUtil;
+import by.training.validation.InputDataValidator;
 import by.training.validation.TournamentDataValidator;
 import by.training.validation.ValidationException;
 import by.training.validation.ValidationResult;
@@ -22,113 +26,151 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 public class CreateTournamentCommand implements ActionCommand {
 
     private static final Logger LOGGER = LogManager.getLogger(CreateTournamentCommand.class);
+    private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
     private final ActionCommandType type = ActionCommandType.CREATE_TOURNAMENT;
     private final TournamentService tournamentService;
-    private final TournamentDataValidator validator;
+
 
     public CreateTournamentCommand(TournamentService tournamentService) {
         this.tournamentService = tournamentService;
-        this.validator = new TournamentDataValidator(tournamentService);
     }
 
-    @Override
-    public HttpRouter direct(HttpServletRequest request, HttpServletResponse response)
-            throws ActionCommandExecutionException {
-
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload sfu = new ServletFileUpload(factory);
-        try {
-            List<FileItem> items = sfu.parseRequest(request);
-            String name = items.get(1).getString();
-            if (!isDataValid(name, validator, request)) {
-                return new HttpForwarder(request.getContextPath());
-            }
-
-            TournamentDto tournamentDto = compile(items, request);
-            long tournamentId = tournamentService.create(tournamentDto);
-            return new HttpForwarder(PathsContainer.CREATE_TOURNAMENT_COMMAND + tournamentId);
-        } catch (ServiceException | FileUploadException | IOException e) {
-            LOGGER.error("Tournament creation failed.", e);
-            throw new ActionCommandExecutionException("Tournament creation failed.", e);
-        }
-    }
 
     @Override
     public ActionCommandType getType() {
         return type;
     }
 
-    private boolean isDataValid(String name, TournamentDataValidator validator, HttpServletRequest request)
+
+    @Override
+    public Optional<HttpRouter> direct(HttpServletRequest request, HttpServletResponse response)
             throws ActionCommandExecutionException {
+
         try {
-            ValidationResult result = validator.validate(name);
+            TournamentValidationDto validationDto = compile(request);
+
+
+            LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
+                    request.getLocale());
+
+            InputDataValidator<TournamentValidationDto> validator
+                    = new TournamentDataValidator(tournamentService, manager);
+
+            ValidationResult result = validator.validate(validationDto);
             if (!result.isValid()) {
-                setErrorAttributes(result.getValidationResult(), request);
-                return false;
+                setErrorMessage(result, request);
+                return Optional.of(new HttpForwarder(PathsContainer.FILE_TOURNAMENT_CREATION_PAGE));
             }
-            return true;
-        } catch (ValidationException e) {
-            LOGGER.error("Validation failed.", e);
-            throw new ActionCommandExecutionException("Validation failed.", e);
+
+
+            HttpSession httpSession = request.getSession();
+            UserDto user = (UserDto) httpSession.getAttribute(AttributesContainer.USER.toString());
+
+
+            TournamentDto genericDto = convert(user, validationDto, request);
+            long tournamentId = tournamentService.create(genericDto);
+
+
+            return Optional.of(new HttpRedirector(request.getContextPath()
+                    + PathsContainer.COMMAND_TO_TOURNAMENT_PAGE + tournamentId));
+
+        } catch (ServiceException | FileUploadException | IOException | ValidationException e) {
+            LOGGER.error("Tournament creation failed.", e);
+            throw new ActionCommandExecutionException("Tournament creation failed.", e);
         }
+
     }
 
-    private void setErrorAttributes(Map<String, String> errorMap, HttpServletRequest request) {
-        for (Map.Entry<String, String> entry : errorMap.entrySet()) {
-            request.setAttribute(entry.getKey(), entry.getValue());
-        }
+
+    private TournamentValidationDto compile(HttpServletRequest request)
+            throws FileUploadException, IOException {
+
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload sfu = new ServletFileUpload(factory);
+
+
+        List<FileItem> items = sfu.parseRequest(request);
+        int i = -1;
+        long logoSize = items.get(++i).getSize();
+
+        String name = IOUtils.toString(items.get(++i).getInputStream(),
+                setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
+
+        String sReward = IOUtils.toString(items.get(++i).getInputStream(),
+                setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
+
+        String sBonus = IOUtils.toString(items.get(++i).getInputStream(),
+                setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
+
+        String sBuyIn = IOUtils.toString(items.get(++i).getInputStream(),
+                setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
+
+        String sPlayersNumber = IOUtils.toString(items.get(++i).getInputStream(),
+                setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
+
+        return new TournamentValidationDto(logoSize, name, sReward, sBonus, sBuyIn, sPlayersNumber);
     }
 
-    private TournamentDto compile(List<FileItem> items, HttpServletRequest request) throws IOException {
+
+    private void setErrorMessage(ValidationResult result, HttpServletRequest request) {
+        LocalizationManager manager
+                = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
+
+
+        request.setAttribute(AttributesContainer.MESSAGE.toString(),
+                manager.getValue(result.getFirstValue()));
+
+    }
+
+
+    private TournamentDto convert(UserDto user, TournamentValidationDto validationDto,
+                                  HttpServletRequest request) throws IOException, FileUploadException {
+
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload sfu = new ServletFileUpload(factory);
+
+
+        List<FileItem> items = sfu.parseRequest(request);
+
         int i = -1;
         byte[] logo = items.get(++i).get();
         if (logo == null || logo.length == 0) {
-            File file = new File(request.getServletContext().getRealPath("/img/blank-logo.jpg"));
+            File file = new File(request.getServletContext().getRealPath(PathsContainer.FILE_DEF_TOURNAMENT_LOGO));
             InputStream is = new FileInputStream(file);
             logo = IOUtils.toByteArray(is);
         }
-        String name = items.get(++i).getString();
-        String sPrizePool = items.get(++i).getString();
-        double prizePool = Double.parseDouble(sPrizePool);
-        String sPlayersNumber = items.get(++i).getString();
-        int playersNumber = Integer.parseInt(sPlayersNumber);
-//        String sStartDate = request.getParameter(AttributesContainer.START_DATE.toString());
-//        String sEndDate = request.getParameter(AttributesContainer.END_DATE.toString());
-//        Date startDate = new Date();
-//        try {
-//            startDate = new SimpleDateFormat(ValuesContainer.DEFAULT_DATE_FORMAT).parse(sStartDate);
-//        } catch (ParseException e) {
-//            LOGGER.warn("Start date parsing failed.", e);
-//        }
-//        Date endDate = new Date();
-//        try {
-//            endDate = new SimpleDateFormat(ValuesContainer.DEFAULT_DATE_FORMAT).parse(sEndDate);
-//        } catch (ParseException e) {
-//            LOGGER.warn("End date parsing failed.", e);
-//        }
 
-        HttpSession httpSession = request.getSession();
-        UserDto userDto = (UserDto) httpSession.getAttribute(AttributesContainer.USER.toString());
+        String name = validationDto.getName();
+        double reward = Double.parseDouble(validationDto.getOrganizerRewardPercentage());
+        double bonus = Double.parseDouble(validationDto.getFromOrganizerBonus());
+        double buyIn = Double.parseDouble(validationDto.getBuyIn());
+        int playersNumber = Integer.parseInt(validationDto.getPlayersNumber());
+
+
+        double prizePool = TournamentUtil.calculatePrizePool(reward, bonus, buyIn, playersNumber);
+
 
         return new TournamentDto.Builder()
-                .name(name)
                 .logo(logo)
+                .name(name)
                 .prizePool(prizePool)
+                .buyIn(buyIn)
+                .reward(reward)
                 .playersNumber(playersNumber)
-//                .startDate(startDate)
-//                .endDate(endDate)
-                .organizerId(userDto.getOrganizerId())
+                .organizerId(user.getOrganizerId())
                 .build();
     }
 

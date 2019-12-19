@@ -16,7 +16,7 @@ public class SecurityProviderImpl implements SecurityProvider {
 
     @Override
     public SecurityDirector get(ActionCommand command) {
-        AccessAllowedForType securityType = command.getType().getSecurityType();
+        AccessAllowedForType securityType = command.getType().getAccessType();
         return registered.get(securityType);
     }
 

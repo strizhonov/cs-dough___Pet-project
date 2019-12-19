@@ -1,116 +1,133 @@
-<%@ page contentType="text/html;charset=utf-8" pageEncoding="utf-8" %>
+<%@ page contentType="text/html;charset=utf-8"
+         pageEncoding="utf-8"
+         import="by.training.resourse.PathsContainer" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <fmt:setLocale value="${language}"/>
-<fmt:setBundle basename="content"/>
+<fmt:setBundle basename="i18n"/>
 <div class="container">
     <div class="row">
-        <div class="profile-page-holder container">
+        <div class="main-holder container">
             <div class="col-sm-12">
                 <div class="row" style="margin: 0;">
-                    <h2 class="col-sm-12"><fmt:message key="game"/></h2>
+                    <h2 class="col-sm-12" style="text-align: center"><fmt:message key="game.page"/></h2>
+                </div>
+                <div class="row" style="margin: 0;">
+                    <div class="info-field col-sm-4">
+                        <fmt:message key="game.starts"/>:&nbsp
+                        <c:choose>
+                            <c:when test="${game.startTime != null}">
+                                ${game.startTime}
+                            </c:when>
+                            <c:otherwise>
+                                <fmt:message key="tbd"/>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                    <div class="col-sm-4">
+                        <c:if test="${user != null
+                        && (user_type == 'ADMIN'
+                        || user.organizerId == game.tournament.organizerId
+                        || user.playerAccountId == game.firstPlayer.id
+                        || user.playerAccountId == game.secondPlayer.id)}">
+                            <script>
+                                function hide() {
+                                    var button = document.getElementById("server-button");
+                                    var info = document.getElementById("server-info");
+                                    button.style.display = "none";
+                                    info.style.display = "block";
+                                }
+                            </script>
+                            <button id="server-button" class="info-link col-sm-12" onclick="hide();">
+                                <fmt:message key="get.server.path"/>
+                            </button>
+                            <div id="server-info" class="info-field col-sm-12" style="display: none;">
+                                <fmt:message key="server.path"/>&nbsp:${game.gameServer.path}
+                            </div>
+                        </c:if>
+                    </div>
+                    <div class="col-sm-4">
+                        <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_TOURNAMENT_PAGE}${game.tournament.id}">
+                            <div class="info-link col-sm-12">
+                                <fmt:message key="to.tournament"/>
+                            </div>
+                        </a>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="col-sm-6">
-                            <div style="font-size: 40px; float: right; margin: 15px">0</div>
+                        <div class="col-sm-4">
+                            <div class="info-block" style="float: left">
+                                <c:choose>
+                                    <c:when test="${game.firstPlayer != null}">
+                                        <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_SHOW_PLAYER}${game.firstPlayer.id}">
+                                            <img style="max-height: 200px;"
+                                                 src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_PLAYER_PHOTO}${game.firstPlayer.id}">
+                                        </a>
+                                        <div class="info-field">
+                                                ${game.firstPlayer.nickname}
+                                        </div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img style="max-height: 200px;"
+                                             src="${pageContext.request.contextPath}/img/unknown.png">
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
                         </div>
-                        <div class="col-sm-6">
-                            <div style="font-size: 40px; margin: 15px">0</div>
+                        <div class="col-sm-1" style="padding-top: 70px">
+                            <c:if test="${user_type == 'ADMIN' || game.tournament.organizerId == user.organizerId}">
+                                <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_INCREASE_FIRST_PLAYER_COUNT}${game.id}">
+                                    <div class="update-button col-sm-1" style="float: left">
+                                        <img src="${pageContext.request.contextPath}/img/icon/arrow-up.png" alt="">
+                                        <span class="button-tooltip"><fmt:message
+                                                key="increase.first.player.count"/></span>
+                                    </div>
+                                </a>
+                            </c:if>
+                        </div>
+                        <div class="col-sm-1">
+                            <div style="font-size: 100px; float: right; margin: 15px">${game.gameServer.playerOnePoints}</div>
+                        </div>
+                        <div class="col-sm-1">
+                            <div style="font-size: 100px; margin: 15px">${game.gameServer.playerTwoPoints}</div>
+                        </div>
+                        <div class="col-sm-1" style="padding-top: 70px">
+                            <c:if test="${user_type == 'ADMIN' || game.tournament.organizerId == user.organizerId}">
+                                <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_INCREASE_SECOND_PLAYER_COUNT}${game.id}">
+                                    <div class="update-button col-sm-1" style="float: left;">
+                                        <img src="${pageContext.request.contextPath}/img/icon/arrow-up.png" alt="">
+                                        <span class="button-tooltip"><fmt:message
+                                                key="increase.second.player.count"/></span>
+                                    </div>
+                                </a>
+                            </c:if>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="info-block" style="float: right">
+                                <c:choose>
+                                    <c:when test="${game.secondPlayer != null}">
+                                        <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_SHOW_PLAYER}${game.secondPlayer.id}">
+                                            <img style="max-height: 200px;"
+                                                 src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_PLAYER_PHOTO}${game.secondPlayer.id}">
+                                        </a>
+                                        <div class="info-field">
+                                                ${game.secondPlayer.nickname}
+                                        </div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img style="max-height: 200px;"
+                                             src="${pageContext.request.contextPath}/img/unknown.png">
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="profile-avatar col-sm-5">
-                            <img id="logo" src="" alt="">
-                            AVATAR1
-                        </div>
-                        <div class="profile-info col-sm-5">
-                            <div class="profile-info-field col-sm-12">
-                                <fmt:message key="name"/>
-                            </div>
-                            <div class="profile-info-field col-sm-12">
-                                <fmt:message key="surname"/>
-                            </div>
-                            <div class="profile-info-field col-sm-12">
-                                <fmt:message key="nickname"/>
-                            </div>
-                            <div class="profile-info-field col-sm-12">
-                                <fmt:message key="country"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="profile-info col-sm-5" style="float: left;">
-                            <div class="profile-info-field col-sm-12">
-                                <fmt:message key="name"/>
-                            </div>
-                            <div class="profile-info-field col-sm-12">
-                                <fmt:message key="surname"/>
-                            </div>
-                            <div class="profile-info-field col-sm-12">
-                                <fmt:message key="nickname"/>
-                            </div>
-                            <div class="profile-info-field col-sm-12">
-                                <fmt:message key="country"/>
-                            </div>
-                        </div>
-                        <div class="profile-avatar col-sm-5">
-                            <img id="logo1" src="" alt="">
-                            AVATAR2
-                        </div>
-                    </div>
-                </div>
-
-
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-12">
-
-            <div class="col-sm-2">
-            </div>
-            <div class="col-sm-8">
-                <div class="update-button col-sm-1" style="float: left">
-                    <img src="${pageContext.request.contextPath}/img/arrow-up.png" alt="">
-                    <span class="button-tooltip"><fmt:message key="increase.first.player.count"/></span>
-                </div>
-                <div class="col-sm-10">
-                    <div class="col-sm-3">
-                    </div>
-                    <div class="col-sm-6 profile-info-link">
-                        <a href="">
-                            <fmt:message key="get.server"/>
-                        </a>
-                    </div>
-                    <div class="col-sm-3">
-                    </div>
-                </div>
-
-                <div class="update-button col-sm-1" style="float: left;">
-                    <img src="${pageContext.request.contextPath}/img/arrow-up.png" alt="">
-                    <span class="button-tooltip"><fmt:message key="increase.first.player.count"/></span>
-                </div>
-            </div>
-            <div class="col-sm-2">
-            </div>
-        </div>
-    </div>
-
 </div>
-<div class="row">
-    <div class="col-sm-3">
-
-    </div>
-    <div class="col-sm-6">
-        <iframe class="translation" src="https://player.twitch.tv/?channel=esl_csgo&muted=true&autoplay=false"></iframe>
-    </div>
-    <div class="col-sm-3">
-
-    </div>
-</div>
-
+<div class="row" style="text-align: center; margin-bottom: 40px;">
+    <iframe class="translation" src="${PathsContainer.PATH_FAKE_GAME_TRANSLATION}"></iframe>
 </div>
