@@ -68,6 +68,7 @@ public class EntityDtoConverter {
 
 
     public static Organizer fromDto(OrganizerDto organizerDto) {
+        byte[] test = organizerDto.getLogo();
         return new Organizer.Builder()
                 .id(organizerDto.getId())
                 .name(organizerDto.getName())

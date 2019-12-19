@@ -24,6 +24,7 @@ public class AppSetting {
          * Synchronize your updates with setting.properties
          */
 
+        APP_WALLET_HOLDER_ID,
         APP_WALLET_ID,
         CONNECTION_LIFETIME_MS,
         CONNECTION_POOL_SIZE,

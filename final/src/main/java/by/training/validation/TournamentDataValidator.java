@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 public class TournamentDataValidator implements InputDataValidator<TournamentValidationDto> {
 
-    private static final Logger LOGGER = LogManager.getLogger(OrganizerDataValidator.class);
+    private static final Logger LOGGER = LogManager.getLogger(TournamentDataValidator.class);
     private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
     private TournamentService tournamentService;
     private final LocalizationManager localizationManager;
@@ -44,7 +44,7 @@ public class TournamentDataValidator implements InputDataValidator<TournamentVal
             return nameUniqueness;
         }
 
-        ValidationResult reward = reward(dto.getOrganizerRewardPercentage());
+        ValidationResult reward = rewardRate(dto.getOrganizerRewardPercentage());
         if (!reward.isValid()) {
             return reward;
         }
@@ -113,7 +113,7 @@ public class TournamentDataValidator implements InputDataValidator<TournamentVal
     }
 
 
-    public ValidationResult reward(String sReward) {
+    public ValidationResult rewardRate(String sReward) {
         ValidationResult result = new ValidationResult();
 
         try {

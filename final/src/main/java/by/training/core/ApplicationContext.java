@@ -119,8 +119,18 @@ public final class ApplicationContext {
 
         BufferWallet appWallet = BufferWallet.getInstance();
         String sWalletId = setting.get(AppSetting.SettingName.APP_WALLET_ID);
-        appWallet.init(Long.parseLong(sWalletId));
-        register(appWallet);
+
+        try {
+
+            WalletDto walletDto = ((WalletDao) registered.get(WalletDaoImpl.class)).get(Long.parseLong(sWalletId));
+            appWallet.init(walletDto);
+            register(appWallet);
+
+        } catch (DaoException e) {
+            LOGGER.error("App buffer wallet initialization failed.", e);
+            throw new ApplicationContextException("App buffer wallet initialization failed.", e);
+        }
+
 
 
         ActionCommandProvider commandProvider = new ActionCommandProviderImpl();

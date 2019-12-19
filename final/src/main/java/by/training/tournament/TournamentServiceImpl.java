@@ -107,6 +107,10 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
 
             returnFromOrganiserBonus(tournament);
 
+            deleteGames(tournament);
+
+            tournamentDao.delete(tournament.getId());
+
             transactionManager.commitTransaction();
 
             return true;
@@ -271,6 +275,10 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
 
         WalletDto organizerWallet = walletDao.getOfOrganizer(tournament.getOrganizerId());
 
+        if (fromOrganizerBonus == 0) {
+            return;
+        }
+
         if (organizerWallet.getBalance() < fromOrganizerBonus) {
             LOGGER.warn(fromOrganizerBonus + " is exceed balance.");
             throw new NotEnoughFundsException(fromOrganizerBonus + " is exceed balance.");
@@ -280,7 +288,7 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
         walletDao.update(organizerWallet);
 
         BufferWallet buffer = (BufferWallet) ApplicationContext.getInstance().get(BufferWallet.class);
-        organizerWallet.increaseBalance(fromOrganizerBonus);
+        buffer.increaseBalance(fromOrganizerBonus);
         walletDao.update(buffer);
 
     }
@@ -293,7 +301,7 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
                         .tournamentId(tournamentDto.getId())
                         .bracketIndex(i)
                         .build();
-                long gameId = gameDao.save(plainGameDto);
+                long gameId = gameDao.saveNew(plainGameDto);
 
                 GameServerDto gameServer = createGameServer(gameId);
                 gameServerDao.save(gameServer);
@@ -321,6 +329,10 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
     private void returnFromOrganiserBonus(TournamentDto tournament) throws DaoException {
         double fromOrganizerBonus = tournament.getFromOrganizerBonus();
 
+        if (fromOrganizerBonus == 0) {
+            return;
+        }
+
         WalletDto organizerWallet = walletDao.getOfOrganizer(tournament.getOrganizerId());
         organizerWallet.increaseBalance(fromOrganizerBonus);
         walletDao.update(organizerWallet);
@@ -330,6 +342,21 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
         organizerWallet.decreaseBalance(fromOrganizerBonus);
         walletDao.update(buffer);
     }
+
+
+    private void deleteGames(TournamentDto tournament) throws DaoException {
+
+        List<Long> gamesIds = tournament.getGamesIds();
+        for (long gameId : gamesIds) {
+
+            gameServerDao.deleteByGameId(gameId);
+
+            gameDao.delete(gameId);
+
+        }
+
+    }
+
 
 
     private void takeBuyIn(ParticipantDto joiningDto, TournamentDto tournament)

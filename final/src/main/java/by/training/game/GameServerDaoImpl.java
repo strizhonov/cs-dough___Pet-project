@@ -25,11 +25,6 @@ public class GameServerDaoImpl implements GameServerDao {
                     "FROM gameserver " +
                     "WHERE game_server_id = ?";
 
-    private static final String SELECT_BY_GAME =
-            "SELECT game_server_id, points_to_win, player_one_points, player_two_points, server_path, game_id " +
-                    "FROM gameserver " +
-                    "WHERE game_id = ?";
-
     private static final String UPDATE =
             "UPDATE gameserver " +
                     "SET points_to_win=?, player_one_points=?, player_two_points=?, server_path=?, game_id=? " +
@@ -42,6 +37,15 @@ public class GameServerDaoImpl implements GameServerDao {
     private static final String SELECT_ALL =
             "SELECT game_server_id, points_to_win, player_one_points, player_two_points, server_path, game_id " +
                     "FROM gameserver";
+
+    private static final String SELECT_BY_GAME =
+            "SELECT game_server_id, points_to_win, player_one_points, player_two_points, server_path, game_id " +
+                    "FROM gameserver " +
+                    "WHERE game_id = ?";
+
+    private static final String DELETE_BY_GAME =
+            "DELETE FROM gameserver " +
+                    "WHERE game_id = ?";
 
 
     private static final Logger LOGGER = LogManager.getLogger(GameServerDaoImpl.class);
@@ -176,6 +180,24 @@ public class GameServerDaoImpl implements GameServerDao {
             LOGGER.error("Unable to perform entity retrieving.", e);
             throw new DaoException("Unable to perform entity retrieving.", e);
         }
+    }
+
+
+    @Override
+    public void deleteByGameId(long gameId) throws DaoException {
+
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(DELETE_BY_GAME)) {
+
+            statement.setLong(1, gameId);
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            LOGGER.error("Unable to perform entity deleting.", e);
+            throw new DaoException("Unable to perform entity deleting.", e);
+        }
+
+
     }
 
 

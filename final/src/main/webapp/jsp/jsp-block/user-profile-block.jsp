@@ -150,10 +150,10 @@
                             </div>
                             <div class="info-field col-sm-5" style="float: right;">
                                 <div class="col-sm-6" style="text-align: right; padding-right: 3px">
-                                    ${sessionScope.user.balance}
+                                    ${sessionScope.user.wallet.balance}
                                 </div>
                                 <div class="col-sm-6" style="text-align: left; padding-left: 3px">
-                                    ${sessionScope.user.currency}
+                                    ${sessionScope.user.wallet.currency}
                                 </div>
                                 <span class="field-tooltip"><fmt:message key="balance"/></span>
                             </div>

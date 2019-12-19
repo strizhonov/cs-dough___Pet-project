@@ -37,13 +37,17 @@ public class GameDaoImpl implements GameDao {
 
     private static final String DELETE =
             "DELETE FROM game " +
-                    "WHERE tournament_id = ?";
+                    "WHERE game_id = ?";
 
     private static final String SELECT_ALL =
             "SELECT game.game_id, bracket_index, start_time, end_time, first_player_id, second_player_id, tournament_id , gameserver.game_server_id " +
                     "FROM game " +
                     "LEFT JOIN gameserver " +
                     "ON game.game_id = gameserver.game_id";
+
+    private static final String INSERT_NEW =
+            "INSERT INTO game (bracket_index, tournament_id) " +
+                    "VALUES (?,?)";
 
     private static final String SELECT_BY_BRACKET_INDEX_OF_TOURNAMENT =
             "SELECT game.game_id, bracket_index, start_time, end_time, first_player_id, second_player_id, tournament_id, gameserver.game_server_id " +
@@ -202,6 +206,28 @@ public class GameDaoImpl implements GameDao {
 
 
     @Override
+    public long saveNew(PlainGameDto plainGameDto) throws DaoException {
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(INSERT_NEW, Statement.RETURN_GENERATED_KEYS)) {
+
+            Game game = EntityDtoConverter.fromDto(plainGameDto);
+            fillSaveNewStatement(statement, game);
+            statement.executeUpdate();
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getLong(1);
+                }
+                return 0;
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error("Unable to perform entity saving.", e);
+            throw new DaoException("Unable to perform entity saving.", e);
+        }
+    }
+
+
+    @Override
     public ComplexGameDto getComplex(long id) throws DaoException {
         PlainGameDto plain = get(id);
         return upgrade(plain);
@@ -327,6 +353,13 @@ public class GameDaoImpl implements GameDao {
     }
 
 
+    private void fillSaveNewStatement(PreparedStatement statement, Game game) throws SQLException {
+        int i = 0;
+        statement.setInt(++i, game.getBracketIndex());
+        statement.setLong(++i, game.getTournamentId());
+    }
+
+
     private void fillUpdateStatement(PreparedStatement statement, Game game) throws SQLException {
         int i = 0;
         statement.setInt(++i, game.getBracketIndex());
@@ -357,14 +390,22 @@ public class GameDaoImpl implements GameDao {
 
         long gameId = plainGame.getId();
 
-        PlainPlayerDto playerOne = getFirstPlayer(gameId);
-        PlainPlayerDto playerTwo = getSecondPlayer(gameId);
         GameServerDto server = getServerOfGame(gameId);
         TournamentDto tournamentDto = getGameTournament(gameId);
 
         ComplexGameDto game = new ComplexGameDto();
-        game.setFirstPlayer(playerOne);
-        game.setSecondPlayer(playerTwo);
+
+        try {
+            PlainPlayerDto playerOne = getFirstPlayer(gameId);
+            PlainPlayerDto playerTwo = getSecondPlayer(gameId);
+
+            game.setFirstPlayer(playerOne);
+            game.setSecondPlayer(playerTwo);
+
+        } catch (EntityNotFoundException e) {
+            LOGGER.info("No player(s) for game id#" + gameId);
+        }
+
         game.setGameServer(server);
         game.setTournament(tournamentDto);
 

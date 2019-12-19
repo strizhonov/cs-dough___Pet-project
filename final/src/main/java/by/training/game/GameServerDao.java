@@ -7,4 +7,5 @@ public interface GameServerDao extends CrudDao<GameServerDto> {
 
     GameServerDto getByGameId(long gameId) throws DaoException;
 
+    void deleteByGameId(long gameId) throws DaoException;
 }

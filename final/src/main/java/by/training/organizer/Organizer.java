@@ -114,7 +114,7 @@ public class Organizer extends Entity {
             if (val == null) {
                 this.logo = null;
             } else {
-                this.logo = Arrays.copyOf(logo, logo.length);
+                this.logo = Arrays.copyOf(val, val.length);
             }
             return this;
         }

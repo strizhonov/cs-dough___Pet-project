@@ -13,6 +13,7 @@ import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
 import by.training.user.UserDto;
+import by.training.util.ServletUtil;
 import by.training.validation.InputDataValidator;
 import by.training.validation.OrganizerDataValidator;
 import by.training.validation.ValidationException;
@@ -60,7 +61,9 @@ public class CreateOrganizerCommand implements ActionCommand {
             throws ActionCommandExecutionException {
         try {
 
-            OrganizerValidationDto validationDto = compile(request);
+            List<FileItem> items = ServletUtil.parseRequest(request);
+
+            OrganizerValidationDto validationDto = compile(items);
 
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
@@ -81,7 +84,7 @@ public class CreateOrganizerCommand implements ActionCommand {
             UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
 
 
-            OrganizerDto genericDto = convert(validationDto, request, user);
+            OrganizerDto genericDto = convert(validationDto, items, request, user);
             long organizerId = organizerService.create(genericDto);
 
 
@@ -100,12 +103,7 @@ public class CreateOrganizerCommand implements ActionCommand {
     }
 
 
-    private OrganizerValidationDto compile(HttpServletRequest request) throws FileUploadException, IOException {
-
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload sfu = new ServletFileUpload(factory);
-
-        List<FileItem> items = sfu.parseRequest(request);
+    private OrganizerValidationDto compile(List<FileItem> items) throws FileUploadException, IOException {
 
         int i = -1;
         long logoSize = items.get(++i).getSize();
@@ -128,13 +126,8 @@ public class CreateOrganizerCommand implements ActionCommand {
     }
 
 
-    private OrganizerDto convert(OrganizerValidationDto validationDto, HttpServletRequest request, UserDto user)
-            throws FileUploadException, IOException {
-
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload sfu = new ServletFileUpload(factory);
-
-        List<FileItem> items = sfu.parseRequest(request);
+    private OrganizerDto convert(OrganizerValidationDto validationDto, List<FileItem> items, HttpServletRequest request, UserDto user)
+            throws IOException {
 
         byte[] logo = items.get(0).get();
         if (logo == null || logo.length == 0) {
@@ -142,6 +135,7 @@ public class CreateOrganizerCommand implements ActionCommand {
             InputStream is = new FileInputStream(file);
             logo = IOUtils.toByteArray(is);
         }
+
 
         return OrganizerDto.Builder.anOrganizerDto()
                 .name(validationDto.getName())

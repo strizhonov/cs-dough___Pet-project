@@ -53,6 +53,9 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
 
             user.setPassword(encrypted);
             user.setPasswordKey(passKey);
+            user.setAvatar(registrationDto.getDefAvatar());
+            user.setEmail(registrationDto.getEmail());
+            user.setUsername(registrationDto.getUsername());
 
             long userId = userDao.save(user);
 
@@ -191,6 +194,8 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
 
             userWallet.increaseBalance(value);
 
+            walletDao.update(userWallet);
+
             transactionManager.commitTransaction();
 
         } catch (Exception e) {
@@ -218,7 +223,9 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
                 LOGGER.warn("Not enough funds.");
                 return false;
             }
+
             userWallet.decreaseBalance(value);
+            walletDao.update(userWallet);
 
             transactionManager.commitTransaction();
 

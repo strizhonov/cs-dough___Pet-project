@@ -28,7 +28,11 @@ public class User extends Entity {
 
     public User(byte[] avatar, String username, String password, String passwordKey, String email, UserType type,
                 Language language) {
-        this.avatar = Arrays.copyOf(avatar, avatar.length);
+        if (avatar == null) {
+            this.avatar = null;
+        } else {
+            this.avatar = Arrays.copyOf(avatar, avatar.length);
+        }
         this.username = username;
         this.password = password;
         this.passwordKey = passwordKey;

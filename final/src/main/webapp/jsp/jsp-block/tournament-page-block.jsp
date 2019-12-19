@@ -26,7 +26,7 @@
                                          style="width: 100%; text-align: center; padding-top: 0;">
                                         <img style="max-height: 100%; padding: 10px;"
                                              src="${pageContext.request.contextPath}/img/icon/delete.png" alt="">
-                                        <span class="button-tooltip"><fmt:message key="edit.tournament"/></span>
+                                        <span class="button-tooltip"><fmt:message key="delete.tournament"/></span>
                                     </div>
                                 </a>
                             </div>

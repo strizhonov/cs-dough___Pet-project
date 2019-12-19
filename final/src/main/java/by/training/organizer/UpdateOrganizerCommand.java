@@ -13,6 +13,7 @@ import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
 import by.training.user.UserDto;
+import by.training.util.ServletUtil;
 import by.training.validation.InputDataValidator;
 import by.training.validation.OrganizerDataValidator;
 import by.training.validation.ValidationException;
@@ -59,7 +60,9 @@ public class UpdateOrganizerCommand implements ActionCommand {
             throws ActionCommandExecutionException {
         try {
 
-            OrganizerValidationDto validationDto = compile(request);
+            List<FileItem> items = ServletUtil.parseRequest(request);
+
+            OrganizerValidationDto validationDto = compile(items);
 
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
@@ -73,14 +76,15 @@ public class UpdateOrganizerCommand implements ActionCommand {
             ValidationResult result = validator.validate(validationDto);
             if (!result.isValid()) {
                 setErrorMessage(result, request);
-                return Optional.of(new HttpForwarder(PathsContainer.FILE_TOURNAMENT_CREATION_PAGE));
+                return Optional.of(new HttpForwarder(PathsContainer.FILE_ORGANIZER_PROFILE_PAGE));
             }
 
             HttpSession session = request.getSession();
             UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
 
 
-            OrganizerDto genericDto = convert(validationDto, request, user);
+
+            OrganizerDto genericDto = convert(validationDto, items, request, user);
             if (organizerService.update(genericDto)) {
 
                 return Optional.of(new HttpRedirector(request.getContextPath()
@@ -101,12 +105,7 @@ public class UpdateOrganizerCommand implements ActionCommand {
     }
 
 
-    private OrganizerValidationDto compile(HttpServletRequest request) throws FileUploadException, IOException {
-
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload sfu = new ServletFileUpload(factory);
-
-        List<FileItem> items = sfu.parseRequest(request);
+    private OrganizerValidationDto compile(List<FileItem> items) throws FileUploadException, IOException {
 
         int i = -1;
         long logoSize = items.get(++i).getSize();
@@ -129,13 +128,9 @@ public class UpdateOrganizerCommand implements ActionCommand {
     }
 
 
-    private OrganizerDto convert(OrganizerValidationDto validationDto, HttpServletRequest request, UserDto user)
-            throws FileUploadException, IOException {
-
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload sfu = new ServletFileUpload(factory);
-
-        List<FileItem> items = sfu.parseRequest(request);
+    private OrganizerDto convert(OrganizerValidationDto validationDto, List<FileItem> items,
+                                 HttpServletRequest request, UserDto user)
+            throws IOException {
 
         byte[] logo = items.get(0).get();
         if (logo == null || logo.length == 0) {
@@ -144,7 +139,10 @@ public class UpdateOrganizerCommand implements ActionCommand {
             logo = IOUtils.toByteArray(is);
         }
 
+        String sId = request.getParameter(AttributesContainer.ID.toString());
+
         return OrganizerDto.Builder.anOrganizerDto()
+                .id(Long.parseLong(sId))
                 .name(validationDto.getName())
                 .logo(logo)
                 .userId(user.getId())

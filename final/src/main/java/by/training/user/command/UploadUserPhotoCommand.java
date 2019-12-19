@@ -12,6 +12,7 @@ import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
 import by.training.user.UserDto;
 import by.training.user.UserService;
+import by.training.util.ServletUtil;
 import by.training.validation.UserDataValidator;
 import by.training.validation.ValidationResult;
 import org.apache.commons.fileupload.FileItem;
@@ -51,7 +52,10 @@ public class UploadUserPhotoCommand implements ActionCommand {
             throws ActionCommandExecutionException {
 
         try {
-            long avatarSize = getSize(request);
+
+            List<FileItem> items = ServletUtil.parseRequest(request);
+
+            long avatarSize = items.get(0).getSize();
 
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
@@ -67,7 +71,7 @@ public class UploadUserPhotoCommand implements ActionCommand {
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_TOURNAMENT_CREATION_PAGE));
             }
 
-            byte[] avatar = getAvatar(request);
+            byte[] avatar = items.get(0).get();
 
             HttpSession httpSession = request.getSession();
             UserDto user = (UserDto) httpSession.getAttribute(AttributesContainer.USER.toString());
@@ -77,32 +81,12 @@ public class UploadUserPhotoCommand implements ActionCommand {
             userService.update(user);
 
             return Optional.of(new HttpRedirector( request.getContextPath()
-                    + PathsContainer.COMMAND_TO_USER_PAGE + user.getId()));
+                    + PathsContainer.FILE_USER_PROFILE_PAGE));
 
         } catch (ServiceException | FileUploadException e) {
             LOGGER.error("Avatar updating failed.", e);
             throw new ActionCommandExecutionException("Avatar updating failed.", e);
         }
-
-
-    }
-
-
-    private byte[] getAvatar(HttpServletRequest request) throws FileUploadException {
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload sfu = new ServletFileUpload(factory);
-        List<FileItem> items = sfu.parseRequest(request);
-        return items.get(0).get();
-
-    }
-
-
-    private long getSize(HttpServletRequest request) throws FileUploadException {
-
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload sfu = new ServletFileUpload(factory);
-        List<FileItem> items = sfu.parseRequest(request);
-        return items.get(0).getSize();
 
 
     }

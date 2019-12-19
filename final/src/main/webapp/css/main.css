@@ -758,6 +758,7 @@ ERROR
 #error {
     position: relative;
     height: 100vh;
+    background: white;
 }
 
 #error .error {
@@ -774,7 +775,6 @@ ERROR
     width: 100%;
     line-height: 1.4;
     text-align: center;
-    background: white;
 }
 
 .error .inner-error {

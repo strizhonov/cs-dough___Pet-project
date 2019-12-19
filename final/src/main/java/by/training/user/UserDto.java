@@ -17,7 +17,7 @@ public class UserDto implements Serializable {
     private String email;
     private User.UserType type = User.UserType.getDefault();
     private User.Language language = User.Language.getDefault();
-    private long walletId;
+    private WalletDto wallet;
     private long playerAccountId;
     private long organizerId;
 
@@ -28,7 +28,7 @@ public class UserDto implements Serializable {
 
 
     public UserDto(long id, byte[] avatar, String username, String password, String passwordKey, String email,
-                   User.UserType type, User.Language language, long walletId, long playerAccountId, long organizerId) {
+                   User.UserType type, User.Language language, WalletDto wallet, long playerAccountId, long organizerId) {
         this.id = id;
         if (avatar == null) {
             this.avatar = null;
@@ -41,7 +41,7 @@ public class UserDto implements Serializable {
         this.email = email;
         this.type = type;
         this.language = language;
-        this.walletId = walletId;
+        this.wallet = wallet;
         this.playerAccountId = playerAccountId;
         this.organizerId = organizerId;
     }
@@ -55,7 +55,7 @@ public class UserDto implements Serializable {
         setEmail(builder.email);
         setType(builder.type);
         setLanguage(builder.language);
-        setWalletId(builder.walletId);
+        setWallet(builder.wallet);
         setPlayerAccountId(builder.playerAccountId);
         setOrganizerId(builder.organizerId);
     }
@@ -137,12 +137,12 @@ public class UserDto implements Serializable {
         this.language = language;
     }
 
-    public long getWalletId() {
-        return walletId;
+    public WalletDto getWallet() {
+        return wallet;
     }
 
-    public void setWalletId(long walletId) {
-        this.walletId = walletId;
+    public void setWallet(WalletDto wallet) {
+        this.wallet = wallet;
     }
 
     public long getPlayerAccountId() {
@@ -168,10 +168,10 @@ public class UserDto implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         UserDto userDto = (UserDto) o;
         return id == userDto.id &&
-                walletId == userDto.walletId &&
                 playerAccountId == userDto.playerAccountId &&
                 organizerId == userDto.organizerId &&
                 Arrays.equals(avatar, userDto.avatar) &&
+                Objects.equals(wallet, userDto.wallet) &&
                 Objects.equals(username, userDto.username) &&
                 Objects.equals(password, userDto.password) &&
                 Objects.equals(passwordKey, userDto.passwordKey) &&
@@ -183,7 +183,7 @@ public class UserDto implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, username, password, passwordKey, email, type, language, walletId, playerAccountId, organizerId);
+        int result = Objects.hash(id, username, password, passwordKey, email, type, language, wallet, playerAccountId, organizerId);
         result = 31 * result + Arrays.hashCode(avatar);
         return result;
     }
@@ -200,7 +200,7 @@ public class UserDto implements Serializable {
                 ", email='" + email + '\'' +
                 ", type=" + type +
                 ", language=" + language +
-                ", walletId=" + walletId +
+                ", wallet=" + wallet +
                 ", playerAccountId=" + playerAccountId +
                 ", organizerId=" + organizerId +
                 '}';
@@ -216,7 +216,7 @@ public class UserDto implements Serializable {
         private String email;
         private User.UserType type;
         private User.Language language;
-        private long walletId;
+        private WalletDto wallet;
         private long playerAccountId;
         private long organizerId;
 
@@ -229,7 +229,11 @@ public class UserDto implements Serializable {
         }
 
         public Builder avatar(byte[] val) {
-            avatar = Arrays.copyOf(val, val.length);
+            if (val == null) {
+                this.avatar = null;
+            } else {
+                avatar = Arrays.copyOf(val, val.length);
+            }
             return this;
         }
 
@@ -263,8 +267,8 @@ public class UserDto implements Serializable {
             return this;
         }
 
-        public Builder walletId(long val) {
-            walletId = val;
+        public Builder wallet(WalletDto val) {
+            wallet = val;
             return this;
         }
 

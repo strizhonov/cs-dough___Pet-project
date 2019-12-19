@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface GameDao extends CrudDao<PlainGameDto> {
 
+    long saveNew(PlainGameDto game) throws DaoException;
+
     ComplexGameDto getComplex(long gameId) throws DaoException;
 
     ComplexGameDto getComplexByBracketIndex(int nextGameIndex, long tournamentId) throws DaoException;

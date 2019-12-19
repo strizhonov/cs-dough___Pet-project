@@ -124,9 +124,9 @@ public class DaoMapper {
         User.UserType type = User.UserType.fromString(sType).orElse(User.UserType.getDefault());
         String sLanguage = rs.getString(LANG.toString());
         User.Language language = User.Language.fromLocaleString(sLanguage).orElse(User.Language.getDefault());
-        long walletId = rs.getLong(WALLET_ID.toString());
         long playerId = rs.getLong(PLAYER_ID.toString());
         long organizerId = rs.getLong(ORGANIZER_ID.toString());
+
 
         return new UserDto.Builder()
                 .id(id)
@@ -137,7 +137,6 @@ public class DaoMapper {
                 .email(email)
                 .type(type)
                 .language(language)
-                .walletId(walletId)
                 .organizerId(organizerId)
                 .playerAccountId(playerId)
                 .build();

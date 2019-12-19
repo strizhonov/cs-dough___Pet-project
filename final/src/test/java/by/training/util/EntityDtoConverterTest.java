@@ -31,7 +31,7 @@ public class EntityDtoConverterTest {
     public void userFromDto() {
         UserDto userDto = new UserDto(0, null, "username", "password",
                 "passwordKey", "email", null, null,
-                0, 0, 0);
+                null, 0, 0);
 
         User user = EntityDtoConverter.fromDto(userDto);
 

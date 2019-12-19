@@ -59,7 +59,7 @@ public class UpdateEmailCommand implements ActionCommand {
             ValidationResult result = validator.emailCorrectness(email).and(validator.emailUniqueness(email));
             if (!result.isValid()) {
                 setErrorMessage(result, request);
-                return Optional.of(new HttpForwarder(PathsContainer.FILE_TOURNAMENT_CREATION_PAGE));
+                return Optional.of(new HttpForwarder(PathsContainer.FILE_USER_PROFILE_PAGE));
             }
 
             HttpSession httpSession = request.getSession();
@@ -70,7 +70,7 @@ public class UpdateEmailCommand implements ActionCommand {
             userService.update(user);
 
             return Optional.of(new HttpRedirector( request.getContextPath()
-                    + PathsContainer.COMMAND_TO_USER_PAGE + user.getId()));
+                    + PathsContainer.FILE_USER_PROFILE_PAGE));
 
         } catch (ServiceException | ValidationException e) {
             LOGGER.error("User updating failed.", e);

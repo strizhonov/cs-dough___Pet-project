@@ -1,5 +1,6 @@
 package by.training.core;
 
+import by.training.user.WalletDao;
 import by.training.user.WalletDto;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,9 +29,14 @@ public class BufferWallet extends WalletDto {
         return BufferWallet.InstanceHolder.INSTANCE;
     }
 
-    public void init(long id) {
+    public void init(WalletDto walletDto) {
         if (!initialized.get()) {
-            this.id = id;
+
+            this.id = walletDto.getId();
+            this.balance = walletDto.getBalance();
+            this.currency = walletDto.getCurrency();
+            this.userId = walletDto.getUserId();
+
             initialized.set(true);
         }
     }

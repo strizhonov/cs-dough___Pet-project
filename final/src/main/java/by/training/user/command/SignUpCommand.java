@@ -11,10 +11,9 @@ import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
 import by.training.user.RegistrationDto;
-import by.training.user.UserDto;
 import by.training.user.UserService;
 import by.training.user.UserValidationDto;
-import by.training.util.ImageConverter;
+import by.training.util.ServletUtil;
 import by.training.validation.InputDataValidator;
 import by.training.validation.UserDataValidator;
 import by.training.validation.ValidationException;
@@ -111,12 +110,12 @@ public class SignUpCommand implements ActionCommand {
     private RegistrationDto convert(UserValidationDto validationDto, HttpServletRequest request)
             throws IOException {
 
-        byte[] defAvatar = ImageConverter.fromImg(request.getServletContext().getRealPath(PathsContainer.FILE_NOBODY),
+        byte[] defAvatar = ServletUtil.fromImg(request.getServletContext().getRealPath(PathsContainer.FILE_NOBODY),
                 AttributesContainer.JPG.toString());
         RegistrationDto registrationDto = new RegistrationDto();
         registrationDto.setDefAvatar(defAvatar);
         registrationDto.setUsername(validationDto.getUsername());
-        registrationDto.setEmail(validationDto.getUsername());
+        registrationDto.setEmail(validationDto.getEmail());
         registrationDto.setPassword(validationDto.getPassword());
 
         return registrationDto;

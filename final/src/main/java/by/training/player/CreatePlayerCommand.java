@@ -13,14 +13,13 @@ import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
 import by.training.user.UserDto;
+import by.training.util.ServletUtil;
 import by.training.validation.InputDataValidator;
 import by.training.validation.PlayerDataValidator;
 import by.training.validation.ValidationException;
 import by.training.validation.ValidationResult;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,7 +59,9 @@ public class CreatePlayerCommand implements ActionCommand {
 
         try {
 
-            PlayerValidationDto validationDto = compile(request);
+            List<FileItem> items = ServletUtil.parseRequest(request);
+
+            PlayerValidationDto validationDto = compile(items);
 
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
@@ -81,7 +82,7 @@ public class CreatePlayerCommand implements ActionCommand {
             UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
 
 
-            PlayerDto genericDto = convert(validationDto, request, user);
+            PlayerDto genericDto = convert(validationDto, items, request, user);
             long playerId = playerService.create(genericDto);
 
 
@@ -101,12 +102,7 @@ public class CreatePlayerCommand implements ActionCommand {
     }
 
 
-    private PlayerValidationDto compile(HttpServletRequest request) throws FileUploadException, IOException {
-
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload sfu = new ServletFileUpload(factory);
-
-        List<FileItem> items = sfu.parseRequest(request);
+    private PlayerValidationDto compile(List<FileItem> items) throws IOException {
 
         int i = -1;
         long logoSize = items.get(++i).getSize();
@@ -134,13 +130,8 @@ public class CreatePlayerCommand implements ActionCommand {
     }
 
 
-    private PlayerDto convert(PlayerValidationDto validationDto, HttpServletRequest request, UserDto user)
-            throws FileUploadException, IOException {
-
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload sfu = new ServletFileUpload(factory);
-
-        List<FileItem> items = sfu.parseRequest(request);
+    private PlayerDto convert(PlayerValidationDto validationDto, List<FileItem> items, HttpServletRequest request,
+                              UserDto user) throws IOException {
 
         byte[] photo = items.get(0).get();
         if (photo == null || photo.length == 0) {

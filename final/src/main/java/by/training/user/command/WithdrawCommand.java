@@ -12,6 +12,10 @@ import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
 import by.training.user.UserDto;
 import by.training.user.UserService;
+import by.training.validation.GenericDataValidator;
+import by.training.validation.InputDataValidator;
+import by.training.validation.ValidationException;
+import by.training.validation.ValidationResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,26 +42,37 @@ public class WithdrawCommand implements ActionCommand {
 
 
     @Override
-    public Optional<HttpRouter> direct(HttpServletRequest request, HttpServletResponse response) throws ActionCommandExecutionException {
+    public Optional<HttpRouter> direct(HttpServletRequest request, HttpServletResponse response)
+            throws ActionCommandExecutionException {
 
-
-        UserDto user = (UserDto) request.getSession().getAttribute(AttributesContainer.USER.toString());
         String sValueToWithdraw = request.getParameter(AttributesContainer.WITHDRAW.toString());
-        double valueToWithdraw = Double.parseDouble(sValueToWithdraw);
+
+        LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
+                request.getLocale());
+
+        InputDataValidator<String> validator = new GenericDataValidator(manager);
 
         try {
-            if (userService.withdraw(valueToWithdraw, user)) {
+
+            ValidationResult result = validator.validate(sValueToWithdraw);
+            if (!result.isValid()) {
+                setErrorMessage(result, request);
+                return Optional.of(new HttpForwarder(PathsContainer.FILE_WALLET_PAGE));
+            }
+
+
+            UserDto user = (UserDto) request.getSession().getAttribute(AttributesContainer.USER.toString());
+
+            if (userService.withdraw(Double.parseDouble(sValueToWithdraw), user)) {
 
                 user = userService.find(user.getId());
                 request.getSession().setAttribute(AttributesContainer.USER.toString(), user);
+
 
                 return Optional.of(new HttpRedirector(request.getContextPath() + PathsContainer.FILE_WALLET_PAGE));
 
 
             } else {
-                LocalizationManager manager
-                        = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
-
 
                 request.setAttribute(AttributesContainer.MESSAGE.toString(),
                         manager.getValue(AttributesContainer.NOT_ENOUGH_FUNDS.toString()));
@@ -67,11 +82,22 @@ public class WithdrawCommand implements ActionCommand {
             }
 
 
-        } catch (ServiceException e) {
+        } catch (ServiceException | ValidationException e) {
             LOGGER.error("Unable to perform withdrawing operation.", e);
             throw new ActionCommandExecutionException("Unable to perform withdrawing operation.", e);
         }
 
     }
+
+
+    private void setErrorMessage(ValidationResult result, HttpServletRequest request) {
+        LocalizationManager manager
+                = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
+
+
+        request.setAttribute(AttributesContainer.MESSAGE.toString(),
+                manager.getValue(result.getFirstValue()));
+    }
+
 
 }

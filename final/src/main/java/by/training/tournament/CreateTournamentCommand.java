@@ -13,6 +13,7 @@ import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
 import by.training.user.UserDto;
+import by.training.util.ServletUtil;
 import by.training.util.TournamentUtil;
 import by.training.validation.InputDataValidator;
 import by.training.validation.TournamentDataValidator;
@@ -20,8 +21,6 @@ import by.training.validation.ValidationException;
 import by.training.validation.ValidationResult;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,7 +59,10 @@ public class CreateTournamentCommand implements ActionCommand {
             throws ActionCommandExecutionException {
 
         try {
-            TournamentValidationDto validationDto = compile(request);
+
+            List<FileItem> items = ServletUtil.parseRequest(request);
+
+            TournamentValidationDto validationDto = compile(items);
 
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
@@ -80,7 +82,7 @@ public class CreateTournamentCommand implements ActionCommand {
             UserDto user = (UserDto) httpSession.getAttribute(AttributesContainer.USER.toString());
 
 
-            TournamentDto genericDto = convert(user, validationDto, request);
+            TournamentDto genericDto = convert(user, items, validationDto, request);
             long tournamentId = tournamentService.create(genericDto);
 
 
@@ -95,14 +97,8 @@ public class CreateTournamentCommand implements ActionCommand {
     }
 
 
-    private TournamentValidationDto compile(HttpServletRequest request)
-            throws FileUploadException, IOException {
+    private TournamentValidationDto compile(List<FileItem> items) throws IOException {
 
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload sfu = new ServletFileUpload(factory);
-
-
-        List<FileItem> items = sfu.parseRequest(request);
         int i = -1;
         long logoSize = items.get(++i).getSize();
 
@@ -136,14 +132,8 @@ public class CreateTournamentCommand implements ActionCommand {
     }
 
 
-    private TournamentDto convert(UserDto user, TournamentValidationDto validationDto,
-                                  HttpServletRequest request) throws IOException, FileUploadException {
-
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload sfu = new ServletFileUpload(factory);
-
-
-        List<FileItem> items = sfu.parseRequest(request);
+    private TournamentDto convert(UserDto user, List<FileItem> items, TournamentValidationDto validationDto,
+                                  HttpServletRequest request) throws IOException {
 
         int i = -1;
         byte[] logo = items.get(++i).get();

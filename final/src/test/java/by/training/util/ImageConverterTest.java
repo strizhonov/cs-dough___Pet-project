@@ -17,7 +17,7 @@ public class ImageConverterTest {
     public void convert() throws URISyntaxException, IOException {
         URI uri = this.getClass().getResource("/test.jpg").toURI();
         String path = Paths.get(uri).toString();
-        byte[] image = ImageConverter.fromImg(path, "jpg");
+        byte[] image = ServletUtil.fromImg(path, "jpg");
         Assert.assertTrue(image != null && image.length > 0);
     }
 

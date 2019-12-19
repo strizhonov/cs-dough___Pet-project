@@ -121,7 +121,7 @@ public class PlayerDto extends PlainPlayerDto {
             if (val == null) {
                 this.photo = null;
             } else {
-                this.photo = Arrays.copyOf(photo, photo.length);
+                this.photo = Arrays.copyOf(val, val.length);
             }
             return this;
         }

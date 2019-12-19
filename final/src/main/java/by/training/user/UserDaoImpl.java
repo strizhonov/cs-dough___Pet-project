@@ -3,6 +3,7 @@ package by.training.user;
 import by.training.connection.ConnectionProvider;
 import by.training.core.Bean;
 import by.training.core.DaoException;
+import by.training.core.EntityNotFoundException;
 import by.training.util.DaoMapper;
 import by.training.util.EntityDtoConverter;
 import org.apache.logging.log4j.LogManager;
@@ -86,6 +87,11 @@ public class UserDaoImpl implements UserDao {
                     "ON user_account.user_id = o.user_account_id " +
                     "WHERE username=? AND user_password=?";
 
+    private static final String SELECT_WALLET =
+            "SELECT wallet_id, balance, currency, user_id " +
+                    "FROM wallet " +
+                    "WHERE user_id=?";
+
 
     private static final Logger LOGGER = LogManager.getLogger(UserDaoImpl.class);
     private final ConnectionProvider provider;
@@ -131,10 +137,10 @@ public class UserDaoImpl implements UserDao {
             try (ResultSet resultSet = statement.executeQuery()) {
 
                 if (resultSet.next()) {
-                    return DaoMapper.mapUserDto(resultSet);
+                    return compile(resultSet);
                 } else {
                     LOGGER.error("Unable to get user with " + id + " id, not found.");
-                    throw new DaoException("Unable to get user with " + id + " id not found.");
+                    throw new EntityNotFoundException("Unable to get user with " + id + " id not found.");
                 }
             }
 
@@ -185,7 +191,7 @@ public class UserDaoImpl implements UserDao {
             List<UserDto> result = new ArrayList<>();
 
             if (resultSet.next()) {
-                UserDto userDto = DaoMapper.mapUserDto(resultSet);
+                UserDto userDto = compile(resultSet);
                 result.add(userDto);
             }
 
@@ -211,7 +217,7 @@ public class UserDaoImpl implements UserDao {
                 UserDto userDto = null;
 
                 if (resultSet.next()) {
-                    userDto = DaoMapper.mapUserDto(resultSet);
+                    userDto = compile(resultSet);
                 }
 
                 if (userDto == null) {
@@ -239,7 +245,7 @@ public class UserDaoImpl implements UserDao {
             try (ResultSet resultSet = statement.executeQuery()) {
 
                 if (resultSet.next()) {
-                    return DaoMapper.mapUserDto(resultSet);
+                    return compile(resultSet);
                 }
 
                 return null;
@@ -264,7 +270,7 @@ public class UserDaoImpl implements UserDao {
 
                 UserDto userDto = null;
                 if (resultSet.next()) {
-                    userDto = DaoMapper.mapUserDto(resultSet);
+                    userDto = compile(resultSet);
                 }
 
                 return userDto;
@@ -274,6 +280,17 @@ public class UserDaoImpl implements UserDao {
             LOGGER.error("Unable to perform user search.", e);
             throw new DaoException("Unable to perform user search.", e);
         }
+    }
+
+
+
+    private UserDto compile(ResultSet resultSet) throws SQLException, DaoException {
+        UserDto user = DaoMapper.mapUserDto(resultSet);
+
+        WalletDto walletDto = getWallet(user.getId());
+        user.setWallet(walletDto);
+
+        return user;
     }
 
 
@@ -305,6 +322,34 @@ public class UserDaoImpl implements UserDao {
             statement.setString(++i, user.getLanguage().name());
             statement.setLong(++i, user.getId());
         }
+    }
+
+
+
+    private WalletDto getWallet(long userId) throws DaoException {
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SELECT_WALLET)) {
+
+            statement.setLong(1, userId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    return DaoMapper.mapWalletDto(resultSet);
+                } else {
+                    LOGGER.error("Unable to get wallet with " + userId + " user Id, not found.");
+                    throw new EntityNotFoundException("Unable to get wallet with " + userId + " user Id, not found.");
+                }
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error("Unable to perform entity retrieving.", e);
+            throw new DaoException("Unable to perform entity retrieving.", e);
+        }
+
+
+
+
     }
 
 }

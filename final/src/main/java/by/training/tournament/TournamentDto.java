@@ -101,15 +101,15 @@ public class TournamentDto extends PlainTournamentDto {
     public static final class Builder {
         private long id;
         private String name;
-        private byte[] logo;
+        private byte[] logo = new byte[0];
         private double prizePool;
         private double reward;
         private double buyIn;
         private int playersNumber;
-        private Tournament.TournamentStatus status;
+        private Tournament.TournamentStatus status = Tournament.TournamentStatus.getDefault();
         private long organizerId;
-        private List<Long> gamesIds;
-        private List<Long> participantsIds;
+        private List<Long> gamesIds = new ArrayList<>();
+        private List<Long> participantsIds = new ArrayList<>();
 
         public Builder() {
         }
@@ -128,7 +128,7 @@ public class TournamentDto extends PlainTournamentDto {
             if (val == null) {
                 this.logo = null;
             } else {
-                this.logo = Arrays.copyOf(logo, logo.length);
+                this.logo = Arrays.copyOf(val, val.length);
             }
             return this;
         }

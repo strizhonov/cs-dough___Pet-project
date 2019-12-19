@@ -66,6 +66,7 @@ public class TransactionManagerImpl implements TransactionManager, ConnectionPro
             Connection connection = localConnection.get();
             if (connection != null) {
                 connection.rollback();
+                connection.setAutoCommit(true);
                 connection.close();
                 localConnection.remove();
             }

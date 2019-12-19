@@ -1,5 +1,7 @@
 package by.training.resourse;
 
+import by.training.game.Game;
+
 public enum AttributesContainer {
 
     /**
@@ -55,6 +57,7 @@ public enum AttributesContainer {
     NICKNAME_CORRECTNESS_ERROR,
     NICKNAME_ERROR,
     NICKNAME_UNIQUENESS_ERROR,
+    NON_POSITIVE_INTEGER,
     NOT_ENOUGH_FUNDS,
     ORGANIZER,
     ORGANIZER_BONUS_CORRECTNESS_ERROR,
