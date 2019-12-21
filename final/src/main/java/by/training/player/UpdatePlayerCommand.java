@@ -66,7 +66,7 @@ public class UpdatePlayerCommand implements ActionCommand {
 
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                    request.getLocale());
+                    (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
             InputDataValidator<PlayerValidationDto> validator
@@ -75,7 +75,8 @@ public class UpdatePlayerCommand implements ActionCommand {
 
             ValidationResult result = validator.validate(validationDto);
             if (!result.isValid()) {
-                setErrorMessage(result, request);
+                request.setAttribute(AttributesContainer.MESSAGE.toString(),
+                        manager.getValue(result.getFirstValue()));
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_TOURNAMENT_CREATION_PAGE));
             }
 
@@ -120,16 +121,6 @@ public class UpdatePlayerCommand implements ActionCommand {
 
         return new PlayerValidationDto(logoSize, nickname, name, surname);
 
-    }
-
-
-    private void setErrorMessage(ValidationResult result, HttpServletRequest request) {
-        LocalizationManager manager
-                = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
-
-
-        request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                manager.getValue(result.getFirstValue()));
     }
 
 

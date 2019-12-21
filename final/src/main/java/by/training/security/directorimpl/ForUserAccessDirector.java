@@ -30,8 +30,8 @@ public class ForUserAccessDirector extends BaseSecurityDirector {
 
     @Override
     protected Optional<HttpRouter> getHttpRouter(HttpServletRequest request, HttpServletResponse response) {
-        LocalizationManager localizationManager
-                = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
+        LocalizationManager localizationManager = new LocalizationManager(AttributesContainer.I18N.toString(),
+                (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
         request.setAttribute(AttributesContainer.MESSAGE.toString(),
                 localizationManager.getValue(MESSAGE_KEY));

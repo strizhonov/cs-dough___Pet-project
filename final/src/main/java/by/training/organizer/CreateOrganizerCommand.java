@@ -65,7 +65,7 @@ public class CreateOrganizerCommand implements ActionCommand {
 
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                    request.getLocale());
+                    (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
             InputDataValidator<OrganizerValidationDto> validator
@@ -115,8 +115,8 @@ public class CreateOrganizerCommand implements ActionCommand {
 
 
     private void setErrorMessage(ValidationResult result, HttpServletRequest request) {
-        LocalizationManager manager
-                = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
+        LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
+                (String) request.getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
         request.setAttribute(AttributesContainer.MESSAGE.toString(),
@@ -124,8 +124,8 @@ public class CreateOrganizerCommand implements ActionCommand {
     }
 
 
-    private OrganizerDto convert(OrganizerValidationDto validationDto, List<FileItem> items, HttpServletRequest request, UserDto user)
-            throws IOException {
+    private OrganizerDto convert(OrganizerValidationDto validationDto, List<FileItem> items, HttpServletRequest request,
+                                 UserDto user) throws IOException {
 
         byte[] logo = items.get(0).get();
         if (logo == null || logo.length == 0) {

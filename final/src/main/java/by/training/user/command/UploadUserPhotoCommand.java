@@ -59,7 +59,7 @@ public class UploadUserPhotoCommand implements ActionCommand {
 
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                    request.getLocale());
+                    (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
             UserDataValidator validator = new UserDataValidator(userService, manager);
@@ -67,7 +67,8 @@ public class UploadUserPhotoCommand implements ActionCommand {
 
             ValidationResult result = validator.avatarSize(avatarSize);
             if (!result.isValid()) {
-                setErrorMessage(result, request);
+                request.setAttribute(AttributesContainer.MESSAGE.toString(),
+                        manager.getValue(result.getFirstValue()));
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_TOURNAMENT_CREATION_PAGE));
             }
 
@@ -92,14 +93,6 @@ public class UploadUserPhotoCommand implements ActionCommand {
     }
 
 
-    private void setErrorMessage(ValidationResult result, HttpServletRequest request) {
-        LocalizationManager manager
-                = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
-
-
-        request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                manager.getValue(result.getFirstValue()));
-    }
 
 
 }

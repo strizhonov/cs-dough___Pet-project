@@ -39,8 +39,8 @@ public class ForNonOrganizerAccessDirector extends BaseSecurityDirector {
 
     @Override
     protected Optional<HttpRouter> getHttpRouter(HttpServletRequest request, HttpServletResponse response) {
-        LocalizationManager localizationManager
-                = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
+        LocalizationManager localizationManager = new LocalizationManager(AttributesContainer.I18N.toString(),
+                (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
         HttpSession session = request.getSession();
         UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());

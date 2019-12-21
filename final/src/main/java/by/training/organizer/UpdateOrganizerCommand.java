@@ -66,7 +66,7 @@ public class UpdateOrganizerCommand implements ActionCommand {
 
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                    request.getLocale());
+                    (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
             InputDataValidator<OrganizerValidationDto> validator
@@ -75,7 +75,10 @@ public class UpdateOrganizerCommand implements ActionCommand {
 
             ValidationResult result = validator.validate(validationDto);
             if (!result.isValid()) {
-                setErrorMessage(result, request);
+
+                request.setAttribute(AttributesContainer.MESSAGE.toString(),
+                        manager.getValue(result.getFirstValue()));
+
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_ORGANIZER_PROFILE_PAGE));
             }
 
@@ -115,16 +118,6 @@ public class UpdateOrganizerCommand implements ActionCommand {
 
         return new OrganizerValidationDto(logoSize, name);
 
-    }
-
-
-    private void setErrorMessage(ValidationResult result, HttpServletRequest request) {
-        LocalizationManager manager
-                = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
-
-
-        request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                manager.getValue(result.getFirstValue()));
     }
 
 

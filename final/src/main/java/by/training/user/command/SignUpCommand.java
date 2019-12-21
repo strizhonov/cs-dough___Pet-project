@@ -55,7 +55,7 @@ public class SignUpCommand implements ActionCommand {
 
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                    request.getLocale());
+                    (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
             InputDataValidator<UserValidationDto> validator
@@ -64,7 +64,8 @@ public class SignUpCommand implements ActionCommand {
 
             ValidationResult result = validator.validate(validationDto);
             if (!result.isValid()) {
-                setErrorMessage(result, request);
+                request.setAttribute(AttributesContainer.MESSAGE.toString(),
+                        manager.getValue(result.getFirstValue()));
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_TOURNAMENT_CREATION_PAGE));
             }
 
@@ -94,16 +95,6 @@ public class SignUpCommand implements ActionCommand {
 
         return new UserValidationDto(username, email, password, passConfirmation);
 
-    }
-
-
-    private void setErrorMessage(ValidationResult result, HttpServletRequest request) {
-        LocalizationManager manager
-                = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
-
-
-        request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                manager.getValue(result.getFirstValue()));
     }
 
 

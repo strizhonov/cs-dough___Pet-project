@@ -51,7 +51,7 @@ public class DepositCommand implements ActionCommand {
         String valueToDeposit = request.getParameter(AttributesContainer.DEPOSIT.toString());
 
         LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                request.getLocale());
+                (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
         InputDataValidator<String> validator = new GenericDataValidator(manager);
 
@@ -59,7 +59,8 @@ public class DepositCommand implements ActionCommand {
 
             ValidationResult result = validator.validate(valueToDeposit);
             if (!result.isValid()) {
-                setErrorMessage(result, request);
+                request.setAttribute(AttributesContainer.MESSAGE.toString(),
+                        manager.getValue(result.getFirstValue()));
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_WALLET_PAGE));
             }
 
@@ -79,16 +80,6 @@ public class DepositCommand implements ActionCommand {
             throw new ActionCommandExecutionException("Unable to perform depositing operation.", e);
         }
 
-    }
-
-
-    private void setErrorMessage(ValidationResult result, HttpServletRequest request) {
-        LocalizationManager manager
-                = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
-
-
-        request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                manager.getValue(result.getFirstValue()));
     }
 
 

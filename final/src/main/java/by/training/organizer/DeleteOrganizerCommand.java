@@ -51,8 +51,8 @@ public class DeleteOrganizerCommand implements ActionCommand {
                         + PathsContainer.FILE_USER_PROFILE_PAGE));
             } else {
 
-                LocalizationManager manager
-                        = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
+                LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
+                        (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
                 request.setAttribute(AttributesContainer.MESSAGE.toString(),

@@ -62,8 +62,8 @@ public class JoinTournamentCommand implements ActionCommand {
 
         } catch (NotEnoughFundsException e) {
             LOGGER.error("Not enough funds.", e);
-            LocalizationManager manager
-                    = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
+            LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
+                    (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
             request.setAttribute(AttributesContainer.MESSAGE.toString(),

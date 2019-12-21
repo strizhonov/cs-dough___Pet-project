@@ -59,7 +59,7 @@ public class LogInCommand implements ActionCommand {
 
             if (userDto == null) {
                 LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                        request.getLocale());
+                        (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
                 request.setAttribute(AttributesContainer.MESSAGE.toString(),
                         manager.getValue(AttributesContainer.USERNAME_OR_PASSWORD_ERROR.toString()));

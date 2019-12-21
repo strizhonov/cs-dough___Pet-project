@@ -9,8 +9,8 @@ public class LocalizationManager {
 
     private ResourceBundle resourceBundle;
 
-    public LocalizationManager(String resourceName, Locale locale) {
-        resourceBundle = ResourceBundle.getBundle(resourceName, locale);
+    public LocalizationManager(String resourceName, String lang) {
+        resourceBundle = ResourceBundle.getBundle(resourceName, new Locale(lang));
     }
 
     public String getValue(String key) {

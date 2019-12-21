@@ -48,7 +48,7 @@ public class UpdateUsernameCommand implements ActionCommand {
 
 
         LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                request.getLocale());
+                (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
         UserDataValidator validator = new UserDataValidator(userService, manager);
@@ -57,7 +57,8 @@ public class UpdateUsernameCommand implements ActionCommand {
 
             ValidationResult result = validator.usernameCorrectness(username).and(validator.usernameUniqueness(username));
             if (!result.isValid()) {
-                setErrorMessage(result, request);
+                request.setAttribute(AttributesContainer.MESSAGE.toString(),
+                        manager.getValue(result.getFirstValue()));
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_USER_PROFILE_PAGE));
             }
 
@@ -79,15 +80,6 @@ public class UpdateUsernameCommand implements ActionCommand {
 
     }
 
-
-    private void setErrorMessage(ValidationResult result, HttpServletRequest request) {
-        LocalizationManager manager
-                = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
-
-
-        request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                manager.getValue(result.getFirstValue()));
-    }
 
 
 }
