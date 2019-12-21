@@ -104,7 +104,7 @@
                        oninput="checkEmail();"
                        placeholder="<fmt:message key="email"/>"/>
                 <button id="submit">Register</button>
-                <p class="message">Already registered? <a href="#">Sign In</a></p>
+                <p class="message"><fmt:message key="already.registered"/>&nbsp<a href="#"><fmt:message key="sign.in"/></a></p>
             </form>
             <form class="login-form" action="${pageContext.request.contextPath}${PathsContainer.COMMAND_LOGIN}"
                   method="post">
