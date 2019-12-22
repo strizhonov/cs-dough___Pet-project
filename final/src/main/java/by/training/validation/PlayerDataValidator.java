@@ -79,8 +79,8 @@ public class PlayerDataValidator implements InputDataValidator<PlayerValidationD
         Matcher matcher = pattern.matcher(nickname);
 
         if (!matcher.find()) {
-            result.add(AttributesContainer.NICKNAME_CORRECTNESS_ERROR.toString(),
-                    localizationManager.getValue(AttributesContainer.NICKNAME_CORRECTNESS_ERROR.toString()));
+            result.add(AttributesContainer.WRONG_NICKNAME.toString(),
+                    localizationManager.getValue(AttributesContainer.WRONG_NICKNAME.toString()));
         }
 
         return result;
@@ -110,8 +110,8 @@ public class PlayerDataValidator implements InputDataValidator<PlayerValidationD
         Matcher matcher = pattern.matcher(name);
 
         if (!matcher.find()) {
-            result.add(AttributesContainer.PLAYER_NAME_CORRECTNESS_ERROR.toString(),
-                    localizationManager.getValue(AttributesContainer.PLAYER_NAME_CORRECTNESS_ERROR.toString()));
+            result.add(AttributesContainer.WRONG_PLAYER_NAME.toString(),
+                    localizationManager.getValue(AttributesContainer.WRONG_PLAYER_NAME.toString()));
         }
         return result;
     }
@@ -124,8 +124,8 @@ public class PlayerDataValidator implements InputDataValidator<PlayerValidationD
         Matcher matcher = pattern.matcher(surname);
 
         if (!matcher.find()) {
-            result.add(AttributesContainer.PLAYER_SURNAME_CORRECTNESS_ERROR.toString(),
-                    localizationManager.getValue(AttributesContainer.PLAYER_SURNAME_CORRECTNESS_ERROR.toString()));
+            result.add(AttributesContainer.WRONG_PLAYER_SURNAME.toString(),
+                    localizationManager.getValue(AttributesContainer.WRONG_PLAYER_SURNAME.toString()));
         }
 
         return result;

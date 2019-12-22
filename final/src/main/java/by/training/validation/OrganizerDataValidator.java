@@ -69,8 +69,8 @@ public class OrganizerDataValidator implements InputDataValidator<OrganizerValid
         Matcher matcher = pattern.matcher(name);
 
         if (!matcher.find()) {
-            result.add(AttributesContainer.ORGANIZER_NAME_CORRECTNESS_ERROR.toString(),
-                    localizationManager.getValue(AttributesContainer.ORGANIZER_NAME_CORRECTNESS_ERROR.toString()));
+            result.add(AttributesContainer.WRONG_ORGANIZER_NAME.toString(),
+                    localizationManager.getValue(AttributesContainer.WRONG_ORGANIZER_NAME.toString()));
         }
         return result;
     }

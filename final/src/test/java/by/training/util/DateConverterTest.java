@@ -27,7 +27,7 @@ public class DateConverterTest {
     @Test
     public void toSqlDate() {
         Class<?> clazz = DateConverter.toTimeStamp(new java.util.Date(0)).getClass();
-        Assert.assertEquals(clazz, java.sql.Date.class);
+        Assert.assertEquals(clazz, java.sql.Timestamp.class);
     }
 
     @Test

@@ -88,8 +88,8 @@ public class TournamentDataValidator implements InputDataValidator<TournamentVal
         Matcher matcher = pattern.matcher(name);
 
         if (!matcher.find()) {
-            result.add(AttributesContainer.TOURNAMENT_NAME_CORRECTNESS_ERROR.toString(),
-                    localizationManager.getValue(AttributesContainer.TOURNAMENT_NAME_CORRECTNESS_ERROR.toString()));
+            result.add(AttributesContainer.WRONG_TOURNAMENT_NAME.toString(),
+                    localizationManager.getValue(AttributesContainer.WRONG_TOURNAMENT_NAME.toString()));
         }
         return result;
     }

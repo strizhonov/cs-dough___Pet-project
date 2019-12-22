@@ -71,8 +71,8 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
         Matcher matcher = pattern.matcher(username);
 
         if (!matcher.find()) {
-            result.add(AttributesContainer.USERNAME_CORRECTNESS_ERROR.toString(),
-                    localizationManager.getValue(AttributesContainer.USERNAME_CORRECTNESS_ERROR.toString()));
+            result.add(AttributesContainer.WRONG_USERNAME.toString(),
+                    localizationManager.getValue(AttributesContainer.WRONG_USERNAME.toString()));
         }
         return result;
     }
@@ -102,8 +102,8 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
         Matcher matcher = pattern.matcher(email);
 
         if (!matcher.find()) {
-            result.add(AttributesContainer.EMAIL_CORRECTNESS_ERROR.toString(),
-                    localizationManager.getValue(AttributesContainer.EMAIL_CORRECTNESS_ERROR.toString()));
+            result.add(AttributesContainer.WRONG_EMAIL.toString(),
+                    localizationManager.getValue(AttributesContainer.WRONG_EMAIL.toString()));
         }
         return result;
     }
@@ -134,8 +134,8 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
         Matcher matcher = pattern.matcher(password);
 
         if (!matcher.find()) {
-            result.add(AttributesContainer.PASSWORD_CORRECTNESS_ERROR.toString(),
-                    localizationManager.getValue(AttributesContainer.PASSWORD_CORRECTNESS_ERROR.toString()));
+            result.add(AttributesContainer.WRONG_PASSWORD.toString(),
+                    localizationManager.getValue(AttributesContainer.WRONG_PASSWORD.toString()));
         }
         return result;
     }
@@ -145,8 +145,8 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
         ValidationResult result = new ValidationResult();
 
         if (password == null || !password.equals(passConfirmation)) {
-            result.add(AttributesContainer.PASSWORD_CONFIRMATION.toString(),
-                    localizationManager.getValue(AttributesContainer.PASSWORD_CORRECTNESS_ERROR.toString()));
+            result.add(AttributesContainer.WRONG_PASSWORD_CONFIRMATION.toString(),
+                    localizationManager.getValue(AttributesContainer.WRONG_PASSWORD_CONFIRMATION.toString()));
         }
 
         return result;

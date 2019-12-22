@@ -20,8 +20,6 @@ import by.training.validation.ValidationException;
 import by.training.validation.ValidationResult;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -103,7 +101,7 @@ public class CreateOrganizerCommand implements ActionCommand {
     }
 
 
-    private OrganizerValidationDto compile(List<FileItem> items) throws FileUploadException, IOException {
+    private OrganizerValidationDto compile(List<FileItem> items) throws IOException {
 
         int i = -1;
         long logoSize = items.get(++i).getSize();

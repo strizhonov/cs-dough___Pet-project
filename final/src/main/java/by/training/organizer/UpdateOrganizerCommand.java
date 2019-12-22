@@ -105,7 +105,7 @@ public class UpdateOrganizerCommand implements ActionCommand {
     }
 
 
-    private OrganizerValidationDto compile(List<FileItem> items) throws FileUploadException, IOException {
+    private OrganizerValidationDto compile(List<FileItem> items) throws IOException {
 
         int i = -1;
         long logoSize = items.get(++i).getSize();

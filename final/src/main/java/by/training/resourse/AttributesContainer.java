@@ -1,7 +1,5 @@
 package by.training.resourse;
 
-import by.training.game.Game;
-
 public enum AttributesContainer {
 
     /**
@@ -113,8 +111,16 @@ public enum AttributesContainer {
     USERNAME_OR_PASSWORD_ERROR,
     USERNAME_OR_PASSWORD_ERROR_MESSAGE,
     USERNAME_UNIQUENESS_ERROR,
-    WITHDRAW;
-
+    WITHDRAW,
+    WRONG_EMAIL,
+    WRONG_NICKNAME,
+    WRONG_ORGANIZER_NAME,
+    WRONG_PASSWORD,
+    WRONG_PASSWORD_CONFIRMATION,
+    WRONG_PLAYER_NAME,
+    WRONG_PLAYER_SURNAME,
+    WRONG_TOURNAMENT_NAME,
+    WRONG_USERNAME;
 
     @Override
     public String toString() {
