@@ -5,27 +5,31 @@ import by.training.resourse.LocalizationManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GenericDataValidator implements InputDataValidator<String> {
+public class WalletDataValidator implements InputDataValidator<String> {
 
     private static final Logger LOGGER = LogManager.getLogger(TournamentDataValidator.class);
+    private static final int MAX_VALUE = 1000;
     private final LocalizationManager localizationManager;
 
 
-    public GenericDataValidator(LocalizationManager localizationManager) {
+    public WalletDataValidator(LocalizationManager localizationManager) {
         this.localizationManager = localizationManager;
     }
 
 
     @Override
     public ValidationResult validate(String value) {
-        return positiveDouble(value);
+        return positiveDoubleUpTo(value);
     }
 
 
-    public ValidationResult positiveDouble(String value) {
+    public ValidationResult positiveDoubleUpTo(String sValue) {
         ValidationResult result = new ValidationResult();
         try {
-            if (Double.parseDouble(value) < 0) {
+
+            double value = Double.parseDouble(sValue);
+
+            if (value < 0 || value > MAX_VALUE) {
                 LOGGER.error(value + " is not valid double value.");
                 throw new NumberFormatException(value + " is not valid double value.");
             }
@@ -37,7 +41,6 @@ public class GenericDataValidator implements InputDataValidator<String> {
 
         return result;
     }
-
 
 
 }

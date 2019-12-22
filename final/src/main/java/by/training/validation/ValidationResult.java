@@ -27,6 +27,7 @@ public class ValidationResult {
         for (Map.Entry<String, String> entry : addition.getValidationResult().entrySet()) {
             result.putIfAbsent(entry.getKey(), entry.getValue());
         }
+
         return this;
     }
 
@@ -36,9 +37,9 @@ public class ValidationResult {
     }
 
 
-    public String getFirstValue() {
-        for (String value : result.values()) {
-            return value;
+    public String getFirstKey() {
+        for (String key : result.keySet()) {
+            return key;
         }
 
         throw new IndexOutOfBoundsException("Map is empty, unable to get first element.");

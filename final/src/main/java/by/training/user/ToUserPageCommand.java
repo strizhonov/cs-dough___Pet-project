@@ -1,4 +1,4 @@
-package by.training.user.command;
+package by.training.user;
 
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
@@ -9,8 +9,6 @@ import by.training.resourse.PathsContainer;
 import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRouter;
 import by.training.tournament.ListTournamentsCommand;
-import by.training.user.UserDto;
-import by.training.user.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,6 +41,7 @@ public class ToUserPageCommand implements ActionCommand {
 
         String sId = request.getParameter(AttributesContainer.ID.toString());
         long id = Long.parseLong(sId);
+
         try {
 
             UserDto user = userService.find(id);

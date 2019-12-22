@@ -50,11 +50,9 @@ public class ListPlayerGamesCommand implements ActionCommand {
         try {
 
             PlayerDto player = playerService.find(id);
-
-
             request.setAttribute(AttributesContainer.PLAYER.toString(), player);
-            List<ComplexGameDto> games = gameService.findAllOfPlayer(id);
 
+            List<ComplexGameDto> games = gameService.findAllOfPlayer(id);
             request.setAttribute(AttributesContainer.GAMES.toString(), games);
 
             return Optional.of(new HttpForwarder(PathsContainer.FILE_PLAYER_GAMES));

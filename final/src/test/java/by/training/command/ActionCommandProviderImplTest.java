@@ -24,11 +24,10 @@ public class ActionCommandProviderImplTest {
         Mockito.when(request.getParameter("command"))
                 .thenReturn(changeLanguageToEnCommand.getType().toString().toLowerCase());
 
-        ActionCommand retrievedCommand =  provider.get(request);
+        ActionCommand retrievedCommand = provider.get(request);
 
         Assert.assertSame(retrievedCommand.getClass(), ChangeLanguageToEnCommand.class);
     }
-
 
 
 }

@@ -1,7 +1,6 @@
 package by.training.command;
 
 import by.training.resourse.PathsContainer;
-import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
 

@@ -8,13 +8,17 @@ public class OrganizerValidationDto implements Serializable {
     private static final long serialVersionUID = 4L;
 
     private long logoSize;
+    private String logoType;
     private String name;
+
 
     public OrganizerValidationDto() {
     }
 
-    public OrganizerValidationDto(long logoSize, String name) {
+
+    public OrganizerValidationDto(long logoSize, String logoType, String name) {
         this.logoSize = logoSize;
+        this.logoType = logoType;
         this.name = name;
     }
 
@@ -24,6 +28,14 @@ public class OrganizerValidationDto implements Serializable {
 
     public void setLogoSize(long logoSize) {
         this.logoSize = logoSize;
+    }
+
+    public String getLogoType() {
+        return logoType;
+    }
+
+    public void setLogoType(String logoType) {
+        this.logoType = logoType;
     }
 
     public String getName() {
@@ -41,13 +53,14 @@ public class OrganizerValidationDto implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         OrganizerValidationDto that = (OrganizerValidationDto) o;
         return logoSize == that.logoSize &&
+                Objects.equals(logoType, that.logoType) &&
                 Objects.equals(name, that.name);
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(logoSize, name);
+        return Objects.hash(logoSize, logoType, name);
     }
 
 
@@ -55,9 +68,9 @@ public class OrganizerValidationDto implements Serializable {
     public String toString() {
         return "OrganizerValidationDto{" +
                 "logoSize=" + logoSize +
+                ", logoType='" + logoType + '\'' +
                 ", name='" + name + '\'' +
                 '}';
     }
-
 
 }

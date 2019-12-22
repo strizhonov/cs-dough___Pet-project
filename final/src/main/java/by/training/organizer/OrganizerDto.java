@@ -58,6 +58,7 @@ public class OrganizerDto implements Serializable {
         }
     }
 
+
     public void setLogo(byte[] logo) {
         if (logo == null) {
             this.logo = null;
@@ -65,6 +66,7 @@ public class OrganizerDto implements Serializable {
             this.logo = Arrays.copyOf(logo, logo.length);
         }
     }
+
 
     public long getUserId() {
         return userId;

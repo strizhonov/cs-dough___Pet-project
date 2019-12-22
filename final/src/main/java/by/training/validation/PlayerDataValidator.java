@@ -34,6 +34,11 @@ public class PlayerDataValidator implements InputDataValidator<PlayerValidationD
             return photoSize;
         }
 
+        ValidationResult imageType = imageType(dto.getPhotoType());
+        if (!imageType.isValid()) {
+            return imageType;
+        }
+
         ValidationResult nicknameCorrectness = nicknameCorrectness(dto.getNickname());
         if (!nicknameCorrectness.isValid()) {
             return nicknameCorrectness;
@@ -72,7 +77,29 @@ public class PlayerDataValidator implements InputDataValidator<PlayerValidationD
     }
 
 
-    public ValidationResult nicknameCorrectness(String nickname) {
+    public ValidationResult imageType(String type) throws ValidationException {
+        if (type == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
+        ValidationResult result = new ValidationResult();
+
+        Pattern pattern = Pattern.compile(ValidationRegexp.IMG_REGEXP);
+        Matcher matcher = pattern.matcher(type);
+
+        if (!matcher.find()) {
+            result.add(AttributesContainer.WRONG_IMAGE_TYPE.toString(),
+                    localizationManager.getValue(AttributesContainer.WRONG_IMAGE_TYPE.toString()));
+        }
+        return result;
+    }
+
+
+    public ValidationResult nicknameCorrectness(String nickname) throws ValidationException {
+        if (nickname == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
 
         Pattern pattern = Pattern.compile(ValidationRegexp.NICKNAME_REGEXP);
@@ -88,7 +115,12 @@ public class PlayerDataValidator implements InputDataValidator<PlayerValidationD
 
 
     public ValidationResult nicknameUniqueness(String nickname) throws ValidationException {
+        if (nickname == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
+
         try {
             if (playerService.findByNickname(nickname) != null) {
                 result.addIfAbsent(AttributesContainer.NICKNAME_UNIQUENESS_ERROR.toString(),
@@ -103,7 +135,11 @@ public class PlayerDataValidator implements InputDataValidator<PlayerValidationD
     }
 
 
-    public ValidationResult nameCorrectness(String name) {
+    public ValidationResult nameCorrectness(String name) throws ValidationException {
+        if (name == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
 
         Pattern pattern = Pattern.compile(ValidationRegexp.PLAYER_NAME_REGEXP);
@@ -117,7 +153,11 @@ public class PlayerDataValidator implements InputDataValidator<PlayerValidationD
     }
 
 
-    public ValidationResult surnameCorrectness(String surname) {
+    public ValidationResult surnameCorrectness(String surname) throws ValidationException {
+        if (surname == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
 
         Pattern pattern = Pattern.compile(ValidationRegexp.PLAYER_SURNAME_REGEXP);

@@ -5,6 +5,7 @@ import by.training.resourse.PathsContainer;
 import by.training.security.AccessAllowedForType;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
+import by.training.user.User;
 import by.training.user.UserDto;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +29,7 @@ public class ForAnonymousAccessDirector extends BaseSecurityDirector {
     protected boolean isAccessAllowed(HttpServletRequest request) {
         HttpSession session = request.getSession();
         UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
-        return user == null;
+        return user == null || user.getType() == User.UserType.ADMIN;
     }
 
 

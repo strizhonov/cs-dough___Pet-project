@@ -1,4 +1,4 @@
-package by.training.user.command;
+package by.training.user;
 
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
@@ -10,18 +10,17 @@ import by.training.resourse.PathsContainer;
 import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
-import by.training.user.UserDto;
-import by.training.user.UserService;
-import by.training.validation.GenericDataValidator;
 import by.training.validation.InputDataValidator;
 import by.training.validation.ValidationException;
 import by.training.validation.ValidationResult;
+import by.training.validation.WalletDataValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Locale;
 import java.util.Optional;
 
 public class DepositCommand implements ActionCommand {
@@ -47,31 +46,26 @@ public class DepositCommand implements ActionCommand {
     public Optional<HttpRouter> direct(HttpServletRequest request, HttpServletResponse response)
             throws ActionCommandExecutionException {
 
-
         String valueToDeposit = request.getParameter(AttributesContainer.DEPOSIT.toString());
 
         LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
+                (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
-        InputDataValidator<String> validator = new GenericDataValidator(manager);
+        InputDataValidator<String> validator = new WalletDataValidator(manager);
 
         try {
-
             ValidationResult result = validator.validate(valueToDeposit);
             if (!result.isValid()) {
-                request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                        manager.getValue(result.getFirstValue()));
+                request.setAttribute(AttributesContainer.MESSAGE.toString(), manager.getValue(result.getFirstKey()));
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_WALLET_PAGE));
             }
-
 
             HttpSession session = request.getSession();
             UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
 
             userService.deposit(Double.parseDouble(valueToDeposit), user);
-            UserDto refreshed = userService.find(user.getId());
-            session.setAttribute(AttributesContainer.USER.toString(), refreshed);
-
+            user = userService.find(user.getId());
+            session.setAttribute(AttributesContainer.USER.toString(), user);
 
             return Optional.of(new HttpRedirector(request.getContextPath() + PathsContainer.FILE_WALLET_PAGE));
 

@@ -1,4 +1,4 @@
-package by.training.user.command;
+package by.training.user;
 
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
@@ -10,8 +10,6 @@ import by.training.resourse.PathsContainer;
 import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
-import by.training.user.UserDto;
-import by.training.user.UserService;
 import by.training.validation.UserDataValidator;
 import by.training.validation.ValidationException;
 import by.training.validation.ValidationResult;
@@ -21,15 +19,17 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Locale;
 import java.util.Optional;
 
-public class UpdateUsernameCommand implements ActionCommand {
+public class UpdateEmailCommand implements ActionCommand {
 
-    private static final Logger LOGGER = LogManager.getLogger(UpdateUsernameCommand.class);
-    private final ActionCommandType type = ActionCommandType.UPDATE_USERNAME;
+    private static final Logger LOGGER = LogManager.getLogger(UpdateEmailCommand.class);
+    private final ActionCommandType type = ActionCommandType.UPDATE_EMAIL;
     private final UserService userService;
 
-    public UpdateUsernameCommand(UserService userService) {
+
+    public UpdateEmailCommand(UserService userService) {
         this.userService = userService;
     }
 
@@ -41,32 +41,27 @@ public class UpdateUsernameCommand implements ActionCommand {
 
 
     @Override
-    public Optional<HttpRouter> direct(HttpServletRequest request, HttpServletResponse response)
-            throws ActionCommandExecutionException {
+    public Optional<HttpRouter> direct(HttpServletRequest request, HttpServletResponse response) throws ActionCommandExecutionException {
 
-        String username = request.getParameter(AttributesContainer.USERNAME.toString());
+        String email = request.getParameter(AttributesContainer.EMAIL.toString());
 
 
         LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
+                (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
         UserDataValidator validator = new UserDataValidator(userService, manager);
 
         try {
-
-            ValidationResult result = validator.usernameCorrectness(username).and(validator.usernameUniqueness(username));
+            ValidationResult result = validator.emailCorrectness(email).and(validator.emailUniqueness(email));
             if (!result.isValid()) {
-                request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                        manager.getValue(result.getFirstValue()));
+                request.setAttribute(AttributesContainer.MESSAGE.toString(), manager.getValue(result.getFirstKey()));
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_USER_PROFILE_PAGE));
             }
 
             HttpSession httpSession = request.getSession();
             UserDto user = (UserDto) httpSession.getAttribute(AttributesContainer.USER.toString());
-            user.setEmail(username);
-
-
+            user.setEmail(email);
             userService.update(user);
 
             return Optional.of(new HttpRedirector(request.getContextPath()
@@ -77,9 +72,7 @@ public class UpdateUsernameCommand implements ActionCommand {
             throw new ActionCommandExecutionException("User updating failed.", e);
         }
 
-
     }
-
 
 
 }

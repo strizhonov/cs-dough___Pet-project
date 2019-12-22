@@ -13,6 +13,7 @@ import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
 import by.training.user.UserDto;
+import by.training.util.CommandMapper;
 import by.training.util.ServletUtil;
 import by.training.validation.InputDataValidator;
 import by.training.validation.PlayerDataValidator;
@@ -32,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class UpdatePlayerCommand implements ActionCommand {
@@ -62,11 +64,11 @@ public class UpdatePlayerCommand implements ActionCommand {
 
             List<FileItem> items = ServletUtil.parseRequest(request);
 
-            PlayerValidationDto validationDto = compile(items);
+            PlayerValidationDto validationDto = CommandMapper.mapPlayerValidationDto(items);
 
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                    (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
+                    (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
             InputDataValidator<PlayerValidationDto> validator
@@ -76,12 +78,13 @@ public class UpdatePlayerCommand implements ActionCommand {
             ValidationResult result = validator.validate(validationDto);
             if (!result.isValid()) {
                 request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                        manager.getValue(result.getFirstValue()));
-                return Optional.of(new HttpForwarder(PathsContainer.FILE_TOURNAMENT_CREATION_PAGE));
+                        manager.getValue(result.getFirstKey()));
+                return Optional.of(new HttpForwarder(PathsContainer.FILE_PLAYER_EDITING));
             }
 
             HttpSession session = request.getSession();
             UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
+
 
 
             PlayerDto genericDto = convert(validationDto, items, request, user);
@@ -106,24 +109,6 @@ public class UpdatePlayerCommand implements ActionCommand {
     }
 
 
-    private PlayerValidationDto compile(List<FileItem> items) throws IOException {
-
-        int i = -1;
-        long logoSize = items.get(++i).getSize();
-        String nickname = IOUtils.toString(items.get(++i).getInputStream(),
-                setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
-
-        String name = IOUtils.toString(items.get(++i).getInputStream(),
-                setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
-
-        String surname = IOUtils.toString(items.get(++i).getInputStream(),
-                setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
-
-        return new PlayerValidationDto(logoSize, nickname, name, surname);
-
-    }
-
-
     private PlayerDto convert(PlayerValidationDto validationDto, List<FileItem> items, HttpServletRequest request,
                               UserDto user) throws IOException {
 
@@ -136,6 +121,7 @@ public class UpdatePlayerCommand implements ActionCommand {
 
 
         return new PlayerDto.Builder()
+                .id(user.getPlayerAccountId())
                 .photo(photo)
                 .name(validationDto.getName())
                 .surname(validationDto.getSurname())

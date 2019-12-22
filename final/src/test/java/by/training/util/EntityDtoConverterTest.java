@@ -21,7 +21,6 @@ import org.junit.runners.JUnit4;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedHashMap;
 
 @RunWith(JUnit4.class)
 public class EntityDtoConverterTest {
@@ -109,7 +108,7 @@ public class EntityDtoConverterTest {
                 organizer.getId() == organizerDto.getId()
                         && organizer.getLogo() == null ? organizerDto.getName() == null : Arrays.equals(organizer.getLogo(), organizerDto.getLogo())
                         && organizer.getName() == null ? organizerDto.getName() == null : organizer.getName().equals(organizerDto.getName())
-                        && organizer.getUserId() ==  organizerDto.getUserId()
+                        && organizer.getUserId() == organizerDto.getUserId()
         );
     }
 
@@ -117,7 +116,7 @@ public class EntityDtoConverterTest {
     @Test
     public void playerFromDto() {
         PlayerDto playerDto = new PlayerDto(44, null, "nickname", "surname", null, 0,
-        0, null, null);
+                0, null, null);
 
         Player player = EntityDtoConverter.fromDto(playerDto);
 
@@ -127,8 +126,8 @@ public class EntityDtoConverterTest {
                         && player.getName() == null ? playerDto.getName() == null : player.getName().equals(playerDto.getName())
                         && player.getSurname() == null ? playerDto.getSurname() == null : player.getSurname().equals(playerDto.getSurname())
                         && player.getNickname() == null ? playerDto.getNickname() == null : player.getNickname().equals(playerDto.getNickname())
-                        && player.getUserId() ==  playerDto.getUserId()
-                        && player.getTotalWon() ==  playerDto.getTotalWon()
+                        && player.getUserId() == playerDto.getUserId()
+                        && player.getTotalWon() == playerDto.getTotalWon()
         );
     }
 
@@ -143,12 +142,12 @@ public class EntityDtoConverterTest {
                 tournament.getId() == tournamentDto.getId()
                         && tournament.getLogo() == null ? tournamentDto.getLogo() == null : Arrays.equals(tournament.getLogo(), tournamentDto.getLogo())
                         && tournament.getName() == null ? tournamentDto.getName() == null : tournament.getName().equals(tournamentDto.getName())
-                        && tournament.getPrizePool() ==  tournamentDto.getPrizePool()
-                        && tournament.getOrganizerRewardPercentage() ==  tournamentDto.getOrganizerRewardPercentage()
-                        && tournament.getBuyIn() ==  tournamentDto.getBuyIn()
-                        && tournament.getParticipantsNumber() ==  tournamentDto.getPlayersNumber()
-                        && tournament.getStatus() ==  tournamentDto.getStatus()
-                        && tournament.getOrganizerId() ==  tournamentDto.getOrganizerId()
+                        && tournament.getPrizePool() == tournamentDto.getPrizePool()
+                        && tournament.getOrganizerRewardPercentage() == tournamentDto.getOrganizerRewardPercentage()
+                        && tournament.getBuyIn() == tournamentDto.getBuyIn()
+                        && tournament.getParticipantsNumber() == tournamentDto.getPlayersNumber()
+                        && tournament.getStatus() == tournamentDto.getStatus()
+                        && tournament.getOrganizerId() == tournamentDto.getOrganizerId()
         );
     }
 

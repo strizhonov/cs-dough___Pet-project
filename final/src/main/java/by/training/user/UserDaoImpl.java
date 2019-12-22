@@ -283,7 +283,6 @@ public class UserDaoImpl implements UserDao {
     }
 
 
-
     private UserDto compile(ResultSet resultSet) throws SQLException, DaoException {
         UserDto user = DaoMapper.mapUserDto(resultSet);
 
@@ -325,7 +324,6 @@ public class UserDaoImpl implements UserDao {
     }
 
 
-
     private WalletDto getWallet(long userId) throws DaoException {
         try (Connection connection = provider.getConnection();
              PreparedStatement statement = connection.prepareStatement(SELECT_WALLET)) {
@@ -346,8 +344,6 @@ public class UserDaoImpl implements UserDao {
             LOGGER.error("Unable to perform entity retrieving.", e);
             throw new DaoException("Unable to perform entity retrieving.", e);
         }
-
-
 
 
     }

@@ -29,7 +29,9 @@ public class SecurityFilter extends HttpFilter {
 
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+
         if (request.getParameter(AttributesContainer.COMMAND.toString()) != null) {
 
             ActionCommandProvider commandProvider
@@ -42,7 +44,9 @@ public class SecurityFilter extends HttpFilter {
             SecurityDirector securityDirector = securityProvider.get(command);
 
 
-            Optional<HttpRouter> router = securityDirector.direct((HttpServletRequest) request, (HttpServletResponse) response);
+            Optional<HttpRouter> router = securityDirector.direct((HttpServletRequest) request,
+                    (HttpServletResponse) response);
+
             if (router.isPresent()) {
                 router.get().dispatch((HttpServletRequest) request, (HttpServletResponse) response);
                 return;
@@ -50,6 +54,7 @@ public class SecurityFilter extends HttpFilter {
         }
 
         chain.doFilter(request, response);
+
     }
 
 

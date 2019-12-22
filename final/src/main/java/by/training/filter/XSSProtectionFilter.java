@@ -22,12 +22,14 @@ public class XSSProtectionFilter extends HttpFilter {
 
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+
         ((HttpServletResponse) response).setHeader(setting.get(AppSetting.SettingName.XSS_PROTECTION_NAME),
                 setting.get(AppSetting.SettingName.XSS_PROTECTION_TYPE));
 
-
         chain.doFilter(request, response);
+
     }
 
 

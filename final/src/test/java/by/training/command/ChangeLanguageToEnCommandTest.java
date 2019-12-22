@@ -1,6 +1,5 @@
 package by.training.command;
 
-import by.training.servlet.HttpRedirector;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,7 +7,6 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @RunWith(JUnit4.class)
@@ -27,7 +25,6 @@ public class ChangeLanguageToEnCommandTest {
         Assert.assertTrue(changeLanguageToEn.direct(request, null).isPresent());
 
     }
-
 
 
 }

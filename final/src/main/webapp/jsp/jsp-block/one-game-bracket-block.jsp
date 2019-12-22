@@ -43,7 +43,9 @@
                                 <div class="col-sm-9 bracket-name">
                                     <c:choose>
                                         <c:when test="${games[0].secondPlayer == null}">
-                                            <fmt:message key="tbd"/>
+                                            <div class="tbd">
+                                                <fmt:message key="tbd"/>
+                                            </div>
                                         </c:when>
                                         <c:otherwise>
                                             <div class="col-sm-3">

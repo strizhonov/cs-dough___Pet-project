@@ -4,7 +4,6 @@ import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandType;
 import by.training.core.ApplicationContext;
-import by.training.core.NotEnoughFundsException;
 import by.training.core.ServiceException;
 import by.training.resourse.AppSetting;
 import by.training.resourse.AttributesContainer;
@@ -13,7 +12,9 @@ import by.training.resourse.PathsContainer;
 import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
+import by.training.user.NotEnoughFundsException;
 import by.training.user.UserDto;
+import by.training.util.CommandMapper;
 import by.training.util.ServletUtil;
 import by.training.util.TournamentUtil;
 import by.training.validation.InputDataValidator;
@@ -34,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class CreateTournamentCommand implements ActionCommand {
@@ -61,39 +63,32 @@ public class CreateTournamentCommand implements ActionCommand {
 
         HttpSession httpSession = request.getSession();
         UserDto user = (UserDto) httpSession.getAttribute(AttributesContainer.USER.toString());
+
         LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
+                (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
+
         try {
 
             List<FileItem> items = ServletUtil.parseRequest(request);
 
-            TournamentValidationDto validationDto = compile(items);
-
-
-
+            TournamentValidationDto validationDto = CommandMapper.mapTournamentValidationDto(items);
 
             InputDataValidator<TournamentValidationDto> validator
                     = new TournamentDataValidator(tournamentService, manager);
 
             ValidationResult result = validator.validate(validationDto);
             if (!result.isValid()) {
-
-                request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                        manager.getValue(result.getFirstValue()));
-
+                request.setAttribute(AttributesContainer.MESSAGE.toString(), manager.getValue(result.getFirstKey()));
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_TOURNAMENT_CREATION_PAGE));
             }
 
 
-
-            TournamentDto genericDto = convert(user, items, validationDto, request);
+            TournamentDto genericDto = compile(user, items, validationDto, request);
 
             long tournamentId = tournamentService.create(genericDto);
 
-
             return Optional.of(new HttpRedirector(request.getContextPath()
                     + PathsContainer.COMMAND_TO_TOURNAMENT_PAGE + tournamentId));
-
 
 
         } catch (NotEnoughFundsException e) {
@@ -112,31 +107,7 @@ public class CreateTournamentCommand implements ActionCommand {
     }
 
 
-    private TournamentValidationDto compile(List<FileItem> items) throws IOException {
-
-        int i = -1;
-        long logoSize = items.get(++i).getSize();
-
-        String name = IOUtils.toString(items.get(++i).getInputStream(),
-                setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
-
-        String sReward = IOUtils.toString(items.get(++i).getInputStream(),
-                setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
-
-        String sBonus = IOUtils.toString(items.get(++i).getInputStream(),
-                setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
-
-        String sBuyIn = IOUtils.toString(items.get(++i).getInputStream(),
-                setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
-
-        String sPlayersNumber = IOUtils.toString(items.get(++i).getInputStream(),
-                setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
-
-        return new TournamentValidationDto(logoSize, name, sReward, sBonus, sBuyIn, sPlayersNumber);
-    }
-
-
-    private TournamentDto convert(UserDto user, List<FileItem> items, TournamentValidationDto validationDto,
+    private TournamentDto compile(UserDto user, List<FileItem> items, TournamentValidationDto validationDto,
                                   HttpServletRequest request) throws IOException {
 
         int i = -1;

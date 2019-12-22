@@ -83,10 +83,12 @@
                                 <div style="font-size: 100px; margin: 15px">${game.gameServer.playerTwoPoints}</div>
                             </div>
                             <c:if test="${game.gameServer.playerOnePoints != game.gameServer.pointsToWin
-                            && game.gameServer.playerTwoPoints != game.gameServer.pointsToWin}">
+                            && game.gameServer.playerTwoPoints != game.gameServer.pointsToWin
+                            && game.firstPlayer != null
+                            && game.secondPlayer != null}">
                                 <div class="col-sm-6">
                                     <c:if test="${user_type == 'ADMIN' || game.tournament.organizerId == user.organizerId}">
-                                        <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_INCREASE_FIRST_PLAYER_COUNT}${game.id}">
+                                        <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_INCREASE_PLAYER_COUNT}${game.id}&no=0">
                                             <div class="update-button col-sm-1" style="float: right; margin: 25px;">
                                                 <img src="${pageContext.request.contextPath}/img/icon/arrow-up.png"
                                                      alt="">
@@ -98,7 +100,7 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <c:if test="${user_type == 'ADMIN' || game.tournament.organizerId == user.organizerId}">
-                                        <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_INCREASE_SECOND_PLAYER_COUNT}${game.id}">
+                                        <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_INCREASE_PLAYER_COUNT}${game.id}&no=1">
                                             <div class="update-button col-sm-1" style="float: left; margin: 25px;">
                                                 <img src="${pageContext.request.contextPath}/img/icon/arrow-up.png"
                                                      alt="">

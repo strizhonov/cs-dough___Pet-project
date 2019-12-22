@@ -11,6 +11,7 @@ import by.training.user.UserDto;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Locale;
 import java.util.Optional;
 
 public class ForUserAccessDirector extends BaseSecurityDirector {
@@ -31,7 +32,7 @@ public class ForUserAccessDirector extends BaseSecurityDirector {
     @Override
     protected Optional<HttpRouter> getHttpRouter(HttpServletRequest request, HttpServletResponse response) {
         LocalizationManager localizationManager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
+                (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
         request.setAttribute(AttributesContainer.MESSAGE.toString(),
                 localizationManager.getValue(MESSAGE_KEY));

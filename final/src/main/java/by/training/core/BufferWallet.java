@@ -1,6 +1,5 @@
 package by.training.core;
 
-import by.training.user.WalletDao;
 import by.training.user.WalletDto;
 
 import java.util.concurrent.atomic.AtomicBoolean;

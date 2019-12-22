@@ -19,18 +19,13 @@
                 <nav class="main-navigation">
                     <ul class="main-menu">
                         <li class="languages">
-                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_CHANGE_LANGUAGE}<fmt:message key="lang"/>">
+                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_CHANGE_SESSION_LANGUAGE}<fmt:message key="lang"/>">
                                 <fmt:message key="lang"/>
                             </a>
                         </li>
                         <li><a class="menu-button"
                                href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_HOME_PAGE}"><fmt:message
                                 key="home"/></a></li>
-                        <c:if test="${user.type == 'ADMIN'}">
-                            <li><a class="menu-button"
-                                   href="${pageContext.request.contextPath}${PathsContainer.COMMAND_LIST_USERS}"><fmt:message
-                                    key="users"/></a></li>
-                        </c:if>
                         <li><a class="menu-button"
                                href="${pageContext.request.contextPath}${PathsContainer.COMMAND_LIST_GAMES}"><fmt:message
                                 key="games"/></a>

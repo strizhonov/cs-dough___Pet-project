@@ -17,6 +17,10 @@ public interface GameDao extends CrudDao<PlainGameDto> {
 
     void updateSecondPlayerId(PlainGameDto game) throws DaoException;
 
+    void resetFirstPlayerId(PlainGameDto game) throws DaoException;
+
+    void resetSecondPlayerId(PlainGameDto game) throws DaoException;
+
     void updateStartTime(PlainGameDto game) throws DaoException;
 
     List<ComplexGameDto> findAllComplex() throws DaoException;

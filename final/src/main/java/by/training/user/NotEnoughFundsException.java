@@ -1,4 +1,6 @@
-package by.training.core;
+package by.training.user;
+
+import by.training.core.ServiceException;
 
 public class NotEnoughFundsException extends ServiceException {
 

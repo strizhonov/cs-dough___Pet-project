@@ -103,14 +103,15 @@
                        pattern="${ValidationRegexp.EMAIL_REGEXP}"
                        oninput="checkEmail();"
                        placeholder="<fmt:message key="email"/>"/>
-                <button id="submit">Register</button>
-                <p class="message"><fmt:message key="already.registered"/>&nbsp<a href="#"><fmt:message key="sign.in"/></a></p>
+                <button id="submit"><fmt:message key="register"/></button>
+                <p class="message"><fmt:message key="already.registered"/>&nbsp<a href="#"><fmt:message
+                        key="sign.in"/></a></p>
             </form>
             <form class="login-form" action="${pageContext.request.contextPath}${PathsContainer.COMMAND_LOGIN}"
                   method="post">
                 <input type="text" placeholder="<fmt:message key="username"/>" name="username"/>
                 <input type="password" placeholder="<fmt:message key="password"/>" name="password"/>
-                <button>Log In</button>
+                <button><fmt:message key="sign.in"/></button>
                 <p class="message"><fmt:message key="not.registered"/>&nbsp;<a href="#"><fmt:message
                         key="create.account"/></a></p>
             </form>

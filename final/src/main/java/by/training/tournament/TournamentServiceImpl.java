@@ -6,6 +6,7 @@ import by.training.game.*;
 import by.training.player.PlayerDao;
 import by.training.player.PlayerDto;
 import by.training.resourse.AppSetting;
+import by.training.user.NotEnoughFundsException;
 import by.training.user.WalletDao;
 import by.training.user.WalletDto;
 import by.training.util.TournamentUtil;
@@ -49,11 +50,8 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
             long id = tournamentDao.save(tournament);
             tournament.setId(id);
 
-
             takeFromOrganizerBonus(tournament);
-
             fillWithGames(tournament);
-
             tournamentDao.update(tournament);
 
             transactionManager.commitTransaction();
@@ -97,7 +95,6 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
             transactionManager.startTransaction();
 
             TournamentDto tournament = find(id);
-
 
             if (!tournament.getParticipantsIds().isEmpty()) {
                 transactionManager.rollbackTransaction();
@@ -364,11 +361,14 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
     }
 
 
-
     private void takeBuyIn(ParticipantDto joiningDto, TournamentDto tournament)
             throws DaoException, NotEnoughFundsException {
 
         double buyIn = tournament.getBuyIn();
+        if (buyIn == 0) {
+            return;
+        }
+
 
         WalletDto playerWallet = walletDao.getOfPlayer(joiningDto.getPlayerId());
         if (playerWallet.getBalance() < buyIn) {
@@ -389,6 +389,9 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
     private void returnBuyIn(ParticipantDto joiningDto, TournamentDto tournament) throws DaoException {
 
         double buyIn = tournament.getBuyIn();
+        if (buyIn == 0) {
+            return;
+        }
 
         WalletDto playerWallet = walletDao.getOfPlayer(joiningDto.getPlayerId());
         playerWallet.increaseBalance(buyIn);
@@ -451,8 +454,15 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
         if (playerGame != null) {
 
             PlayerDto player = playerDao.get(joiningDto.getPlayerId());
-            playerGame.releasePlayerSlot(player);
-            gameDao.update(playerGame);
+            int slot = playerGame.releasePlayerSlot(player);
+            if (slot == 0) {
+                gameDao.resetFirstPlayerId(playerGame);
+            } else if (slot == 1) {
+                gameDao.resetSecondPlayerId(playerGame);
+            } else {
+                throw new IllegalStateException("Unexpected absence of player's slot.");
+            }
+
 
         } else {
             throw new IllegalStateException("Unexpected absence of player's game.");

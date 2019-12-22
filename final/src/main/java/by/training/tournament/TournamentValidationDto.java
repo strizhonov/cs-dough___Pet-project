@@ -8,6 +8,7 @@ public class TournamentValidationDto implements Serializable {
     private static final long serialVersionUID = 4L;
 
     private long logoSize;
+    private String logoType;
     private String name;
     private String organizerRewardPercentage;
     private String fromOrganizerBonus;
@@ -18,17 +19,18 @@ public class TournamentValidationDto implements Serializable {
     public TournamentValidationDto() {
     }
 
-    public TournamentValidationDto(long logoSize, String name, String organizerRewardPercentage,
-                                   String fromOrganizerBonus, String buyIn,
-                                   String playersNumber) {
+
+    public TournamentValidationDto(long logoSize, String logoType, String name, String organizerRewardPercentage,
+                                   String fromOrganizerBonus, String buyIn, String playersNumber) {
         this.logoSize = logoSize;
+        this.logoType = logoType;
         this.name = name;
         this.organizerRewardPercentage = organizerRewardPercentage;
         this.fromOrganizerBonus = fromOrganizerBonus;
         this.buyIn = buyIn;
         this.playersNumber = playersNumber;
-
     }
+
 
     public long getLogoSize() {
         return logoSize;
@@ -36,6 +38,14 @@ public class TournamentValidationDto implements Serializable {
 
     public void setLogoSize(long logoSize) {
         this.logoSize = logoSize;
+    }
+
+    public String getLogoType() {
+        return logoType;
+    }
+
+    public void setLogoType(String logoType) {
+        this.logoType = logoType;
     }
 
     public String getName() {
@@ -85,6 +95,7 @@ public class TournamentValidationDto implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         TournamentValidationDto that = (TournamentValidationDto) o;
         return logoSize == that.logoSize &&
+                Objects.equals(logoType, that.logoType) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(organizerRewardPercentage, that.organizerRewardPercentage) &&
                 Objects.equals(fromOrganizerBonus, that.fromOrganizerBonus) &&
@@ -95,7 +106,7 @@ public class TournamentValidationDto implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(logoSize, name, organizerRewardPercentage, fromOrganizerBonus, buyIn, playersNumber);
+        return Objects.hash(logoSize, logoType, name, organizerRewardPercentage, fromOrganizerBonus, buyIn, playersNumber);
     }
 
 
@@ -103,6 +114,7 @@ public class TournamentValidationDto implements Serializable {
     public String toString() {
         return "TournamentValidationDto{" +
                 "logoSize=" + logoSize +
+                ", logoType='" + logoType + '\'' +
                 ", name='" + name + '\'' +
                 ", organizerRewardPercentage='" + organizerRewardPercentage + '\'' +
                 ", fromOrganizerBonus='" + fromOrganizerBonus + '\'' +
@@ -110,6 +122,5 @@ public class TournamentValidationDto implements Serializable {
                 ", playersNumber='" + playersNumber + '\'' +
                 '}';
     }
-
 
 }

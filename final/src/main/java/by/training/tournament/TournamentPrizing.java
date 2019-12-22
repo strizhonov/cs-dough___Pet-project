@@ -14,7 +14,7 @@ import java.util.Map;
  * <p>
  * Initialized with properties data.
  *
- * @author Uladzislau Stryzhonak\
+ * @author Uladzislau Stryzhonak
  */
 public class TournamentPrizing {
 
@@ -43,6 +43,7 @@ public class TournamentPrizing {
                 prizeSchema.put(++i, Double.parseDouble(setting.get(AppSetting.SettingName.FOUR_PLAYERS_FOURTH_PRIZE_RATE)));
                 break;
             case 8:
+                /* For future impls */
                 i = 0;
                 prizeSchema.put(++i, Double.parseDouble(setting.get(AppSetting.SettingName.EIGHT_PLAYERS_FIRST_PRIZE_RATE)));
                 prizeSchema.put(++i, Double.parseDouble(setting.get(AppSetting.SettingName.EIGHT_PLAYERS_SECOND_PRIZE_RATE)));

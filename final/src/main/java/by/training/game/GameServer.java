@@ -14,6 +14,7 @@ public class GameServer extends Entity {
     private String path;
     private long gameId;
 
+
     public GameServer() {
     }
 

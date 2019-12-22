@@ -19,6 +19,8 @@ public class User extends Entity {
     private String passwordKey;
     private String email;
     private UserType type = UserType.getDefault();
+
+    // TO DO replace to cookies
     private Language language = Language.getDefault();
 
 
@@ -41,6 +43,7 @@ public class User extends Entity {
         this.language = language;
     }
 
+
     private User(Builder builder) {
         setId(builder.id);
         setAvatar(builder.avatar);
@@ -55,8 +58,9 @@ public class User extends Entity {
 
     public enum UserType {
 
-        USER, ADMIN;
-
+        USER,
+        // TO DO wider impl
+        ADMIN;
 
         public static UserType getDefault() {
             AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);

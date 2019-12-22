@@ -12,8 +12,10 @@ public class PlayerDto extends PlainPlayerDto {
     private List<Long> tournamentsIds = new ArrayList<>();
     private List<Long> gamesIds = new ArrayList<>();
 
+
     public PlayerDto() {
     }
+
 
     public PlayerDto(long id, String name, String nickname, String surname, byte[] photo, double totalWon,
                      long userId, List<Long> tournamentsIds, List<Long> gamesIds) {
@@ -21,6 +23,7 @@ public class PlayerDto extends PlainPlayerDto {
         this.tournamentsIds = tournamentsIds;
         this.gamesIds = gamesIds;
     }
+
 
     private PlayerDto(Builder builder) {
         setId(builder.id);
@@ -33,6 +36,7 @@ public class PlayerDto extends PlainPlayerDto {
         setTournamentsIds(builder.tournamentsIds);
         setGamesIds(builder.gamesIds);
     }
+
 
     public List<Long> getTournamentsIds() {
         return tournamentsIds;

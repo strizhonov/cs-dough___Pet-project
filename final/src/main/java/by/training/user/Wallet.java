@@ -10,6 +10,8 @@ import java.util.stream.Stream;
 
 public class Wallet extends Entity {
 
+    private static final long serialVersionUID = 4L;
+
     private double balance;
     private Currency currency = Currency.getDefault();
     private long userId;

@@ -1,4 +1,4 @@
-package by.training.user.command;
+package by.training.user;
 
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
@@ -10,9 +10,7 @@ import by.training.resourse.PathsContainer;
 import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
-import by.training.user.UserDto;
-import by.training.user.UserService;
-import by.training.validation.GenericDataValidator;
+import by.training.validation.WalletDataValidator;
 import by.training.validation.InputDataValidator;
 import by.training.validation.ValidationException;
 import by.training.validation.ValidationResult;
@@ -21,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
 import java.util.Optional;
 
 public class WithdrawCommand implements ActionCommand {
@@ -48,16 +47,15 @@ public class WithdrawCommand implements ActionCommand {
         String sValueToWithdraw = request.getParameter(AttributesContainer.WITHDRAW.toString());
 
         LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
+                (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
-        InputDataValidator<String> validator = new GenericDataValidator(manager);
+        InputDataValidator<String> validator = new WalletDataValidator(manager);
 
         try {
 
             ValidationResult result = validator.validate(sValueToWithdraw);
             if (!result.isValid()) {
-                request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                        manager.getValue(result.getFirstValue()));
+                request.setAttribute(AttributesContainer.MESSAGE.toString(), manager.getValue(result.getFirstKey()));
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_WALLET_PAGE));
             }
 
@@ -66,6 +64,7 @@ public class WithdrawCommand implements ActionCommand {
 
             if (userService.withdraw(Double.parseDouble(sValueToWithdraw), user)) {
 
+                /* Success */
                 user = userService.find(user.getId());
                 request.getSession().setAttribute(AttributesContainer.USER.toString(), user);
 
@@ -75,6 +74,7 @@ public class WithdrawCommand implements ActionCommand {
 
             } else {
 
+                /* Fail */
                 request.setAttribute(AttributesContainer.MESSAGE.toString(),
                         manager.getValue(AttributesContainer.NOT_ENOUGH_FUNDS.toString()));
 

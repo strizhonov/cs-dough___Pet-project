@@ -13,6 +13,7 @@ import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
 import by.training.user.UserDto;
+import by.training.util.CommandMapper;
 import by.training.util.ServletUtil;
 import by.training.validation.InputDataValidator;
 import by.training.validation.OrganizerDataValidator;
@@ -32,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class CreateOrganizerCommand implements ActionCommand {
@@ -61,11 +63,11 @@ public class CreateOrganizerCommand implements ActionCommand {
 
             List<FileItem> items = ServletUtil.parseRequest(request);
 
-            OrganizerValidationDto validationDto = compile(items);
+            OrganizerValidationDto validationDto = CommandMapper.mapOrganizerValidationDto(items);
 
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                    (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
+                    (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
             InputDataValidator<OrganizerValidationDto> validator
@@ -74,15 +76,15 @@ public class CreateOrganizerCommand implements ActionCommand {
 
             ValidationResult result = validator.validate(validationDto);
             if (!result.isValid()) {
-                setErrorMessage(result, request);
-                return Optional.of(new HttpForwarder(PathsContainer.FILE_TOURNAMENT_CREATION_PAGE));
+                request.setAttribute(AttributesContainer.MESSAGE.toString(), manager.getValue(result.getFirstKey()));
+                return Optional.of(new HttpForwarder(PathsContainer.FILE_ORGANIZER_CREATION));
             }
 
             HttpSession session = request.getSession();
             UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
 
 
-            OrganizerDto genericDto = convert(validationDto, items, request, user);
+            OrganizerDto genericDto = compile(validationDto, items, request, user);
             long organizerId = organizerService.create(genericDto);
 
 
@@ -101,30 +103,7 @@ public class CreateOrganizerCommand implements ActionCommand {
     }
 
 
-    private OrganizerValidationDto compile(List<FileItem> items) throws IOException {
-
-        int i = -1;
-        long logoSize = items.get(++i).getSize();
-        String name = IOUtils.toString(items.get(++i).getInputStream(),
-                setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
-
-
-        return new OrganizerValidationDto(logoSize, name);
-
-    }
-
-
-    private void setErrorMessage(ValidationResult result, HttpServletRequest request) {
-        LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                (String) request.getAttribute(AttributesContainer.LANGUAGE.toString()));
-
-
-        request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                manager.getValue(result.getFirstValue()));
-    }
-
-
-    private OrganizerDto convert(OrganizerValidationDto validationDto, List<FileItem> items, HttpServletRequest request,
+    private OrganizerDto compile(OrganizerValidationDto validationDto, List<FileItem> items, HttpServletRequest request,
                                  UserDto user) throws IOException {
 
         byte[] logo = items.get(0).get();

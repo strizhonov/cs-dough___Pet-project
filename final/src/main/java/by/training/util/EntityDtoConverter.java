@@ -97,6 +97,7 @@ public class EntityDtoConverter {
                 .name(tournamentDto.getName())
                 .logo(tournamentDto.getLogo())
                 .prizePool(tournamentDto.getPrizePool())
+                .reward(tournamentDto.getOrganizerRewardPercentage())
                 .buyIn(tournamentDto.getBuyIn())
                 .participantsNumber(tournamentDto.getPlayersNumber())
                 .status(tournamentDto.getStatus())

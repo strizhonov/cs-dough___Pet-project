@@ -25,7 +25,7 @@ public class UserDataValidatorTest {
 
 
     @Test
-    public void positiveDouble() {
+    public void positiveDouble() throws ValidationException {
         String valid = "VALID";
         ValidationResult result = validator.usernameCorrectness(valid);
         Assert.assertTrue(result.getValidationResult().isEmpty());
@@ -40,7 +40,7 @@ public class UserDataValidatorTest {
     }
 
     @Test
-    public void emailCorrectness() {
+    public void emailCorrectness() throws ValidationException {
         String valid = "TEST@TEST.RU";
         ValidationResult result = validator.emailCorrectness(valid);
         Assert.assertTrue(result.getValidationResult().isEmpty());
@@ -59,7 +59,7 @@ public class UserDataValidatorTest {
     }
 
     @Test
-    public void passwordCorrectness() {
+    public void passwordCorrectness() throws ValidationException {
         String valid = "PASSWORD";
         ValidationResult result = validator.passwordCorrectness(valid);
         Assert.assertTrue(result.getValidationResult().isEmpty());
@@ -76,7 +76,6 @@ public class UserDataValidatorTest {
         result = validator.passwordCorrectness(invalid);
         Assert.assertFalse(result.getValidationResult().isEmpty());
     }
-
 
 
 }

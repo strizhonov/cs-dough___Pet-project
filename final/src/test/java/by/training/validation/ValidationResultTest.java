@@ -10,7 +10,7 @@ public class ValidationResultTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyGetFirst() {
-        new ValidationResult().getFirstValue();
+        new ValidationResult().getFirstKey();
     }
 
 

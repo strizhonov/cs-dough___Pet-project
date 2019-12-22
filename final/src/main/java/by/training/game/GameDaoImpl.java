@@ -294,6 +294,42 @@ public class GameDaoImpl implements GameDao {
         }
     }
 
+    @Override
+    public void resetFirstPlayerId(PlainGameDto gameDto) throws DaoException {
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE_FIRST)) {
+
+            Game game = EntityDtoConverter.fromDto(gameDto);
+
+            int i = 0;
+            statement.setNull(++i, Types.INTEGER);
+            statement.setLong(++i, game.getId());
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            LOGGER.error("Unable to perform entity updating.", e);
+            throw new DaoException("Unable to perform entity updating.", e);
+        }
+    }
+
+    @Override
+    public void resetSecondPlayerId(PlainGameDto gameDto) throws DaoException {
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE_SECOND)) {
+
+            Game game = EntityDtoConverter.fromDto(gameDto);
+
+            int i = 0;
+            statement.setNull(++i, Types.INTEGER);
+            statement.setLong(++i, game.getId());
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            LOGGER.error("Unable to perform entity updating.", e);
+            throw new DaoException("Unable to perform entity updating.", e);
+        }
+    }
+
 
     @Override
     public void updateStartTime(PlainGameDto gameDto) throws DaoException {

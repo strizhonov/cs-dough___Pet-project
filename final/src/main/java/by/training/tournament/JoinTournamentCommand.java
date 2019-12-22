@@ -3,7 +3,6 @@ package by.training.tournament;
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandType;
-import by.training.core.NotEnoughFundsException;
 import by.training.core.ServiceException;
 import by.training.resourse.AttributesContainer;
 import by.training.resourse.LocalizationManager;
@@ -11,12 +10,14 @@ import by.training.resourse.PathsContainer;
 import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
+import by.training.user.NotEnoughFundsException;
 import by.training.user.UserDto;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
 import java.util.Optional;
 
 public class JoinTournamentCommand implements ActionCommand {
@@ -63,7 +64,7 @@ public class JoinTournamentCommand implements ActionCommand {
         } catch (NotEnoughFundsException e) {
             LOGGER.error("Not enough funds.", e);
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                    (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
+                    (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
             request.setAttribute(AttributesContainer.MESSAGE.toString(),

@@ -1,4 +1,4 @@
-package by.training.user.command;
+package by.training.user;
 
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
@@ -8,8 +8,6 @@ import by.training.core.ServiceException;
 import by.training.resourse.AppSetting;
 import by.training.resourse.AttributesContainer;
 import by.training.servlet.HttpRouter;
-import by.training.user.UserDto;
-import by.training.user.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

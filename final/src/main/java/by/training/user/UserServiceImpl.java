@@ -40,6 +40,7 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
         try {
             transactionManager.startTransaction();
 
+
             String password = registrationDto.getPassword();
             if (password == null) {
                 throw new GeneralSecurityException("Password not found.");
@@ -50,12 +51,12 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
 
             UserDto user = new UserDto();
 
-
+            user.setAvatar(registrationDto.getDefAvatar());
+            user.setUsername(registrationDto.getUsername());
             user.setPassword(encrypted);
             user.setPasswordKey(passKey);
-            user.setAvatar(registrationDto.getDefAvatar());
             user.setEmail(registrationDto.getEmail());
-            user.setUsername(registrationDto.getUsername());
+            user.setLanguage(registrationDto.getLanguage());
 
             long userId = userDao.save(user);
 
@@ -193,7 +194,6 @@ public class UserServiceImpl extends BaseBeanService implements UserService {
             WalletDto userWallet = walletDao.getOfUser(user.getId());
 
             userWallet.increaseBalance(value);
-
             walletDao.update(userWallet);
 
             transactionManager.commitTransaction();

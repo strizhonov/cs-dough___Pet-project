@@ -62,6 +62,7 @@ public class ConnectionPoolTest {
     private static class SingletonRetrievingThread extends Thread {
 
         private ConnectionPool connectionPool;
+
         public SingletonRetrievingThread(ConnectionPool connectionPool) {
             this.connectionPool = connectionPool;
         }
@@ -78,9 +79,11 @@ public class ConnectionPoolTest {
 
     private static class PoolInitializingThread extends Thread {
         private int size;
+
         public PoolInitializingThread(int size) {
             this.size = size;
         }
+
         @Override
         public void run() {
             ConnectionPool toCheck = ConnectionPool.getInstance();

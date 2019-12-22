@@ -53,7 +53,7 @@
                                class="info-field col-sm-12"
                                pattern="${ValidationRegexp.NICKNAME_REGEXP}"
                                type="text"
-                               placeholder="<fmt:message key="nickname"/>"
+                               value="${player.nickname}"
                                oninput="checkNickname();"
                         />
                         <script>
@@ -77,7 +77,7 @@
                                class="info-field col-sm-12"
                                pattern="${ValidationRegexp.PLAYER_NAME_REGEXP}"
                                type="text"
-                               placeholder="<fmt:message key="name"/>"
+                               value="${player.name}"
                                oninput="checkName();"/>
                         <script>
                             function checkSurname() {
@@ -100,7 +100,7 @@
                                class="info-field col-sm-12"
                                pattern="${ValidationRegexp.PLAYER_SURNAME_REGEXP}"
                                type="text"
-                               placeholder="<fmt:message key="surname"/>"
+                               value="${player.surname}"
                                oninput="checkSurname();"
                                style="margin-bottom: 0;"/>
 
@@ -111,13 +111,17 @@
                         <span class="button-tooltip"><fmt:message key="submit"/></span>
                     </button>
                     <c:if test="${tournaments.size() == 0}">
-                        <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_DELETE_PLAYER}${player.id}">
-                            <div class="long-button col-sm-11"
-                                 style="padding: 13px; margin: 10px; float: right; text-align: center;">
-                                <fmt:message key="delete.account"/>
-                            </div>
-                            <span class="button-tooltip"><fmt:message key="submit"/></span>
-                        </a>
+                        <div>
+                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_DELETE_PLAYER}${player.id}">
+                                <div class="long-button col-sm-6"
+                                     style="padding: 13px; margin: 10px; float: right; text-align: center;">
+                                    <fmt:message key="delete.account"/>
+                                </div>
+                                <span class="button-tooltip"><fmt:message key="submit"/></span>
+                            </a>
+
+                        </div>
+
                     </c:if>
                 </div>
                 <div class="col-sm-1">

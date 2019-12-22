@@ -10,6 +10,7 @@ public class GameServerModel {
     private int playerOnePoints;
     private int playerTwoPoints;
     private Date endTime;
+    private boolean isStarted;
 
 
     public GameServerModel(int pointsToWin) {
@@ -31,21 +32,31 @@ public class GameServerModel {
     }
 
 
+    public void startIfNot() {
+        isStarted = true;
+    }
+
     /**
      * Implements logic of winning round by the first player. Increases its
      * count by one.
      *
      * @return false if increased points reached win points, indicating that the
-     * game is finished. Otherwise returns true.
+     * game can not be continued. Otherwise returns true.
      */
-    public boolean increaseFirstPlayerPoints() {
+    public boolean increaseFirstPlayerPoints() throws ServerIsNotReadyException {
+        if (!isStarted) {
+            throw new ServerIsNotReadyException("Server is not ready to start.");
+        }
+
         if (playerOnePoints < pointsToWin && playerTwoPoints < pointsToWin) {
             playerOnePoints++;
             if (playerOnePoints == pointsToWin) {
                 endTime = new Date();
+                return true;
             }
-            return true;
+
         }
+
         return false;
     }
 
@@ -55,16 +66,22 @@ public class GameServerModel {
      * count by one.
      *
      * @return false if increased points reached win points, indicating that the
-     * game is finished. Otherwise returns true.
+     * game can not be continued. Otherwise returns true.
      */
-    public boolean increaseSecondPlayerPoints() {
+    public boolean increaseSecondPlayerPoints() throws ServerIsNotReadyException {
+        if (!isStarted) {
+            throw new ServerIsNotReadyException("Server is not ready to start.");
+        }
+
         if (playerOnePoints < pointsToWin && playerTwoPoints < pointsToWin) {
             playerTwoPoints++;
             if (playerTwoPoints == pointsToWin) {
                 endTime = new Date();
+                return true;
             }
-            return true;
+
         }
+
         return false;
     }
 

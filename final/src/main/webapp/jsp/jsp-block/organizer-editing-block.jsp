@@ -59,7 +59,7 @@
                                            class="info-field col-sm-12"
                                            pattern="${ValidationRegexp.ORGANIZER_NAME_REGEXP}"
                                            type="text"
-                                           placeholder="${organizer.name}"
+                                           value="${organizer.name}"
                                            oninput="checkName();"
                                            style="display: block; margin-bottom: 0;"/>
                                 </div>

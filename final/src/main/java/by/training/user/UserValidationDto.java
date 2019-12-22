@@ -6,6 +6,8 @@ import java.util.Objects;
 
 public class UserValidationDto implements Serializable {
 
+    private static final long serialVersionUID = 4L;
+
     private String username;
     private String email;
     private String password;

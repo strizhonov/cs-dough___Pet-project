@@ -38,9 +38,11 @@ public class ConnectionPool implements AutoCloseable {
 
     }
 
+
     public static ConnectionPool getInstance() {
         return InstanceHolder.INSTANCE;
     }
+
 
     public void init(int poolSize) throws SQLException {
         if (!initialized.get()) {
@@ -53,6 +55,7 @@ public class ConnectionPool implements AutoCloseable {
             initialized.set(true);
         }
     }
+
 
     @Override
     public void close() throws SQLException {
@@ -74,13 +77,16 @@ public class ConnectionPool implements AutoCloseable {
 
     }
 
+
     public ConnectionProvider getConnectionProvider() {
         return connectionProvider;
     }
 
+
     Connection getConnection() throws SQLException {
         lock.lock();
         Connection connection;
+
         try {
             while (available.isEmpty()) {
                 if (borrowed.size() == poolSize) {
@@ -91,9 +97,12 @@ public class ConnectionPool implements AutoCloseable {
                     available.add(connection);
                 }
             }
+
             connection = available.remove(0);
             borrowed.put(connection, new Date());
+
             return connection;
+
         } catch (InterruptedException e) {
             LOGGER.error("Unable to get database connection.", e);
             throw new SQLException("Unable to get database connection.", e);
@@ -102,6 +111,7 @@ public class ConnectionPool implements AutoCloseable {
         }
 
     }
+
 
     void release(Connection connection) {
         lock.lock();
@@ -115,10 +125,11 @@ public class ConnectionPool implements AutoCloseable {
         }
     }
 
+
     private void initConnectionTerminator() {
-        String sConnectionLifetime = setting.get(AppSetting.SettingName.CONNECTION_POOL_SIZE);
+        String sConnectionLifetime = setting.get(AppSetting.SettingName.CONNECTION_LIFETIME_MS);
         long connectionLifetime = Long.parseLong(sConnectionLifetime);
-        Runnable runnable = new ConnectionTerminator(borrowed, connectionLifetime);
+        Runnable runnable = new ConnectionTerminator(borrowed, connectionLifetime, this);
 
         String sExecutorDelay = setting.get(AppSetting.SettingName.TERMINATOR_EXECUTOR_DELAY);
         long executorDelay = Long.parseLong(sExecutorDelay);
@@ -130,6 +141,7 @@ public class ConnectionPool implements AutoCloseable {
         terminatorExecutorService.scheduleAtFixedRate(runnable, executorDelay, executorPeriod, executorTimeUnit);
     }
 
+
     private void register() throws SQLException {
         String dbDriver = setting.get(AppSetting.SettingName.DB_DRIVER);
         try {
@@ -140,6 +152,7 @@ public class ConnectionPool implements AutoCloseable {
         }
     }
 
+
     private void deregister() throws SQLException {
         Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {
@@ -148,12 +161,14 @@ public class ConnectionPool implements AutoCloseable {
         }
     }
 
+
     private void initConnections(int poolSize) throws SQLException {
         for (int i = 0; i < poolSize; i++) {
             Connection connection = getConnectionFromDriver();
             available.add(connection);
         }
     }
+
 
     private Connection getConnectionFromDriver() throws SQLException {
         String url = setting.get(AppSetting.SettingName.DB_URL);
@@ -162,6 +177,7 @@ public class ConnectionPool implements AutoCloseable {
 
         return DriverManager.getConnection(url, user, password);
     }
+
 
     private static class InstanceHolder {
         private static final ConnectionPool INSTANCE = new ConnectionPool();

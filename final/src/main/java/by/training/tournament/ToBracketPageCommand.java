@@ -68,6 +68,7 @@ public class ToBracketPageCommand implements ActionCommand {
             case 4:
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_THREE_GAME_BRACKET_PAGE));
             case 8:
+                /* For future impls */
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_SEVEN_GAME_BRACKET_PAGE));
             default:
                 throw new IllegalStateException("There is no option of "

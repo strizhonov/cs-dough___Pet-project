@@ -35,6 +35,11 @@ public class OrganizerDataValidator implements InputDataValidator<OrganizerValid
             return logoSize;
         }
 
+        ValidationResult imageType = imageType(dto.getLogoType());
+        if (!imageType.isValid()) {
+            return imageType;
+        }
+
         ValidationResult nameCorrectness = nameCorrectness(dto.getName());
         if (!nameCorrectness.isValid()) {
             return nameCorrectness;
@@ -62,7 +67,29 @@ public class OrganizerDataValidator implements InputDataValidator<OrganizerValid
     }
 
 
-    public ValidationResult nameCorrectness(String name) {
+    public ValidationResult imageType(String type) throws ValidationException {
+        if (type == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
+        ValidationResult result = new ValidationResult();
+
+        Pattern pattern = Pattern.compile(ValidationRegexp.IMG_REGEXP);
+        Matcher matcher = pattern.matcher(type);
+
+        if (!matcher.find()) {
+            result.add(AttributesContainer.WRONG_IMAGE_TYPE.toString(),
+                    localizationManager.getValue(AttributesContainer.WRONG_IMAGE_TYPE.toString()));
+        }
+        return result;
+    }
+
+
+    public ValidationResult nameCorrectness(String name) throws ValidationException {
+        if (name == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
 
         Pattern pattern = Pattern.compile(ValidationRegexp.ORGANIZER_NAME_REGEXP);
@@ -77,6 +104,10 @@ public class OrganizerDataValidator implements InputDataValidator<OrganizerValid
 
 
     public ValidationResult nameUniqueness(String name) throws ValidationException {
+        if (name == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
 
         try {

@@ -13,8 +13,10 @@ public class Organizer extends Entity {
     private String name;
     private long userId;
 
+
     public Organizer() {
     }
+
 
     public Organizer(byte[] logo, String name, long userId) {
         if (logo == null) {
@@ -26,12 +28,14 @@ public class Organizer extends Entity {
         this.userId = userId;
     }
 
+
     private Organizer(Builder builder) {
         setId(builder.id);
         logo = builder.logo;
         name = builder.name;
         userId = builder.userId;
     }
+
 
     public byte[] getLogo() {
         if (logo == null) {
@@ -41,6 +45,7 @@ public class Organizer extends Entity {
         }
     }
 
+
     public void setLogo(byte[] logo) {
         if (logo == null) {
             this.logo = null;
@@ -48,6 +53,7 @@ public class Organizer extends Entity {
             this.logo = Arrays.copyOf(logo, logo.length);
         }
     }
+
 
     public String getName() {
         return name;

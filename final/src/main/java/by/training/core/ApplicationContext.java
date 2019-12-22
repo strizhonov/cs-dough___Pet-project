@@ -15,7 +15,6 @@ import by.training.security.SecurityProviderImpl;
 import by.training.security.directorimpl.*;
 import by.training.tournament.*;
 import by.training.user.*;
-import by.training.user.command.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -132,7 +131,6 @@ public final class ApplicationContext {
         }
 
 
-
         ActionCommandProvider commandProvider = new ActionCommandProviderImpl();
         createCommands(commandProvider);
         register(commandProvider);
@@ -235,8 +233,8 @@ public final class ApplicationContext {
         ActionCommand joinTournament = new JoinTournamentCommand(tournamentService);
         ActionCommand leaveTournament = new LeaveTournamentCommand(tournamentService);
         ActionCommand showParticipants = new ShowParticipantsCommand(gameService, tournamentService);
-        ActionCommand increaseFirstPlayerCount = new IncreaseFirstPlayerCountCommand(gameService);
-        ActionCommand increaseSecondPlayerCount = new IncreaseSecondPlayerCountCommand(gameService);
+        ActionCommand increaseFirstPlayerCount = new IncreaseFirstPlayerCountCommand(gameService, userService);
+        ActionCommand increaseSecondPlayerCount = new IncreasePlayerCountCommand(gameService, userService);
         ActionCommand deposit = new DepositCommand(userService);
         ActionCommand withdraw = new WithdrawCommand(userService);
         ActionCommand toOrganizerEditing = new ToOrganizerEditingCommand(organizerService, tournamentService);

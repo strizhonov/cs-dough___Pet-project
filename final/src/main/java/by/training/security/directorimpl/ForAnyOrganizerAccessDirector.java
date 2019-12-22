@@ -6,11 +6,13 @@ import by.training.resourse.PathsContainer;
 import by.training.security.AccessAllowedForType;
 import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRouter;
+import by.training.user.User;
 import by.training.user.UserDto;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Locale;
 import java.util.Optional;
 
 public class ForAnyOrganizerAccessDirector extends BaseSecurityDirector {
@@ -33,14 +35,14 @@ public class ForAnyOrganizerAccessDirector extends BaseSecurityDirector {
     protected boolean isAccessAllowed(HttpServletRequest request) {
         HttpSession session = request.getSession();
         UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
-        return user != null && user.getOrganizerId() != 0;
+        return user != null && user.getOrganizerId() != 0 || user != null && user.getType() == User.UserType.ADMIN;
     }
 
 
     @Override
     public Optional<HttpRouter> getHttpRouter(HttpServletRequest request, HttpServletResponse response) {
         LocalizationManager localizationManager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
+                (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
         HttpSession session = request.getSession();
         UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
@@ -48,7 +50,7 @@ public class ForAnyOrganizerAccessDirector extends BaseSecurityDirector {
         if (user != null) {
             request.setAttribute(AttributesContainer.MESSAGE.toString(),
                     localizationManager.getValue(MESSAGE_FOR_USER_KEY));
-            return Optional.of(new HttpForwarder(request.getContextPath() + REDIRECT_USER_TO));
+            return Optional.of(new HttpForwarder(REDIRECT_USER_TO));
 
         } else {
             request.setAttribute(AttributesContainer.MESSAGE.toString(),

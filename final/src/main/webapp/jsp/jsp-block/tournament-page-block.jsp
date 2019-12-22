@@ -23,10 +23,10 @@
                         <c:if test="${tournament.participantsIds.size() == 0}">
                             <div class="col-sm-1">
                                 <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_DELETE_TOURNAMENT}${tournament.id}">
-                                    <div class="update-button col-sm-1"
-                                         style="width: 100%; text-align: center; padding-top: 0;">
-                                        <img style="max-height: 100%; padding: 10px;"
-                                             src="${pageContext.request.contextPath}/img/icon/delete.png" alt="">
+                                    <div class="update-button"
+                                         style="width: 100%; text-align: center; padding: 5px;">
+                                        <img src="${pageContext.request.contextPath}/img/icon/delete.png" alt=""
+                                             style="max-width: available; max-height: 100%">
                                         <span class="button-tooltip"><fmt:message key="delete.tournament"/></span>
                                     </div>
                                 </a>
@@ -50,7 +50,7 @@
                                         </a>
                                     </div>
                                 </c:when>
-                                <c:when test="${tournament.participantsIds.contains(user.playerAccountId) && tournament.status != 'UPCOMING'}">
+                                <c:when test="${!tournament.participantsIds.contains(user.playerAccountId) && tournament.status == 'UPCOMING'}">
 
                                     <div class="col-sm-3" style="float: right">
                                         <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_JOIN_TOURNAMENT}${tournament.id}">

@@ -7,8 +7,8 @@
 <fmt:setBundle basename="i18n"/>
 <div class="container">
     <div class="row">
-        <div class="col-sm-12" style="margin-bottom: 50px; height: 300px">
-            <h2>Tournament Bracket</h2>
+        <div class="col-sm-12" style="margin-bottom:200px; height: 400px">
+            <h2><fmt:message key="tournament.bracket"/></h2>
             <div class="col-sm-3">
             </div>
             <div class="col-sm-3">
@@ -20,7 +20,9 @@
                                 <div class="col-sm-9 bracket-name">
                                     <c:choose>
                                         <c:when test="${games[1].firstPlayer == null}">
-                                            <fmt:message key="tbd"/>
+                                            <div class="tbd">
+                                                <fmt:message key="tbd"/>
+                                            </div>
                                         </c:when>
                                         <c:otherwise>
                                             <div class="col-sm-3">
@@ -28,7 +30,7 @@
                                                      src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_PLAYER_PHOTO}${games[1].firstPlayer.id}"
                                                      alt="">
                                             </div>
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-9 nickname">
                                                     ${games[1].firstPlayer.nickname}
                                             </div>
                                         </c:otherwise>
@@ -41,7 +43,9 @@
                                 <div class="col-sm-9 bracket-name">
                                     <c:choose>
                                         <c:when test="${games[1].secondPlayer == null}">
-                                            <fmt:message key="tbd"/>
+                                            <div class="tbd">
+                                                <fmt:message key="tbd"/>
+                                            </div>
                                         </c:when>
                                         <c:otherwise>
                                             <div class="col-sm-3">
@@ -49,7 +53,7 @@
                                                      src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_PLAYER_PHOTO}${games[1].secondPlayer.id}"
                                                      alt="">
                                             </div>
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-9 nickname">
                                                     ${games[1].secondPlayer.nickname}
                                             </div>
                                         </c:otherwise>
@@ -60,14 +64,16 @@
                             </div>
                         </div>
                     </a>
-                    <div style="height: 40px"></div>
+                    <div style="height: 200px"></div>
                     <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${games[2].id}">
                         <div class="bracket-match-up">
                             <div class="bracket-team ">
                                 <div class="col-sm-9 bracket-name">
                                     <c:choose>
                                         <c:when test="${games[2].firstPlayer == null}">
-                                            <fmt:message key="tbd"/>
+                                            <div class="tbd">
+                                                <fmt:message key="tbd"/>
+                                            </div>
                                         </c:when>
                                         <c:otherwise>
                                             <div class="col-sm-3">
@@ -75,7 +81,7 @@
                                                      src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_PLAYER_PHOTO}${games[2].firstPlayer.id}"
                                                      alt="">
                                             </div>
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-9 nickname">
                                                     ${games[2].firstPlayer.nickname}
                                             </div>
                                         </c:otherwise>
@@ -88,7 +94,9 @@
                                 <div class="col-sm-9 bracket-name">
                                     <c:choose>
                                         <c:when test="${games[2].secondPlayer == null}">
-                                            <fmt:message key="tbd"/>
+                                            <div class="tbd">
+                                                <fmt:message key="tbd"/>
+                                            </div>
                                         </c:when>
                                         <c:otherwise>
                                             <div class="col-sm-3">
@@ -96,7 +104,7 @@
                                                      src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_PLAYER_PHOTO}${games[2].secondPlayer.id}"
                                                      alt="">
                                             </div>
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-9 nickname">
                                                     ${games[2].secondPlayer.nickname}
                                             </div>
                                         </c:otherwise>
@@ -118,7 +126,9 @@
                                 <div class="col-sm-9 bracket-name">
                                     <c:choose>
                                         <c:when test="${games[0].firstPlayer == null}">
-                                            <fmt:message key="tbd"/>
+                                            <div class="tbd">
+                                                <fmt:message key="tbd"/>
+                                            </div>
                                         </c:when>
                                         <c:otherwise>
                                             <div class="col-sm-3">
@@ -126,7 +136,7 @@
                                                      src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_PLAYER_PHOTO}${games[0].firstPlayer.id}"
                                                      alt="">
                                             </div>
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-9 nickname">
                                                     ${games[0].firstPlayer.nickname}
                                             </div>
                                         </c:otherwise>
@@ -139,7 +149,9 @@
                                 <div class="col-sm-9 bracket-name">
                                     <c:choose>
                                         <c:when test="${games[0].secondPlayer == null}">
-                                            <fmt:message key="tbd"/>
+                                            <div class="tbd">
+                                                <fmt:message key="tbd"/>
+                                            </div>
                                         </c:when>
                                         <c:otherwise>
                                             <div class="col-sm-3">
@@ -147,7 +159,7 @@
                                                      src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_PLAYER_PHOTO}${games[0].secondPlayer.id}"
                                                      alt="">
                                             </div>
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-9 nickname">
                                                     ${games[0].secondPlayer.nickname}
                                             </div>
                                         </c:otherwise>

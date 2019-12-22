@@ -43,6 +43,7 @@ public class Tournament extends Entity {
         this.organizerId = organizerId;
     }
 
+
     private Tournament(Builder builder) {
         setId(builder.id);
         setLogo(builder.logo);

@@ -46,9 +46,9 @@ public class ShowPlayerCommand implements ActionCommand {
         long id = Long.parseLong(sId);
         try {
             PlayerDto playerDto = playerService.find(id);
-            List<TournamentDto> tournaments = tournamentService.findAllOfPlayer(playerDto.getId());
-
             request.setAttribute(AttributesContainer.PLAYER.toString(), playerDto);
+
+            List<TournamentDto> tournaments = tournamentService.findAllOfPlayer(playerDto.getId());
             request.setAttribute(AttributesContainer.TOURNAMENTS.toString(), tournaments);
 
             return Optional.of(new HttpForwarder(PathsContainer.FILE_PLAYER_PROFILE_PAGE));

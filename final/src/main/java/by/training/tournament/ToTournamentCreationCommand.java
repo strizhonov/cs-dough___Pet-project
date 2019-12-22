@@ -3,16 +3,9 @@ package by.training.tournament;
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandType;
-import by.training.core.ServiceException;
-import by.training.organizer.OrganizerDto;
-import by.training.organizer.OrganizerService;
-import by.training.resourse.AttributesContainer;
 import by.training.resourse.PathsContainer;
-import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -46,6 +46,7 @@ public class UserDto implements Serializable {
         this.organizerId = organizerId;
     }
 
+
     private UserDto(Builder builder) {
         setId(builder.id);
         setAvatar(builder.avatar);

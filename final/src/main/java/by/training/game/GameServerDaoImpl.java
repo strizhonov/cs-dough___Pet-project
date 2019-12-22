@@ -160,30 +160,6 @@ public class GameServerDaoImpl implements GameServerDao {
 
 
     @Override
-    public GameServerDto getByGameId(long gameId) throws DaoException {
-        try (Connection connection = provider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_BY_GAME)) {
-
-            statement.setLong(1, gameId);
-            try (ResultSet resultSet = statement.executeQuery()) {
-
-                if (resultSet.next()) {
-                    return DaoMapper.mapGameServerDto(resultSet);
-                } else {
-                    LOGGER.error("Unable to get game server with  id, not found.");
-                    throw new EntityNotFoundException("Unable to get game server with id, not found.");
-                }
-
-            }
-
-        } catch (SQLException e) {
-            LOGGER.error("Unable to perform entity retrieving.", e);
-            throw new DaoException("Unable to perform entity retrieving.", e);
-        }
-    }
-
-
-    @Override
     public void deleteByGameId(long gameId) throws DaoException {
 
         try (Connection connection = provider.getConnection();
@@ -196,7 +172,6 @@ public class GameServerDaoImpl implements GameServerDao {
             LOGGER.error("Unable to perform entity deleting.", e);
             throw new DaoException("Unable to perform entity deleting.", e);
         }
-
 
     }
 

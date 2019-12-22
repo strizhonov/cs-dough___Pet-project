@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Locale;
 import java.util.Optional;
 
 public class DeleteOrganizerCommand implements ActionCommand {
@@ -45,15 +46,18 @@ public class DeleteOrganizerCommand implements ActionCommand {
 
         try {
             if (organizerService.delete(user.getOrganizerId())) {
+
+                /* Success */
                 user.setOrganizerId(0);
 
                 return Optional.of(new HttpRedirector(request.getContextPath()
                         + PathsContainer.FILE_USER_PROFILE_PAGE));
+
             } else {
 
+                /* Fail */
                 LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                        (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
-
+                        (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
                 request.setAttribute(AttributesContainer.MESSAGE.toString(),
                         manager.getValue(AttributesContainer.ORGANIZER_DELETING_ERROR.toString()));
@@ -63,7 +67,7 @@ public class DeleteOrganizerCommand implements ActionCommand {
 
             }
 
-            } catch (ServiceException e) {
+        } catch (ServiceException e) {
             LOGGER.error("Unable to perform organizer deleting.", e);
             throw new ActionCommandExecutionException("Unable to perform organizer deleting.", e);
         }

@@ -11,4 +11,9 @@ public class ValidationRegexp {
     public static final String PLAYER_NAME_REGEXP = "^[A-Za-zА-Яа-я\u0020\\-]{1,45}$";
     public static final String PLAYER_SURNAME_REGEXP = "^[A-Za-zА-Яа-я\\-]{1,45}$";
 
+    /**
+     * "blank" value is for empty image field
+     */
+    public static final String IMG_REGEXP = "image/png|image/gif|image/jpeg|" + AttributesContainer.BLANK.toString();
+
 }

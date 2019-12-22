@@ -8,6 +8,7 @@ import by.training.resourse.PathsContainer;
 import by.training.security.AccessAllowedForType;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
+import by.training.user.User;
 import by.training.user.UserDto;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +47,7 @@ public class ForTournamentOwnerAccessDirector extends BaseSecurityDirector {
 
             OrganizerDto organizer = organizerService.find(user.getOrganizerId());
 
-            return organizer.getTournamentsIdList().contains(tournamentId);
+            return organizer.getTournamentsIdList().contains(tournamentId) || user.getType() == User.UserType.ADMIN;
 
         } catch (ServiceException e) {
             LOGGER.error("Unable to get organizer", e);

@@ -1,5 +1,7 @@
 package by.training.resourse;
 
+import by.training.game.Game;
+
 public enum AttributesContainer {
 
     /**
@@ -8,6 +10,7 @@ public enum AttributesContainer {
 
     AFTER_SIGN_UP,
     BALANCE_ERROR,
+    BLANK,
     BUY_IN_CORRECTNESS_ERROR,
     CLOSE,
     COMMAND,
@@ -55,6 +58,7 @@ public enum AttributesContainer {
     NICKNAME_CORRECTNESS_ERROR,
     NICKNAME_ERROR,
     NICKNAME_UNIQUENESS_ERROR,
+    NO,
     NON_POSITIVE_INTEGER,
     NOT_ENOUGH_FUNDS,
     ORGANIZER,
@@ -113,6 +117,7 @@ public enum AttributesContainer {
     USERNAME_UNIQUENESS_ERROR,
     WITHDRAW,
     WRONG_EMAIL,
+    WRONG_IMAGE_TYPE,
     WRONG_NICKNAME,
     WRONG_ORGANIZER_NAME,
     WRONG_PASSWORD,

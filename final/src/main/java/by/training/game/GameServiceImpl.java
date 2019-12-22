@@ -46,11 +46,13 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
     @Override
     public ComplexGameDto find(long id) throws ServiceException {
         try {
+
             return gameDao.getComplex(id);
 
         } catch (EntityNotFoundException e) {
             LOGGER.error("Games with id " + id + " not found.", e);
             return null;
+
         } catch (DaoException e) {
             LOGGER.error("Games retrieving failed.", e);
             throw new ServiceException("Games retrieving failed.", e);
@@ -61,70 +63,66 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
     @Override
     public List<ComplexGameDto> findAll() throws ServiceException {
         try {
+
             return gameDao.findAllComplex();
+
         } catch (DaoException e) {
             LOGGER.error("Games retrieving failed.", e);
             throw new ServiceException("Games retrieving failed.", e);
         }
+
     }
 
 
     /**
      * Catch Exception for transaction security reasons
+     * <p>
+     * Perform emulation of winning round by player.
+     *
+     * @param gameId     id of game count to increase
+     * @param playerSlot index of player within the game (0 or 1).
+     * @return true if tournament finished after points had been increased
      */
     @Override
-    public void increaseFirstPlayerPoints(long gameId) throws ServiceException {
+    public boolean increasePlayerPoints(long gameId, int playerSlot) throws ServiceException {
         try {
             transactionManager.startTransaction();
 
-            GameServerDto gameServerDto = gameServerDao.getByGameId(gameId);
+            ComplexGameDto game = gameDao.getComplex(gameId);
+            GameServerDto gameServerDto = game.getGameServer();
             GameServerModel server = new GameServerModel(gameServerDto);
 
-            boolean isGameFinished = server.increaseFirstPlayerPoints();
-            if (isGameFinished) {
 
-                /* Game is continuing */
-                gameServerDto.setPlayerOnePoints(server.getPlayerOnePoints());
+            boolean isTournamentFinished = false;
+            if (game.isReady()) {
+
+                server.startIfNot();
+
+                boolean isGameToFinish;
+                if (playerSlot == 0) {
+                    isGameToFinish = server.increaseFirstPlayerPoints();
+                    gameServerDto.setPlayerOnePoints(server.getPlayerTwoPoints());
+
+                } else if (playerSlot == 1) {
+                    isGameToFinish = server.increaseSecondPlayerPoints();
+                    gameServerDto.setPlayerTwoPoints(server.getPlayerTwoPoints());
+
+                } else {
+                    throw new ServiceException("Illegal player slot " + playerSlot);
+                }
+
                 gameServerDao.update(gameServerDto);
-            } else {
 
-                /* Game is finished */
-                finishGame(gameId, server);
+                if (isGameToFinish) {
+                    isTournamentFinished = finishGame(game, server);
+                }
+
             }
+
 
             transactionManager.commitTransaction();
 
-        } catch (Exception e) {
-            transactionManager.rollbackTransaction();
-            LOGGER.error("Count increasing failed.", e);
-            throw new ServiceException("Count increasing failed.", e);
-        }
-    }
-
-
-    /**
-     * Catch Exception for transaction security reasons
-     */
-    @Override
-    public void increaseSecondPlayerPoints(long gameId) throws ServiceException {
-        try {
-            transactionManager.startTransaction();
-
-            GameServerDto gameServerDto = gameServerDao.getByGameId(gameId);
-            GameServerModel server = new GameServerModel(gameServerDto);
-
-            boolean isGameFinished = server.increaseSecondPlayerPoints();
-            if (isGameFinished) {
-
-                /* Game is continuing */
-                gameServerDto.setPlayerTwoPoints(server.getPlayerTwoPoints());
-                gameServerDao.update(gameServerDto);
-            } else {
-
-                /* Game is finished */
-                finishGame(gameId, server);
-            }
-            transactionManager.commitTransaction();
+            return isTournamentFinished;
 
         } catch (Exception e) {
             transactionManager.rollbackTransaction();
@@ -137,7 +135,9 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
     @Override
     public List<ComplexGameDto> findAllOfPlayer(long id) throws ServiceException {
         try {
+
             return gameDao.findAllComplexOfPlayer(id);
+
         } catch (DaoException e) {
             LOGGER.error("Games retrieving failed.", e);
             throw new ServiceException("Games retrieving failed.", e);
@@ -198,14 +198,12 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
     }
 
 
-    private void finishGame(long gameId, GameServerModel server) throws DaoException, ServiceException {
-
-        ComplexGameDto game = gameDao.getComplex(gameId);
+    private boolean finishGame(ComplexGameDto game, GameServerModel server) throws DaoException, ServiceException {
         game.setEndTime(server.getEndTime());
         gameDao.update(game);
 
-
         int gameIndex = game.getBracketIndex();
+
         if (gameIndex == 0) {
 
             /* Tournament is finished */
@@ -215,15 +213,25 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
 
             payRewards(tournament);
 
+            return true;
+
         } else {
 
             /* Tournament is continuing */
             int nextGameIndex = TournamentUtil.getNextGameIndex(gameIndex);
             ComplexGameDto nextGame = gameDao.getComplexByBracketIndex(nextGameIndex, game.getTournamentId());
-            if (nextGame.occupyPlayerSlot(game.getWinner()) == -1) {
+
+            int slot = nextGame.occupyPlayerSlot(game.getWinner());
+
+            if (slot == 0) {
+                gameDao.updateFirstPlayerId(nextGame);
+            } else if (slot == 1) {
+                gameDao.updateSecondPlayerId(nextGame);
+            } else {
                 throw new IllegalStateException("Illegal game state, winner not found.");
             }
-            gameDao.update(nextGame);
+
+            return false;
         }
     }
 
@@ -255,6 +263,8 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
 
     private void payParticipants(TournamentDto tournament) throws ServiceException, DaoException {
         List<TournamentPlacement> placements = findTournamentPlacements(tournament);
+
+        /* Pay placements one by one */
         for (TournamentPlacement placement : placements) {
 
             List<PlayerDto> players = placement.getPlayersOnPosition();
@@ -271,6 +281,7 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
             PlayerDto player = players.get(0);
             double prize = placement.getPrize();
             player.increaseTotalWon(prize);
+            playerDao.update(player);
 
             WalletDto wallet = walletDao.getOfPlayer(player.getId());
             wallet.increaseBalance(prize);

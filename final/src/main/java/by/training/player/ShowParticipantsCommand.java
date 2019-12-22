@@ -49,11 +49,13 @@ public class ShowParticipantsCommand implements ActionCommand {
         try {
 
             String sTournamentId = request.getParameter(AttributesContainer.ID.toString());
+
             TournamentDto tournament = tournamentService.find(Long.parseLong(sTournamentId));
 
             List<TournamentPlacement> placements = gameService.findTournamentPlacements(tournament);
 
             placements.sort(Comparator.comparingInt(TournamentPlacement::getPlacementNumber));
+
             request.setAttribute(AttributesContainer.PLACEMENTS.toString(), placements);
 
             return Optional.of(new HttpForwarder(PathsContainer.FILE_PLACEMENTS));

@@ -34,6 +34,11 @@ public class TournamentDataValidator implements InputDataValidator<TournamentVal
             return logoSize;
         }
 
+        ValidationResult imageType = imageType(dto.getLogoType());
+        if (!imageType.isValid()) {
+            return imageType;
+        }
+
         ValidationResult nameCorrectness = nameCorrectness(dto.getName());
         if (!nameCorrectness.isValid()) {
             return nameCorrectness;
@@ -81,7 +86,29 @@ public class TournamentDataValidator implements InputDataValidator<TournamentVal
     }
 
 
-    public ValidationResult nameCorrectness(String name) {
+    public ValidationResult imageType(String type) throws ValidationException {
+        if (type == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
+        ValidationResult result = new ValidationResult();
+
+        Pattern pattern = Pattern.compile(ValidationRegexp.IMG_REGEXP);
+        Matcher matcher = pattern.matcher(type);
+
+        if (!matcher.find()) {
+            result.add(AttributesContainer.WRONG_IMAGE_TYPE.toString(),
+                    localizationManager.getValue(AttributesContainer.WRONG_IMAGE_TYPE.toString()));
+        }
+        return result;
+    }
+
+
+    public ValidationResult nameCorrectness(String name) throws ValidationException {
+        if (name == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
 
         Pattern pattern = Pattern.compile(ValidationRegexp.TOURNAMENT_NAME_REGEXP);
@@ -113,7 +140,11 @@ public class TournamentDataValidator implements InputDataValidator<TournamentVal
     }
 
 
-    public ValidationResult rewardRate(String sReward) {
+    public ValidationResult rewardRate(String sReward) throws ValidationException {
+        if (sReward == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
 
         try {
@@ -132,7 +163,11 @@ public class TournamentDataValidator implements InputDataValidator<TournamentVal
     }
 
 
-    public ValidationResult bonus(String bonus) {
+    public ValidationResult bonus(String bonus) throws ValidationException {
+        if (bonus == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
         try {
 
@@ -150,7 +185,11 @@ public class TournamentDataValidator implements InputDataValidator<TournamentVal
     }
 
 
-    public ValidationResult buyIn(String buyIn) {
+    public ValidationResult buyIn(String buyIn) throws ValidationException {
+        if (buyIn == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
         try {
             if (Double.parseDouble(buyIn) < 0) {
@@ -167,7 +206,11 @@ public class TournamentDataValidator implements InputDataValidator<TournamentVal
     }
 
 
-    public ValidationResult playersNumber(String playersNumber) {
+    public ValidationResult playersNumber(String playersNumber) throws ValidationException {
+        if (playersNumber == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
         try {
             if (Double.parseDouble(playersNumber) < 0) {

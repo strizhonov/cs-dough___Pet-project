@@ -38,32 +38,39 @@ public class ComplexGameDto extends PlainGameDto {
         return firstPlayer;
     }
 
+
     public void setFirstPlayer(PlainPlayerDto firstPlayer) {
         this.firstPlayerId = firstPlayer.getId();
         this.firstPlayer = firstPlayer;
     }
 
+
     public PlainPlayerDto getSecondPlayer() {
         return secondPlayer;
     }
+
 
     public void setSecondPlayer(PlainPlayerDto secondPlayer) {
         this.secondPlayerId = secondPlayer.getId();
         this.secondPlayer = secondPlayer;
     }
 
+
     public GameServerDto getGameServer() {
         return gameServer;
     }
+
 
     public void setGameServer(GameServerDto gameServer) {
         this.gameServerId = gameServer.getId();
         this.gameServer = gameServer;
     }
 
+
     public PlainTournamentDto getTournament() {
         return tournament;
     }
+
 
     public void setTournament(PlainTournamentDto tournament) {
         this.tournamentId = tournament.getId();
@@ -121,11 +128,13 @@ public class ComplexGameDto extends PlainGameDto {
             firstPlayer = player;
             return 0;
         }
+
         if (secondPlayerId == 0) {
             secondPlayerId = player.getId();
             secondPlayer = player;
             return 1;
         }
+
         return -1;
     }
 
@@ -142,12 +151,24 @@ public class ComplexGameDto extends PlainGameDto {
             firstPlayer = null;
             return 0;
         }
+
         if (secondPlayerId == player.getId()) {
             secondPlayerId = 0;
             secondPlayer = null;
             return 0;
         }
+
         return -1;
+    }
+
+
+    /**
+     * Indicate if game is ready to start.
+     *
+     * @return true if game has both players. If there is no at least one player, return false
+     */
+    public boolean isReady() {
+        return firstPlayer != null && secondPlayer != null;
     }
 
 

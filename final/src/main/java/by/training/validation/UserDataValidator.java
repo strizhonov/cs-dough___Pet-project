@@ -64,7 +64,11 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
     }
 
 
-    public ValidationResult usernameCorrectness(String username) {
+    public ValidationResult usernameCorrectness(String username) throws ValidationException {
+        if (username == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
 
         Pattern pattern = Pattern.compile(ValidationRegexp.USERNAME_REGEXP);
@@ -79,6 +83,10 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
 
 
     public ValidationResult usernameUniqueness(String username) throws ValidationException {
+        if (username == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
 
         try {
@@ -95,7 +103,11 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
     }
 
 
-    public ValidationResult emailCorrectness(String email) {
+    public ValidationResult emailCorrectness(String email) throws ValidationException {
+        if (email == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
 
         Pattern pattern = Pattern.compile(ValidationRegexp.EMAIL_REGEXP, Pattern.CASE_INSENSITIVE);
@@ -110,6 +122,10 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
 
 
     public ValidationResult emailUniqueness(String email) throws ValidationException {
+        if (email == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
 
         try {
@@ -127,7 +143,11 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
     }
 
 
-    public ValidationResult passwordCorrectness(String password) {
+    public ValidationResult passwordCorrectness(String password) throws ValidationException {
+        if (password == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
 
         Pattern pattern = Pattern.compile(ValidationRegexp.PASSWORD_REGEXP);
@@ -141,10 +161,14 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
     }
 
 
-    public ValidationResult passwordsEquality(String password, String passConfirmation) {
+    public ValidationResult passwordsEquality(String password, String passConfirmation) throws ValidationException {
+        if (password == null || passConfirmation == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
         ValidationResult result = new ValidationResult();
 
-        if (password == null || !password.equals(passConfirmation)) {
+        if (!password.equals(passConfirmation)) {
             result.add(AttributesContainer.WRONG_PASSWORD_CONFIRMATION.toString(),
                     localizationManager.getValue(AttributesContainer.WRONG_PASSWORD_CONFIRMATION.toString()));
         }
@@ -165,4 +189,21 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
         return result;
     }
 
+
+    public ValidationResult imageType(String type) throws ValidationException {
+        if (type == null) {
+            throw new ValidationException("Value to validate is null.");
+        }
+
+        ValidationResult result = new ValidationResult();
+
+        Pattern pattern = Pattern.compile(ValidationRegexp.IMG_REGEXP);
+        Matcher matcher = pattern.matcher(type);
+
+        if (!matcher.find()) {
+            result.add(AttributesContainer.WRONG_IMAGE_TYPE.toString(),
+                    localizationManager.getValue(AttributesContainer.WRONG_IMAGE_TYPE.toString()));
+        }
+        return result;
+    }
 }

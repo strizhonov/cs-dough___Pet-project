@@ -1,4 +1,4 @@
-package by.training.user.command;
+package by.training.user;
 
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
@@ -10,9 +10,7 @@ import by.training.resourse.PathsContainer;
 import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
-import by.training.user.RegistrationDto;
-import by.training.user.UserService;
-import by.training.user.UserValidationDto;
+import by.training.util.CommandMapper;
 import by.training.util.ServletUtil;
 import by.training.validation.InputDataValidator;
 import by.training.validation.UserDataValidator;
@@ -24,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Optional;
 
 public class SignUpCommand implements ActionCommand {
@@ -51,11 +50,11 @@ public class SignUpCommand implements ActionCommand {
 
         try {
 
-            UserValidationDto validationDto = compile(request);
+            UserValidationDto validationDto = CommandMapper.mapUserValidationDto(request);
 
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                    (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
+                    (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
             InputDataValidator<UserValidationDto> validator
@@ -65,12 +64,12 @@ public class SignUpCommand implements ActionCommand {
             ValidationResult result = validator.validate(validationDto);
             if (!result.isValid()) {
                 request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                        manager.getValue(result.getFirstValue()));
-                return Optional.of(new HttpForwarder(PathsContainer.FILE_TOURNAMENT_CREATION_PAGE));
+                        manager.getValue(result.getFirstKey()));
+                return Optional.of(new HttpForwarder(PathsContainer.FILE_LOGIN));
             }
 
 
-            RegistrationDto registrationDto = convert(validationDto, request);
+            RegistrationDto registrationDto = compile(validationDto, request);
             userService.registerUser(registrationDto);
 
 
@@ -86,19 +85,7 @@ public class SignUpCommand implements ActionCommand {
     }
 
 
-    private UserValidationDto compile(HttpServletRequest request) {
-
-        String username = request.getParameter(AttributesContainer.USERNAME.toString());
-        String email = request.getParameter(AttributesContainer.EMAIL.toString());
-        String password = request.getParameter(AttributesContainer.PASSWORD.toString());
-        String passConfirmation = request.getParameter(AttributesContainer.PASSWORD_CONFIRMATION.toString());
-
-        return new UserValidationDto(username, email, password, passConfirmation);
-
-    }
-
-
-    private RegistrationDto convert(UserValidationDto validationDto, HttpServletRequest request)
+    private RegistrationDto compile(UserValidationDto validationDto, HttpServletRequest request)
             throws IOException {
 
         byte[] defAvatar = ServletUtil.fromImg(request.getServletContext().getRealPath(PathsContainer.FILE_NOBODY),
@@ -108,6 +95,10 @@ public class SignUpCommand implements ActionCommand {
         registrationDto.setUsername(validationDto.getUsername());
         registrationDto.setEmail(validationDto.getEmail());
         registrationDto.setPassword(validationDto.getPassword());
+
+        String sLang = ((Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString())).getLanguage();
+        User.Language language = User.Language.fromLocaleString(sLang).orElse(User.Language.getDefault());
+        registrationDto.setLanguage(language);
 
         return registrationDto;
 

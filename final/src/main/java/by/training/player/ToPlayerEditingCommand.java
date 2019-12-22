@@ -34,6 +34,7 @@ public class ToPlayerEditingCommand implements ActionCommand {
         this.tournamentService = tournamentService;
     }
 
+
     @Override
     public ActionCommandType getType() {
         return type;

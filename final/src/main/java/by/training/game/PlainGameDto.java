@@ -163,7 +163,7 @@ public class PlainGameDto implements Serializable {
         }
         if (secondPlayerId == player.getId()) {
             secondPlayerId = 0;
-            return 0;
+            return 1;
         }
         return -1;
     }

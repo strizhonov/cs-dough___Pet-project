@@ -6,19 +6,26 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * Intended to check borrowed connections and release it by connection pool if
+ * connection was taken more than {@code long msConnectionLifetime} ms ago.
+ *
+ * @author Uladzislau Stryzhonak
+ */
 public class ConnectionTerminator implements Runnable {
 
     private static final Logger LOGGER = LogManager.getLogger(ConnectionTerminator.class);
     private final Map<Connection, Date> borrowed;
     private final long msConnectionLifetime;
+    private final ConnectionPool pool;
 
 
-    public ConnectionTerminator(Map<Connection, Date> borrowed, long msConnectionLifetime) {
+    public ConnectionTerminator(Map<Connection, Date> borrowed, long msConnectionLifetime, ConnectionPool pool) {
         this.borrowed = borrowed;
         this.msConnectionLifetime = msConnectionLifetime;
+        this.pool = pool;
     }
 
 
@@ -27,25 +34,19 @@ public class ConnectionTerminator implements Runnable {
 
         long current = new Date().getTime();
 
-        Iterator<Map.Entry<Connection, Date>> iterator = borrowed.entrySet().iterator();
+        for (Map.Entry<Connection, Date> entry : borrowed.entrySet()) {
 
-        while (iterator.hasNext()) {
-
-            Map.Entry<Connection, Date> entry = iterator.next();
             long creation = entry.getValue().getTime();
-
             if (current - creation <= msConnectionLifetime) {
                 continue;
             }
 
             try {
-
                 Connection connection = entry.getKey();
                 if (!connection.getAutoCommit()) {
                     connection.rollback();
                 }
-                connection.close();
-                iterator.remove();
+                pool.release(connection);
 
             } catch (SQLException e) {
                 LOGGER.error("Unable to close connection.", e);

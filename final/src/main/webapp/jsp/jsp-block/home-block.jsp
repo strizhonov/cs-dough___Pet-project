@@ -99,7 +99,8 @@
                         <div class="col-md-6 col-sm-6">
                             <div class="home-item">
                                 <img src="${pageContext.request.contextPath}/img/home-4.jpg" alt="">
-                                <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_LIST_TOURNAMENTS}" class="overlay">
+                                <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_LIST_TOURNAMENTS}"
+                                   class="overlay">
                                     <h4><fmt:message key="join.tournament"/></h4>
                                 </a>
                             </div>

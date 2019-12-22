@@ -265,6 +265,7 @@ input:-webkit-autofill:active {
     font: inherit;
     margin: 20px;
     text-align: center;
+    color: #ff7f7d;
 }
 
 /*******
@@ -702,6 +703,10 @@ PROFILE
     cursor: pointer;
 }
 
+#arrow:hover .dropdown-content {
+    display: block;
+}
+
 .dropdown-content {
     display: none;
     position: absolute;
@@ -867,6 +872,15 @@ BRACKET
 .bracket-match-up:hover .bracket-team {
     background-color: #565656;
 }
+
+.nickname {
+    padding: 20px;
+}
+
+.tbd {
+    padding: 30px;
+}
+
 
 .bracket-name {
     width: 75%;

@@ -9,7 +9,9 @@ public class PathsContainer {
      * <p>
      * Commands
      */
-    public static final String COMMAND_CHANGE_LANGUAGE = "/?command=change_language_to_";
+
+    public static final String COMMAND_CHANGE_SESSION_LANGUAGE = "/?command=change_language_to_";
+    public static final String COMMAND_CHANGE_LANGUAGE = "/?command=change_user_language_to_";
     public static final String COMMAND_CREATE_ORGANIZER = "/?command=create_organizer";
     public static final String COMMAND_CREATE_PLAYER = "/?command=create_player";
     public static final String COMMAND_CREATE_TOURNAMENT = "/?command=create_tournament";
@@ -21,8 +23,7 @@ public class PathsContainer {
     public static final String COMMAND_GET_ORGANIZER_LOGO = "/?command=get_organizer_logo&id=";
     public static final String COMMAND_GET_TOURNAMENT_LOGO = "/?command=get_tournament_logo&id=";
     public static final String COMMAND_GET_USER_PHOTO = "/?command=get_user_photo&id=";
-    public static final String COMMAND_INCREASE_FIRST_PLAYER_COUNT = "/?command=increase_first_player_count&id=";
-    public static final String COMMAND_INCREASE_SECOND_PLAYER_COUNT = "/?command=increase_second_player_count&id=";
+    public static final String COMMAND_INCREASE_PLAYER_COUNT = "/?command=increase_player_count&id=";
     public static final String COMMAND_JOIN_TOURNAMENT = "/?command=join_tournament&id=";
     public static final String COMMAND_LEAVE_TOURNAMENT = "/?command=leave_tournament&id=";
     public static final String COMMAND_LIST_GAMES = "/?command=list_games";
@@ -100,4 +101,5 @@ public class PathsContainer {
     public static final String PATH_GITHUB = "https://github.com/strizhonov";
     public static final String PATH_BITBUCKET = "https://bitbucket.org/strizhonov/java-web-training/src/master/final";
     public static final String PATH_FAKE_GAME_TRANSLATION = "https://player.twitch.tv/?channel=esl_csgo&muted=true&autoplay=false";
+
 }

@@ -13,6 +13,10 @@ public class LocalizationManager {
         resourceBundle = ResourceBundle.getBundle(resourceName, new Locale(lang));
     }
 
+    public LocalizationManager(String resourceName, Locale locale) {
+        resourceBundle = ResourceBundle.getBundle(resourceName, locale);
+    }
+
     public String getValue(String key) {
         return resourceBundle.getString(ResourceUtil.fromConstantToProperty(key));
     }

@@ -29,6 +29,7 @@ public class ConnectionProxyProvider implements ConnectionProvider {
         }
 
         Connection connection = connectionPool.getConnection();
+
         return (Connection) Proxy.newProxyInstance(connection.getClass().getClassLoader(),
                 new Class[]{Connection.class},
                 (proxy, method, args) -> {

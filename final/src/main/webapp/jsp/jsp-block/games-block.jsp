@@ -42,7 +42,7 @@
                                             <fmt:message key="tbd"/>
                                         </c:when>
                                         <c:otherwise>
-                                            <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${game.startTime}" />
+                                            <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${game.startTime}"/>
                                         </c:otherwise>
                                     </c:choose>
                                 </a>

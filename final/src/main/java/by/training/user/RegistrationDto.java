@@ -12,27 +12,35 @@ public class RegistrationDto implements Serializable {
     private String username;
     private String password;
     private String email;
+    private User.Language language;
     private Wallet.Currency currency = Wallet.Currency.getDefault();
 
 
     public RegistrationDto() {
     }
 
-    public RegistrationDto(byte[] defAvatar, String username, String password, String email, Wallet.Currency currency) {
-        this.defAvatar = Arrays.copyOf(defAvatar, defAvatar.length);
+
+    public RegistrationDto(byte[] defAvatar, String username, String password, String email, User.Language language,
+                           Wallet.Currency currency) {
+        this.defAvatar = defAvatar;
         this.username = username;
         this.password = password;
         this.email = email;
+        this.language = language;
         this.currency = currency;
     }
 
 
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
     public byte[] getDefAvatar() {
-        return Arrays.copyOf(defAvatar, defAvatar.length);
+        return defAvatar;
     }
 
     public void setDefAvatar(byte[] defAvatar) {
-        this.defAvatar = Arrays.copyOf(defAvatar, defAvatar.length);
+        this.defAvatar = defAvatar;
     }
 
     public String getUsername() {
@@ -59,6 +67,14 @@ public class RegistrationDto implements Serializable {
         this.email = email;
     }
 
+    public User.Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(User.Language language) {
+        this.language = language;
+    }
+
     public Wallet.Currency getCurrency() {
         return currency;
     }
@@ -77,13 +93,14 @@ public class RegistrationDto implements Serializable {
                 Objects.equals(username, that.username) &&
                 Objects.equals(password, that.password) &&
                 Objects.equals(email, that.email) &&
+                language == that.language &&
                 currency == that.currency;
     }
 
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(username, password, email, currency);
+        int result = Objects.hash(username, password, email, language, currency);
         result = 31 * result + Arrays.hashCode(defAvatar);
         return result;
     }
@@ -96,9 +113,8 @@ public class RegistrationDto implements Serializable {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
+                ", language=" + language +
                 ", currency=" + currency +
                 '}';
     }
-
-
 }

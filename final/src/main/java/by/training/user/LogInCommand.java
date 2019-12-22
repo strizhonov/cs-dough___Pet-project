@@ -1,25 +1,21 @@
-package by.training.user.command;
+package by.training.user;
 
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandType;
-import by.training.core.ApplicationContext;
 import by.training.core.ServiceException;
-import by.training.resourse.AppSetting;
 import by.training.resourse.AttributesContainer;
 import by.training.resourse.LocalizationManager;
 import by.training.resourse.PathsContainer;
 import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRouter;
-import by.training.user.LoginDto;
-import by.training.user.UserDto;
-import by.training.user.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Locale;
 import java.util.Optional;
 
 public class LogInCommand implements ActionCommand {
@@ -59,7 +55,7 @@ public class LogInCommand implements ActionCommand {
 
             if (userDto == null) {
                 LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                        (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
+                        (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
                 request.setAttribute(AttributesContainer.MESSAGE.toString(),
                         manager.getValue(AttributesContainer.USERNAME_OR_PASSWORD_ERROR.toString()));
@@ -72,7 +68,7 @@ public class LogInCommand implements ActionCommand {
 
 
             String lang = userDto.getLanguage().name();
-            httpSession.setAttribute(AttributesContainer.LANGUAGE.toString(), lang);
+            httpSession.setAttribute(AttributesContainer.LANGUAGE.toString(), new Locale(lang));
 
             return Optional.of(new HttpForwarder(PathsContainer.COMMAND_TO_USER_PAGE + userDto.getId()));
 

@@ -16,7 +16,7 @@
             </div>
             <div class="col-sm-10">
                 <div class="row" style="margin: 0;">
-                <h2 class="col-sm-12"><fmt:message key="personal.info"/></h2>
+                    <h2 class="col-sm-12"><fmt:message key="personal.info"/></h2>
                 </div>
                 <div class="avatar-block col-sm-5">
                     <img src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_USER_PHOTO}${sessionScope.user.id}"
@@ -38,7 +38,8 @@
                                   action="${pageContext.request.contextPath}${PathsContainer.COMMAND_UPLOAD_USER_PHOTO}"
                                   method="POST"
                                   enctype='multipart/form-data'>
-                                <input name="image" id="upfile" type="file" onchange="sub()" accept="image/png,image/gif,image/jpeg"/>
+                                <input name="image" id="upfile" type="file" onchange="sub()"
+                                       accept="image/png,image/gif,image/jpeg"/>
                             </form>
                         </div>
                     </div>
@@ -74,7 +75,7 @@
                                         } else {
                                             var message = "<fmt:message key="wrong.username"/>";
                                             username.setCustomValidity(message);
-                                            username.style.background =  "#d0968a";
+                                            username.style.background = "#d0968a";
                                             submit.click();
                                         }
                                     }
@@ -86,7 +87,7 @@
                                        type="text"
                                        placeholder="${sessionScope.user.username}"
                                        oninput="checkUsername();"/>
-                                <button id="submit"  type="submit" class="update-button col-sm-1 input-one input-btn"
+                                <button id="submit" type="submit" class="update-button col-sm-1 input-one input-btn"
                                         style="padding-top: 0;">
                                     <img src="${pageContext.request.contextPath}/img/icon/submit.png" alt="">
                                     <span class="button-tooltip"><fmt:message key="submit"/></span>
@@ -102,7 +103,8 @@
                                 <img src="${pageContext.request.contextPath}/img/icon/edit.png" alt="">
                                 <span class="button-tooltip"><fmt:message key="edit.email"/></span>
                             </div>
-                            <form action="${pageContext.request.contextPath}${PathsContainer.COMMAND_UPDATE_EMAIL}" method="POST">
+                            <form action="${pageContext.request.contextPath}${PathsContainer.COMMAND_UPDATE_EMAIL}"
+                                  method="POST">
 
                                 <script>
                                     function checkEmail() {
@@ -111,22 +113,23 @@
                                         var valid = new RegExp(email.getAttribute("pattern")).test(email.value);
                                         if (valid) {
                                             email.setCustomValidity('');
-                                            email.style.background =  "";
+                                            email.style.background = "";
                                         } else {
                                             email.setCustomValidity("<fmt:message key="wrong.email"/>");
-                                            email.style.background =  "#d0968a";
+                                            email.style.background = "#d0968a";
                                             submit.click();
                                         }
                                     }
                                 </script>
                                 <input id="email"
-                                        class="info-field col-sm-10 input-two"
+                                       class="info-field col-sm-10 input-two"
                                        type="email"
                                        name="email"
                                        pattern="${ValidationRegexp.EMAIL_REGEXP}"
                                        placeholder="${sessionScope.user.email}"
-                                        oninput="checkEmail();">
-                                <button id="submit_email" type="submit" class="update-button col-sm-1 input-two input-btn"
+                                       oninput="checkEmail();">
+                                <button id="submit_email" type="submit"
+                                        class="update-button col-sm-1 input-two input-btn"
                                         style="padding-top: 0;">
                                     <img src="${pageContext.request.contextPath}/img/icon/submit.png" alt="">
                                     <span class="button-tooltip"><fmt:message key="submit"/></span>
@@ -140,7 +143,7 @@
                                 <span class="field-tooltip"><fmt:message key="language"/></span>
                             </div>
                             <div class="dropdown col-sm-1">
-                                <div class="update-button" style="float: left; padding: 15px">
+                                <div id="arrow" class="update-button" style="float: left; padding: 15px">
                                     <img src="${pageContext.request.contextPath}/img/icon/drop-down-arrow.png" alt="">
                                     <div class="dropdown-content">
                                         <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_CHANGE_LANGUAGE}en">EN</a>

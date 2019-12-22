@@ -8,6 +8,7 @@ import by.training.servlet.HttpRouter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
 import java.util.Optional;
 
 public class ChangeLanguageToRuCommand implements ActionCommand {
@@ -17,9 +18,12 @@ public class ChangeLanguageToRuCommand implements ActionCommand {
 
     @Override
     public Optional<HttpRouter> direct(HttpServletRequest request, HttpServletResponse response) {
-        request.getSession().setAttribute(AttributesContainer.LANGUAGE.toString(), AttributesContainer.RU.toString());
+
+        request.getSession().setAttribute(AttributesContainer.LANGUAGE.toString(),
+                new Locale(AttributesContainer.RU.toString()));
 
         return Optional.of(new HttpRedirector(request.getContextPath() + PathsContainer.FILE_INDEX));
+
     }
 
 

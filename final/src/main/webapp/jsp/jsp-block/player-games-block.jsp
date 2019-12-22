@@ -35,16 +35,17 @@
                                          alt="">
                                 </a>
                             </th>
-                            <th><a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${game.id}">
-                                <c:choose>
-                                    <c:when test="${game.startTime == null}">
-                                        <fmt:message key="tbd"/>
-                                    </c:when>
-                                    <c:otherwise>
-                                        ${game.startTime}
-                                    </c:otherwise>
-                                </c:choose>
-                            </a>
+                            <th>
+                                <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${game.id}">
+                                    <c:choose>
+                                        <c:when test="${game.startTime == null}">
+                                            <fmt:message key="tbd"/>
+                                        </c:when>
+                                        <c:otherwise>
+                                            ${game.startTime}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </a>
                             </th>
                             <th>
                                 <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${game.id}">

@@ -4,20 +4,19 @@ import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandType;
 import by.training.core.ServiceException;
-import by.training.organizer.OrganizerService;
 import by.training.resourse.AttributesContainer;
 import by.training.resourse.LocalizationManager;
 import by.training.resourse.PathsContainer;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
 import by.training.user.UserDto;
-import by.training.validation.ValidationResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Locale;
 import java.util.Optional;
 
 public class DeletePlayerCommand implements ActionCommand {
@@ -47,14 +46,17 @@ public class DeletePlayerCommand implements ActionCommand {
 
         try {
             if (playerService.delete(user.getPlayerAccountId())) {
+
+                /* Success */
                 user.setPlayerAccountId(0);
 
                 return Optional.of(new HttpRedirector(request.getContextPath()
                         + PathsContainer.FILE_USER_PROFILE_PAGE));
             } else {
 
+                /* Fail */
                 LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
-                        (String) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
+                        (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
                 request.setAttribute(AttributesContainer.MESSAGE.toString(),

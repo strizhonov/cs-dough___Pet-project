@@ -1,4 +1,4 @@
-package by.training.user.command;
+package by.training.user;
 
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
@@ -10,7 +10,6 @@ import by.training.servlet.HttpRouter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 public class LogOutCommand implements ActionCommand {
@@ -28,9 +27,7 @@ public class LogOutCommand implements ActionCommand {
     public Optional<HttpRouter> direct(HttpServletRequest request, HttpServletResponse response)
             throws ActionCommandExecutionException {
 
-        HttpSession httpSession = request.getSession();
-
-        httpSession.setAttribute(AttributesContainer.USER.toString(), null);
+        request.getSession().setAttribute(AttributesContainer.USER.toString(), null);
 
         return Optional.of(new HttpForwarder(PathsContainer.FILE_HOME));
     }
