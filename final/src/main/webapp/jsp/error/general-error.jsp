@@ -17,7 +17,7 @@
             <h1><fmt:message key="oops"/></h1>
             <h2><fmt:message key="something.wrong"/></h2>
         </div>
-        <a href="${pageContext.request.contextPath}/?command=to_home_page">Go TO Homepage</a>
+        <a href="${pageContext.request.contextPath}/?command=to_home_page"><fmt:message key="to.home.page"/></a>
     </div>
 </div>
 </body>

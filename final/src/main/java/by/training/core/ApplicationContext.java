@@ -233,8 +233,7 @@ public final class ApplicationContext {
         ActionCommand joinTournament = new JoinTournamentCommand(tournamentService);
         ActionCommand leaveTournament = new LeaveTournamentCommand(tournamentService);
         ActionCommand showParticipants = new ShowParticipantsCommand(gameService, tournamentService);
-        ActionCommand increaseFirstPlayerCount = new IncreaseFirstPlayerCountCommand(gameService, userService);
-        ActionCommand increaseSecondPlayerCount = new IncreasePlayerCountCommand(gameService, userService);
+        ActionCommand increasePlayerCount = new IncreasePlayerCountCommand(gameService, userService);
         ActionCommand deposit = new DepositCommand(userService);
         ActionCommand withdraw = new WithdrawCommand(userService);
         ActionCommand toOrganizerEditing = new ToOrganizerEditingCommand(organizerService, tournamentService);
@@ -256,10 +255,10 @@ public final class ApplicationContext {
                 toHomePage, saveUserPhoto, getUserPhoto, toOneGameBracket, toGamePage, logOut, updateUsername,
                 updateEmail, changeUserLanguageToEn, changeUserLanguageToRu, showOrganizer, listGames, listPlayers,
                 getPlayerPhoto, getTournamentLogo, getOrganizerLogo, joinTournament, showParticipants,
-                increaseFirstPlayerCount, increaseSecondPlayerCount, withdraw, deposit, toOrganizerEditing,
-                toOrganizerTournaments, updateOrganizer, deleteOrganizer, listPlayerGames, listPlayerTournaments,
-                toPlayerEditing, deleteTournament, updatePlayer, leaveTournament, toPlayerCreation, toOrganizerCreation,
-                toTournamentCreation, deletePlayer);
+                increasePlayerCount, withdraw, deposit, toOrganizerEditing, toOrganizerTournaments, updateOrganizer,
+                deleteOrganizer, listPlayerGames, listPlayerTournaments, toPlayerEditing, deleteTournament,
+                updatePlayer, leaveTournament, toPlayerCreation, toOrganizerCreation, toTournamentCreation,
+                deletePlayer);
     }
 
 

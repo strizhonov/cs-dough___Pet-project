@@ -101,7 +101,7 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
                 boolean isGameToFinish;
                 if (playerSlot == 0) {
                     isGameToFinish = server.increaseFirstPlayerPoints();
-                    gameServerDto.setPlayerOnePoints(server.getPlayerTwoPoints());
+                    gameServerDto.setPlayerOnePoints(server.getPlayerOnePoints());
 
                 } else if (playerSlot == 1) {
                     isGameToFinish = server.increaseSecondPlayerPoints();

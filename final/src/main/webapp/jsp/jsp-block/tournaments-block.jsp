@@ -58,7 +58,7 @@
                             <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_TOURNAMENT_PAGE}${tournament.id}">${tournament.participantsIds.size()}</a>
                         </th>
                         <th>
-                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_TOURNAMENT_PAGE}${tournament.id}">${tournament.status}</a>
+                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_TOURNAMENT_PAGE}${tournament.id}"><fmt:message key="${tournament.status}"/></a>
                         </th>
                     </tr>
                 </c:forEach>

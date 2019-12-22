@@ -37,7 +37,7 @@
                                 </c:if>
                             </c:forEach>
                         </th>
-                        <th>${placement.prize}</th>
+                        <th><fmt:formatNumber type="number" maxFractionDigits="2" value="${placement.prize}"/></th>
                     </tr>
                 </c:forEach>
                 </tbody>

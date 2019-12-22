@@ -49,7 +49,7 @@
                                             <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${latest_game.id}">${latest_game.gameServer.playerTwoPoints}</a>
                                         </th>
                                         <th>
-                                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${latest_game.id}">${latest_game.firstPlayer.nickname}</a>
+                                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${latest_game.id}">${latest_game.secondPlayer.nickname}</a>
                                         </th>
                                         <th>
                                             <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${latest_game.id}">

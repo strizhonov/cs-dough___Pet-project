@@ -90,7 +90,7 @@
                         <fmt:message key="registered"/>:&nbsp${tournament.participantsIds.size()}
                     </div>
                     <div class="info-field col-sm-12">
-                        <fmt:message key="status"/>:&nbsp${tournament.status}
+                        <fmt:message key="status"/>:&nbsp<fmt:message key="${tournament.status}"/>
                     </div>
                     <div class="info-field col-sm-12">
                         <fmt:message key="organizer"/>:&nbsp<a
