@@ -251,7 +251,7 @@ public final class ApplicationContext {
         ActionCommand toPlayerCreation = new ToPlayerCreationCommand();
         ActionCommand toOrganizerCreation = new ToOrganizerCreationCommand();
         ActionCommand toTournamentCreation = new ToTournamentCreationCommand();
-
+        ActionCommand deletePlayer = new DeletePlayerCommand(playerService);
 
         commandProvider.register(listTournaments, register, logIn, showPlayer, createPlayer,
                 createTournament, createOrganizer, toTournamentPage, changeLanguageToEn, changeLanguageToRu, toUserPage,
@@ -261,7 +261,7 @@ public final class ApplicationContext {
                 increaseFirstPlayerCount, increaseSecondPlayerCount, withdraw, deposit, toOrganizerEditing,
                 toOrganizerTournaments, updateOrganizer, deleteOrganizer, listPlayerGames, listPlayerTournaments,
                 toPlayerEditing, deleteTournament, updatePlayer, leaveTournament, toPlayerCreation, toOrganizerCreation,
-                toTournamentCreation);
+                toTournamentCreation, deletePlayer);
     }
 
 
