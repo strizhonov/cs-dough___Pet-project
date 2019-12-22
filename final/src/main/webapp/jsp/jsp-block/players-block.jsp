@@ -9,7 +9,7 @@
     <div class="row">
         <div class="col-sm-12">
             <div>
-                <h2 style="margin-bottom: 20px;"><fmt:message key="all.players"/></h2>
+                <h2 style="margin-bottom: 20px;"><fmt:message key="all.players"/>:</h2>
             </div>
             <table class="generic-table">
                 <thead>

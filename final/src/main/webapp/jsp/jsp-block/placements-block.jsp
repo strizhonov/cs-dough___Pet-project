@@ -30,7 +30,10 @@
                         <th>
                             <c:forEach var="player" items="${placement.playersOnPosition}">
                                 <c:if test="${player != null}">
-                                    <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_SHOW_PLAYER}${player.id}">${player.nickname}&nbsp</a>
+                                    <div style="display: inline-block;">
+                                        <a
+                                           href="${pageContext.request.contextPath}${PathsContainer.COMMAND_SHOW_PLAYER}${player.id}">${player.nickname}&nbsp</a>
+                                    </div>
                                 </c:if>
                             </c:forEach>
                         </th>

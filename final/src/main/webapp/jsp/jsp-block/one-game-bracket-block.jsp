@@ -8,11 +8,11 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12" style="margin-bottom: 50px; height: 300px">
-            <h2>Tournament Bracket</h2>
+            <h2 style="margin-top: 25px; margin-bottom: 30px;"><fmt:message key="tournament.bracket"/></h2>
             <div class="col-sm-4">
             </div>
             <div class="col-sm-4">
-                <div class="bracket-level">
+                <div class="bracket-level" style="justify-content: normal;">
                     <div style="text-align: center"><fmt:message key="final"/></div>
                     <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${games[0].id}">
                         <div class="bracket-match-up">
@@ -20,7 +20,9 @@
                                 <div class="col-sm-9 bracket-name">
                                     <c:choose>
                                         <c:when test="${games[0].firstPlayer == null}">
-                                            <fmt:message key="tbd"/>
+                                            <div class="tbd">
+                                                <fmt:message key="tbd"/>
+                                            </div>
                                         </c:when>
                                         <c:otherwise>
                                             <div class="col-sm-3">
@@ -28,7 +30,7 @@
                                                      src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_PLAYER_PHOTO}${games[0].firstPlayer.id}"
                                                      alt="">
                                             </div>
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-9" style="padding-top: 18px">
                                                     ${games[0].firstPlayer.nickname}
                                             </div>
                                         </c:otherwise>
@@ -49,7 +51,7 @@
                                                      src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_PLAYER_PHOTO}${games[0].secondPlayer.id}"
                                                      alt="">
                                             </div>
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-9" style="padding-top: 18px">
                                                     ${games[0].secondPlayer.nickname}
                                             </div>
                                         </c:otherwise>

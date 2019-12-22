@@ -36,9 +36,9 @@ public class DaoMapper {
     public static PlainGameDto mapGameDto(ResultSet rs) throws SQLException {
         long id = rs.getLong(GAME_ID.toString());
         int bracketIndex = rs.getInt(BRACKET_INDEX.toString());
-        java.sql.Date sqlStartTime = rs.getDate(START_TIME.toString());
+        java.sql.Timestamp sqlStartTime = rs.getTimestamp(START_TIME.toString());
         java.util.Date startTime = DateConverter.toUtilDate(sqlStartTime);
-        java.sql.Date sqlEndTime = rs.getDate(END_TIME.toString());
+        java.sql.Timestamp sqlEndTime = rs.getTimestamp(END_TIME.toString());
         java.util.Date endTime = DateConverter.toUtilDate(sqlEndTime);
         long firstPlayerId = rs.getLong(FIRST_PLAYER_ID.toString());
         long secondPlayerId = rs.getLong(SECOND_PLAYER_ID.toString());

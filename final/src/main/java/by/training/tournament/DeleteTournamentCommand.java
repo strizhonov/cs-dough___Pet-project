@@ -46,8 +46,7 @@ public class DeleteTournamentCommand implements ActionCommand {
         try {
             tournamentService.delete(Long.parseLong(sId));
 
-            return Optional.of(new HttpForwarder(request.getContextPath()
-                    + PathsContainer.COMMAND_SHOW_ORGANIZER + user.getOrganizerId()));
+            return Optional.of(new HttpForwarder(PathsContainer.COMMAND_SHOW_ORGANIZER + user.getOrganizerId()));
 
         } catch (ServiceException e) {
             LOGGER.error("Tournament deleting failed.", e);

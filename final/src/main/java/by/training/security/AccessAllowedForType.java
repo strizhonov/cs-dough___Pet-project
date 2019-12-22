@@ -9,5 +9,6 @@ public enum AccessAllowedForType {
     NON_ORGANIZER_USERS,
     NON_PLAYER_USERS,
     TOURNAMENT_OWNER,
+    TOURNAMENT_GAME_OWNER,
     USER
 }

@@ -60,8 +60,8 @@ public class LeaveTournamentCommand implements ActionCommand {
             }
 
         } catch (ServiceException e) {
-            LOGGER.error("Unable to perform tournament joining.", e);
-            throw new ActionCommandExecutionException("Unable to perform tournament joining.", e);
+            LOGGER.error("Unable to perform tournament leaving.", e);
+            throw new ActionCommandExecutionException("Unable to perform tournament leaving.", e);
         }
 
     }

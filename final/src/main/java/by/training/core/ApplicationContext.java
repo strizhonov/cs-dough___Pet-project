@@ -173,7 +173,7 @@ public final class ApplicationContext {
         GameService gameService = new GameServiceImpl(
                 (GameDao) registered.get(GameDaoImpl.class),
                 (PlayerDao) registered.get(PlayerDaoImpl.class),
-                (GameServerDao) registered.get(GameServerDao.class),
+                (GameServerDao) registered.get(GameServerDaoImpl.class),
                 (TournamentDao) registered.get(TournamentDaoImpl.class),
                 (WalletDao) registered.get(WalletDaoImpl.class),
                 transactionManager);
@@ -248,6 +248,10 @@ public final class ApplicationContext {
         ActionCommand toPlayerEditing = new ToPlayerEditingCommand(playerService, tournamentService);
         ActionCommand deleteTournament = new DeleteTournamentCommand(tournamentService);
         ActionCommand updatePlayer = new UpdatePlayerCommand(playerService);
+        ActionCommand toPlayerCreation = new ToPlayerCreationCommand();
+        ActionCommand toOrganizerCreation = new ToOrganizerCreationCommand();
+        ActionCommand toTournamentCreation = new ToTournamentCreationCommand();
+
 
         commandProvider.register(listTournaments, register, logIn, showPlayer, createPlayer,
                 createTournament, createOrganizer, toTournamentPage, changeLanguageToEn, changeLanguageToRu, toUserPage,
@@ -256,7 +260,8 @@ public final class ApplicationContext {
                 getPlayerPhoto, getTournamentLogo, getOrganizerLogo, joinTournament, showParticipants,
                 increaseFirstPlayerCount, increaseSecondPlayerCount, withdraw, deposit, toOrganizerEditing,
                 toOrganizerTournaments, updateOrganizer, deleteOrganizer, listPlayerGames, listPlayerTournaments,
-                toPlayerEditing, deleteTournament, updatePlayer, leaveTournament);
+                toPlayerEditing, deleteTournament, updatePlayer, leaveTournament, toPlayerCreation, toOrganizerCreation,
+                toTournamentCreation);
     }
 
 
@@ -268,13 +273,15 @@ public final class ApplicationContext {
         SecurityDirector forPlayer = new ForAnyPlayerAccessDirector();
         SecurityDirector forNonOrg = new ForNonOrganizerAccessDirector();
         SecurityDirector forNonPlayer = new ForNonPlayerUserAccessDirector();
-        SecurityDirector forOrgOwner = new ForTournamentOwnerAccessDirector(
-                (OrganizerService) registered.get(OrganizerService.class));
+        SecurityDirector forTournamentOwner = new ForTournamentOwnerAccessDirector(
+                (OrganizerService) registered.get(OrganizerServiceImpl.class));
         SecurityDirector forUser = new ForUserAccessDirector();
-
+        SecurityDirector forTournamentGameOwner = new ForTournamentGameOwnerAccessDirector(
+                (OrganizerService) registered.get(OrganizerServiceImpl.class),
+                (GameService) registered.get(GameServiceImpl.class));
 
         securityProvider.register(forAdmin, forAnon, forAny, forOrg, forPlayer, forNonOrg,
-                forNonPlayer, forOrgOwner, forUser);
+                forNonPlayer, forTournamentOwner, forUser, forTournamentGameOwner);
     }
 
 

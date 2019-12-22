@@ -49,6 +49,21 @@ public class GameDaoImpl implements GameDao {
             "INSERT INTO game (bracket_index, tournament_id) " +
                     "VALUES (?,?)";
 
+    private static final String UPDATE_FIRST =
+            "UPDATE game " +
+                    "SET first_player_id=? " +
+                    "WHERE game_id = ?";
+
+    private static final String UPDATE_SECOND =
+            "UPDATE game " +
+                    "SET second_player_id=? " +
+                    "WHERE game_id = ?";
+
+    private static final String UPDATE_START_TIME =
+            "UPDATE game " +
+                    "SET start_time = ? " +
+                    "WHERE game_id = ?";
+
     private static final String SELECT_BY_BRACKET_INDEX_OF_TOURNAMENT =
             "SELECT game.game_id, bracket_index, start_time, end_time, first_player_id, second_player_id, tournament_id, gameserver.game_server_id " +
                     "FROM game " +
@@ -211,6 +226,7 @@ public class GameDaoImpl implements GameDao {
              PreparedStatement statement = connection.prepareStatement(INSERT_NEW, Statement.RETURN_GENERATED_KEYS)) {
 
             Game game = EntityDtoConverter.fromDto(plainGameDto);
+
             fillSaveNewStatement(statement, game);
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -238,6 +254,64 @@ public class GameDaoImpl implements GameDao {
     public ComplexGameDto getComplexByBracketIndex(int gameIndex, long tournamentId) throws DaoException {
         PlainGameDto plain = getByBracketIndex(gameIndex, tournamentId);
         return upgrade(plain);
+    }
+
+
+    @Override
+    public void updateFirstPlayerId(PlainGameDto gameDto) throws DaoException {
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE_FIRST)) {
+
+            Game game = EntityDtoConverter.fromDto(gameDto);
+
+            int i = 0;
+            statement.setLong(++i, game.getFirstPlayerId());
+            statement.setLong(++i, game.getId());
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            LOGGER.error("Unable to perform entity updating.", e);
+            throw new DaoException("Unable to perform entity updating.", e);
+        }
+    }
+
+
+    @Override
+    public void updateSecondPlayerId(PlainGameDto gameDto) throws DaoException {
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE_SECOND)) {
+
+            Game game = EntityDtoConverter.fromDto(gameDto);
+
+            int i = 0;
+            statement.setLong(++i, game.getSecondPlayerId());
+            statement.setLong(++i, game.getId());
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            LOGGER.error("Unable to perform entity updating.", e);
+            throw new DaoException("Unable to perform entity updating.", e);
+        }
+    }
+
+
+    @Override
+    public void updateStartTime(PlainGameDto gameDto) throws DaoException {
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE_START_TIME)) {
+
+            Game game = EntityDtoConverter.fromDto(gameDto);
+
+            int i = 0;
+            Timestamp timestamp = DateConverter.toTimeStamp(game.getStartTime());
+            statement.setTimestamp(++i, timestamp);
+            statement.setLong(++i, game.getId());
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            LOGGER.error("Unable to perform entity updating.", e);
+            throw new DaoException("Unable to perform entity updating.", e);
+        }
     }
 
 
@@ -343,10 +417,10 @@ public class GameDaoImpl implements GameDao {
     private void fillSaveStatement(PreparedStatement statement, Game game) throws SQLException {
         int i = 0;
         statement.setInt(++i, game.getBracketIndex());
-        java.sql.Date sqlStartTime = DateConverter.toSqlDate(game.getStartTime());
-        statement.setDate(++i, sqlStartTime);
-        java.sql.Date sqlEndTime = DateConverter.toSqlDate(game.getEndTime());
-        statement.setDate(++i, sqlEndTime);
+        java.sql.Timestamp sqlStartTime = DateConverter.toTimeStamp(game.getStartTime());
+        statement.setTimestamp(++i, sqlStartTime);
+        java.sql.Timestamp sqlEndTime = DateConverter.toTimeStamp(game.getEndTime());
+        statement.setTimestamp(++i, sqlEndTime);
         statement.setLong(++i, game.getFirstPlayerId());
         statement.setLong(++i, game.getSecondPlayerId());
         statement.setLong(++i, game.getTournamentId());
@@ -363,10 +437,10 @@ public class GameDaoImpl implements GameDao {
     private void fillUpdateStatement(PreparedStatement statement, Game game) throws SQLException {
         int i = 0;
         statement.setInt(++i, game.getBracketIndex());
-        Date sqlStartTime = DateConverter.toSqlDate(game.getStartTime());
-        statement.setDate(++i, sqlStartTime);
-        Date sqlEndTime = DateConverter.toSqlDate(game.getEndTime());
-        statement.setDate(++i, sqlEndTime);
+        java.sql.Timestamp sqlStartTime = DateConverter.toTimeStamp(game.getStartTime());
+        statement.setTimestamp(++i, sqlStartTime);
+        java.sql.Timestamp sqlEndTime = DateConverter.toTimeStamp(game.getEndTime());
+        statement.setTimestamp(++i, sqlEndTime);
         statement.setLong(++i, game.getFirstPlayerId());
         statement.setLong(++i, game.getSecondPlayerId());
         statement.setLong(++i, game.getTournamentId());
@@ -394,12 +468,13 @@ public class GameDaoImpl implements GameDao {
         TournamentDto tournamentDto = getGameTournament(gameId);
 
         ComplexGameDto game = new ComplexGameDto();
+        game.setId(gameId);
 
         try {
             PlainPlayerDto playerOne = getFirstPlayer(gameId);
-            PlainPlayerDto playerTwo = getSecondPlayer(gameId);
-
             game.setFirstPlayer(playerOne);
+
+            PlainPlayerDto playerTwo = getSecondPlayer(gameId);
             game.setSecondPlayer(playerTwo);
 
         } catch (EntityNotFoundException e) {
@@ -408,6 +483,9 @@ public class GameDaoImpl implements GameDao {
 
         game.setGameServer(server);
         game.setTournament(tournamentDto);
+        game.setBracketIndex(plainGame.bracketIndex);
+        game.setStartTime(plainGame.startTime);
+        game.setEndTime(plainGame.endTime);
 
         return game;
     }

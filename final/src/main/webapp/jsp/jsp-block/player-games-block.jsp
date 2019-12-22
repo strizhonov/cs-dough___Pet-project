@@ -57,10 +57,10 @@
                                 <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${game.id}">${game.firstPlayer.nickname}</a>
                             </th>
                             <th>
-                                <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${game.id}">${game.gameServerDto.playerOnePoints}</a>
+                                <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${game.id}">${game.gameServer.playerOnePoints}</a>
                             </th>
                             <th>
-                                <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${game.id}">${game.gameServerDto.playerTwoPoints}</a>
+                                <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${game.id}">${game.gameServer.playerTwoPoints}</a>
                             </th>
                             <th>
                                 <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_GAME_PAGE}${game.id}">${game.secondPlayer.nickname}</a>

@@ -11,6 +11,7 @@
             <div class="col-sm-1">
             </div>
             <div class="col-sm-10">
+                <div class="notice">${requestScope.message}</div>
                 <div class="row">
                     <div class="col-sm-12" style="padding: 0">
                         <h2 style="margin-left: 0; margin-right: 0; padding-left: 15px">${tournament.name}&nbsp<fmt:message
@@ -20,7 +21,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <c:if test="${tournament.participantsIds.size() == 0}">
-                            <div class="col-sm-3">
+                            <div class="col-sm-1">
                                 <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_DELETE_TOURNAMENT}${tournament.id}">
                                     <div class="update-button col-sm-1"
                                          style="width: 100%; text-align: center; padding-top: 0;">
@@ -31,7 +32,7 @@
                                 </a>
                             </div>
                         </c:if>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_SHOW_PARTICIPANTS}${tournament.id}">
                                 <div class="info-link" style="text-align: center;">
                                     <fmt:message key="participants"/>
@@ -40,18 +41,17 @@
                         </div>
                         <c:if test="${user.playerAccountId != 0}">
                             <c:choose>
-                                <c:when test="${tournament.participantsIds.contains(user.playerAccountId)}">
-                                    <c:if test="${tournament.status == 'UPCOMING'}">
-                                        <div class="col-sm-3">
-                                            <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_LEAVE_TOURNAMENT}${tournament.id}">
-                                                <div class="join-button">
-                                                    <fmt:message key="leave"/>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </c:if>
+                                <c:when test="${tournament.participantsIds.contains(user.playerAccountId) && tournament.status == 'UPCOMING'}">
+                                    <div class="col-sm-3" style="float: right">
+                                        <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_LEAVE_TOURNAMENT}${tournament.id}">
+                                            <div class="join-button">
+                                                <fmt:message key="leave"/>
+                                            </div>
+                                        </a>
+                                    </div>
                                 </c:when>
-                                <c:otherwise>
+                                <c:when test="${tournament.participantsIds.contains(user.playerAccountId) && tournament.status != 'UPCOMING'}">
+
                                     <div class="col-sm-3" style="float: right">
                                         <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_JOIN_TOURNAMENT}${tournament.id}">
                                             <div class="join-button">
@@ -59,10 +59,10 @@
                                             </div>
                                         </a>
                                     </div>
-                                </c:otherwise>
+                                </c:when>
                             </c:choose>
                         </c:if>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <a href="${pageContext.request.contextPath}${PathsContainer.COMMAND_TO_BRACKET_PAGE}${tournament.id}">
                                 <div class="info-link" style="text-align: center;">
                                     <fmt:message key="bracket"/>

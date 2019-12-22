@@ -109,6 +109,27 @@ public class ComplexGameDto extends PlainGameDto {
 
 
     /**
+     * Sets player and its id to the first found empty slot.
+     *
+     * @param player to set entity.
+     * @return slot order number. If there is no empty slot returns -1.
+     */
+    @Override
+    public int occupyPlayerSlot(PlainPlayerDto player) {
+        if (firstPlayerId == 0) {
+            firstPlayerId = player.getId();
+            firstPlayer = player;
+            return 0;
+        }
+        if (secondPlayerId == 0) {
+            secondPlayerId = player.getId();
+            secondPlayer = player;
+            return 1;
+        }
+        return -1;
+    }
+
+    /**
      * Clear player from corresponding slot.
      *
      * @param player to clear from slot.

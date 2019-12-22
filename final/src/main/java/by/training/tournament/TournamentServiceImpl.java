@@ -195,7 +195,7 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
 
             TournamentDto tournament = tournamentDao.get(participantDto.getTournamentId());
 
-            if (tournament.getStatus() != Tournament.TournamentStatus.ONGOING) {
+            if (tournament.getStatus() == Tournament.TournamentStatus.ONGOING) {
                 LOGGER.warn("Tournament has already started.");
                 transactionManager.rollbackTransaction();
                 return false;
@@ -208,13 +208,18 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
 
             occupyGameSlot(participantDto);
 
-            if (tournament.getPlayersNumber() == tournament.getParticipantsIds().size()) {
+            if (tournament.getPlayersNumber() == tournament.getParticipantsIds().size() + 1) {
                 startTournament(tournament);
             }
 
             transactionManager.commitTransaction();
 
             return true;
+
+        } catch (NotEnoughFundsException e) {
+            transactionManager.rollbackTransaction();
+            LOGGER.error("Not enough funds.", e);
+            throw e;
 
         } catch (Exception e) {
             transactionManager.rollbackTransaction();
@@ -244,7 +249,7 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
 
             TournamentDto tournament = tournamentDao.get(participantDto.getTournamentId());
 
-            if (tournament.getStatus() != Tournament.TournamentStatus.ONGOING) {
+            if (tournament.getStatus() == Tournament.TournamentStatus.ONGOING) {
                 transactionManager.rollbackTransaction();
                 LOGGER.warn("Tournament has already started.");
                 return false;
@@ -320,6 +325,7 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
         GameServerModel serverModel = new GameServerModel(Integer.parseInt(sPointsToWin));
 
         return new GameServerDto.Builder()
+                .pointsToWin(serverModel.getPointsToWin())
                 .gameId(gameId)
                 .path(serverModel.getPath())
                 .build();
@@ -402,18 +408,27 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
 
         List<ComplexGameDto> games = gameDao.findAllComplexOfTournament(dto.getTournamentId());
 
-        ComplexGameDto gameWithEmptySlot = games.stream()
-                .filter(ComplexGameDto::hasEmptySlot)
-                .max(Comparator.comparingInt(ComplexGameDto::getBracketIndex))
+        PlainGameDto gameWithEmptySlot = games.stream()
+                .filter(PlainGameDto::hasEmptySlot)
+                .max(Comparator.comparingInt(PlainGameDto::getBracketIndex))
                 .orElse(null);
 
         if (gameWithEmptySlot != null) {
-            PlayerDto player = playerDao.get(dto.getPlayerId());
-            gameWithEmptySlot.occupyPlayerSlot(player);
-            gameDao.update(gameWithEmptySlot);
-        } else {
 
-            throw new IllegalStateException("Unexpected absence of empty slots.");
+            PlayerDto player = playerDao.get(dto.getPlayerId());
+            int slot = gameWithEmptySlot.occupyPlayerSlot(player);
+
+            if (slot == 0) {
+                gameDao.updateFirstPlayerId(gameWithEmptySlot);
+            } else if (slot == 1) {
+                gameDao.updateSecondPlayerId(gameWithEmptySlot);
+            } else {
+                throw new IllegalStateException("Unexpected absence of empty slots.");
+            }
+
+
+        } else {
+            throw new IllegalStateException("Unexpected absence of games with empty slots.");
         }
     }
 
@@ -427,8 +442,8 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
         List<ComplexGameDto> games = gameDao.findAllComplexOfTournament(joiningDto.getTournamentId());
 
         ComplexGameDto playerGame = games.stream()
-                .filter(game -> game.getFirstPlayer().getId() == joiningDto.getPlayerId()
-                        || game.getFirstPlayer().getId() == joiningDto.getPlayerId())
+                .filter(game -> game.getFirstPlayerId() == joiningDto.getPlayerId()
+                        || game.getSecondPlayerId() == joiningDto.getPlayerId())
                 .findFirst()
                 .orElse(null);
 
@@ -469,7 +484,7 @@ public class TournamentServiceImpl extends BaseBeanService implements Tournament
 
             game.setStartTime(TournamentUtil.getGameAutoTime(interval, i));
 
-            gameDao.update(game);
+            gameDao.updateStartTime(game);
         }
 
     }

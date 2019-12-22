@@ -3,8 +3,10 @@ package by.training.tournament;
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandType;
+import by.training.core.NotEnoughFundsException;
 import by.training.core.ServiceException;
 import by.training.resourse.AttributesContainer;
+import by.training.resourse.LocalizationManager;
 import by.training.resourse.PathsContainer;
 import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
@@ -55,10 +57,19 @@ public class JoinTournamentCommand implements ActionCommand {
 
             } else {
 
-
                 return Optional.of(new HttpRedirector(request.getContextPath() + PathsContainer.FILE_ERROR_PAGE));
             }
 
+        } catch (NotEnoughFundsException e) {
+            LOGGER.error("Not enough funds.", e);
+            LocalizationManager manager
+                    = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
+
+
+            request.setAttribute(AttributesContainer.MESSAGE.toString(),
+                    manager.getValue(AttributesContainer.NOT_ENOUGH_FUNDS.toString()));
+
+            return Optional.of(new HttpForwarder(PathsContainer.COMMAND_TO_TOURNAMENT_PAGE + tournamentId));
 
         } catch (ServiceException e) {
             LOGGER.error("Unable to perform tournament joining.", e);

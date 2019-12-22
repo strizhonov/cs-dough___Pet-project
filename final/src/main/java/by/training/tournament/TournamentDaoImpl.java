@@ -52,7 +52,7 @@ public class TournamentDaoImpl implements TournamentDao {
 
     private static final String PARTICIPANT_DELETE =
             "DELETE FROM participant " +
-                    "WHERE tournament_id = ?" +
+                    "WHERE tournament_id = ? " +
                     "AND player_id = ?";
 
     private static final String SELECT_BY_NAME =
@@ -257,8 +257,8 @@ public class TournamentDaoImpl implements TournamentDao {
              PreparedStatement statement = connection.prepareStatement(PARTICIPANT_DELETE)) {
 
             int i = 0;
-            statement.setLong(++i, dto.getPlayerId());
             statement.setLong(++i, dto.getTournamentId());
+            statement.setLong(++i, dto.getPlayerId());
             statement.executeUpdate();
 
         } catch (SQLException e) {

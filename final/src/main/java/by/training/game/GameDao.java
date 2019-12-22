@@ -13,6 +13,12 @@ public interface GameDao extends CrudDao<PlainGameDto> {
 
     ComplexGameDto getComplexByBracketIndex(int nextGameIndex, long tournamentId) throws DaoException;
 
+    void updateFirstPlayerId(PlainGameDto game) throws DaoException;
+
+    void updateSecondPlayerId(PlainGameDto game) throws DaoException;
+
+    void updateStartTime(PlainGameDto game) throws DaoException;
+
     List<ComplexGameDto> findAllComplex() throws DaoException;
 
     List<ComplexGameDto> findAllComplexOfPlayer(long id) throws DaoException;

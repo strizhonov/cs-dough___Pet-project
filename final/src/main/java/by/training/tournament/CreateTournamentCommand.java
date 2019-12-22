@@ -4,6 +4,7 @@ import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandType;
 import by.training.core.ApplicationContext;
+import by.training.core.NotEnoughFundsException;
 import by.training.core.ServiceException;
 import by.training.resourse.AppSetting;
 import by.training.resourse.AttributesContainer;
@@ -58,6 +59,9 @@ public class CreateTournamentCommand implements ActionCommand {
     public Optional<HttpRouter> direct(HttpServletRequest request, HttpServletResponse response)
             throws ActionCommandExecutionException {
 
+        HttpSession httpSession = request.getSession();
+        UserDto user = (UserDto) httpSession.getAttribute(AttributesContainer.USER.toString());
+
         try {
 
             List<FileItem> items = ServletUtil.parseRequest(request);
@@ -78,16 +82,27 @@ public class CreateTournamentCommand implements ActionCommand {
             }
 
 
-            HttpSession httpSession = request.getSession();
-            UserDto user = (UserDto) httpSession.getAttribute(AttributesContainer.USER.toString());
-
 
             TournamentDto genericDto = convert(user, items, validationDto, request);
+
             long tournamentId = tournamentService.create(genericDto);
 
 
             return Optional.of(new HttpRedirector(request.getContextPath()
                     + PathsContainer.COMMAND_TO_TOURNAMENT_PAGE + tournamentId));
+
+
+
+        } catch (NotEnoughFundsException e) {
+            LOGGER.error("Not enough funds.", e);
+            LocalizationManager manager
+                    = new LocalizationManager(AttributesContainer.I18N.toString(), request.getLocale());
+
+
+            request.setAttribute(AttributesContainer.MESSAGE.toString(),
+                    manager.getValue(AttributesContainer.NOT_ENOUGH_FUNDS.toString()));
+
+            return Optional.of(new HttpForwarder(PathsContainer.COMMAND_SHOW_ORGANIZER + user.getOrganizerId()));
 
         } catch (ServiceException | FileUploadException | IOException | ValidationException e) {
             LOGGER.error("Tournament creation failed.", e);
@@ -144,7 +159,9 @@ public class CreateTournamentCommand implements ActionCommand {
         }
 
         String name = validationDto.getName();
-        double reward = Double.parseDouble(validationDto.getOrganizerRewardPercentage());
+
+        // From percentage input to rate
+        double reward = Double.parseDouble(validationDto.getOrganizerRewardPercentage()) / 100;
         double bonus = Double.parseDouble(validationDto.getFromOrganizerBonus());
         double buyIn = Double.parseDouble(validationDto.getBuyIn());
         int playersNumber = Integer.parseInt(validationDto.getPlayersNumber());

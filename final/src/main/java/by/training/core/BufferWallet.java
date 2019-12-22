@@ -18,7 +18,7 @@ public class BufferWallet extends WalletDto {
 
     private static final long serialVersionUID = 4L;
 
-    private transient final AtomicBoolean initialized = new AtomicBoolean();
+    private final AtomicBoolean initialized = new AtomicBoolean();
 
 
     private BufferWallet() {

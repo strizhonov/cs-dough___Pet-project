@@ -2,6 +2,7 @@ package by.training.game;
 
 import by.training.connection.TransactionManager;
 import by.training.core.*;
+import by.training.player.PlainPlayerDto;
 import by.training.player.PlayerDao;
 import by.training.player.PlayerDto;
 import by.training.tournament.*;
@@ -79,8 +80,8 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
             GameServerDto gameServerDto = gameServerDao.getByGameId(gameId);
             GameServerModel server = new GameServerModel(gameServerDto);
 
-            boolean result = server.increaseFirstPlayerPoints();
-            if (result) {
+            boolean isGameFinished = server.increaseFirstPlayerPoints();
+            if (isGameFinished) {
 
                 /* Game is continuing */
                 gameServerDto.setPlayerOnePoints(server.getPlayerOnePoints());
@@ -88,7 +89,7 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
             } else {
 
                 /* Game is finished */
-                finishGame(gameId);
+                finishGame(gameId, server);
             }
 
             transactionManager.commitTransaction();
@@ -112,8 +113,8 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
             GameServerDto gameServerDto = gameServerDao.getByGameId(gameId);
             GameServerModel server = new GameServerModel(gameServerDto);
 
-            boolean result = server.increaseSecondPlayerPoints();
-            if (result) {
+            boolean isGameFinished = server.increaseSecondPlayerPoints();
+            if (isGameFinished) {
 
                 /* Game is continuing */
                 gameServerDto.setPlayerTwoPoints(server.getPlayerTwoPoints());
@@ -121,7 +122,7 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
             } else {
 
                 /* Game is finished */
-                finishGame(gameId);
+                finishGame(gameId, server);
             }
             transactionManager.commitTransaction();
 
@@ -197,9 +198,13 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
     }
 
 
-    private void finishGame(long gameId) throws DaoException, ServiceException {
+    private void finishGame(long gameId, GameServerModel server) throws DaoException, ServiceException {
 
         ComplexGameDto game = gameDao.getComplex(gameId);
+        game.setEndTime(server.getEndTime());
+        gameDao.update(game);
+
+
         int gameIndex = game.getBracketIndex();
         if (gameIndex == 0) {
 
@@ -279,8 +284,8 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
     }
 
 
-    private List<TournamentPlacement> createPlacements(List<ComplexGameDto> games,
-                                                       TournamentPrizing prizing, double prizePool) throws DaoException {
+    private List<TournamentPlacement> createPlacements(
+            List<ComplexGameDto> games, TournamentPrizing prizing, double prizePool) throws DaoException {
 
         List<TournamentPlacement> placements = new ArrayList<>();
 
@@ -304,6 +309,7 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
 
             // Setting winner placement
             if (gameIndex == 0) {
+
                 TournamentPlacement winner = getWinnerPlacement(prizing, prizePool, games.get(gameIndex));
                 placements.add(winner);
             }
@@ -317,12 +323,18 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
     private TournamentPlacement getWinnerPlacement(TournamentPrizing prizing, double prizePool, ComplexGameDto game)
             throws DaoException {
 
-        TournamentPlacement winner = new TournamentPlacement(1);
-        winner.setPrize(prizing.getPrizeRate(1) * prizePool);
-        winner.addPlayerId(playerDao.get(game.getWinner().getId()));
-        winner.setFinished(true);
+        TournamentPlacement winnerPlacement = new TournamentPlacement(1);
+        winnerPlacement.setPrize(prizing.getPrizeRate(1) * prizePool);
 
-        return winner;
+        PlainPlayerDto winner = game.getWinner();
+
+        if (winner != null) {
+            winnerPlacement.addPlayerId(playerDao.get(game.getWinner().getId()));
+            winnerPlacement.setFinished(true);
+        }
+
+
+        return winnerPlacement;
     }
 
 
@@ -336,8 +348,15 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
 
         // == If game is upcoming - setting both players for placement
         if (game.getWinner() == null) {
-            placement.addPlayerId(playerDao.get(game.getFirstPlayer().getId()));
-            placement.addPlayerId(playerDao.get(game.getSecondPlayer().getId()));
+
+            if (game.getFirstPlayer() != null) {
+                placement.addPlayerId(playerDao.get(game.getFirstPlayer().getId()));
+            }
+
+            if (game.getSecondPlayer() != null) {
+                placement.addPlayerId(playerDao.get(game.getSecondPlayer().getId()));
+            }
+
         } else {
 
 
