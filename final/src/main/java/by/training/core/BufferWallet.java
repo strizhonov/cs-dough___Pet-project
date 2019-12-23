@@ -6,8 +6,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Supposed to be Application Wallet.
- * General purpose is to store funds of participant
- * between start tournament and prize distribution at the end tournament.
+ * General purpose is to store funds of participants
+ * between tournament start and final prize distribution.
  *
  * @author Uladzislau Stryzhonak
  */
@@ -28,6 +28,7 @@ public class BufferWallet extends WalletDto {
         return BufferWallet.InstanceHolder.INSTANCE;
     }
 
+
     public void init(WalletDto walletDto) {
         if (!initialized.get()) {
 
@@ -40,9 +41,11 @@ public class BufferWallet extends WalletDto {
         }
     }
 
+
     private Object readResolve() {
         return getInstance();
     }
+
 
     private static class InstanceHolder {
         private static final BufferWallet INSTANCE = new BufferWallet();

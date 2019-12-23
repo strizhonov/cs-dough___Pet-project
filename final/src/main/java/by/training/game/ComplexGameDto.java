@@ -79,7 +79,7 @@ public class ComplexGameDto extends PlainGameDto {
 
 
     /**
-     * Gets winner player according to players' points and points to win.
+     * Get winner player according to players' points and points to win.
      *
      * @return null if game is not finished so there is no winner
      */
@@ -97,7 +97,7 @@ public class ComplexGameDto extends PlainGameDto {
 
 
     /**
-     * Gets looser player (opposite to winner player).
+     * Get looser player (opposite to winner player).
      *
      * @return null if winner is null.
      */

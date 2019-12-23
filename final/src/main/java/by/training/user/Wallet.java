@@ -37,6 +37,7 @@ public class Wallet extends Entity {
 
 
     public enum Currency {
+        // TO DO impl EUR and BYN
         EUR, USD, BYN;
 
         public static Currency getDefault() {
