@@ -24,7 +24,7 @@
                         <h2 class="col-sm-12"><fmt:message key="tournament.creation"/></h2>
                     </div>
                     <div class="avatar-block col-sm-5">
-                        <img id="logo" src="${pageContext.request.contextPath}/img/blank-logo.jpg"
+                        <img id="logo" src="${pageContext.request.contextPath}/img/def-tournament.png"
                              alt="">
                         <div>
                             <div id="upload-btn" onclick="getFile()"><fmt:message key="click.to.upload"/></div>
