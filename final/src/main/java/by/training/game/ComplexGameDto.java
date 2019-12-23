@@ -165,7 +165,7 @@ public class ComplexGameDto extends PlainGameDto {
     /**
      * Indicate if game is ready to start.
      *
-     * @return true if game has both players. If there is no at least one player, return false
+     * @return true if game has both players != null. If there is no at least one player == null, return false
      */
     public boolean isReady() {
         return firstPlayer != null && secondPlayer != null;
@@ -176,6 +176,7 @@ public class ComplexGameDto extends PlainGameDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         ComplexGameDto that = (ComplexGameDto) o;
         return Objects.equals(firstPlayer, that.firstPlayer) &&
                 Objects.equals(secondPlayer, that.secondPlayer) &&
@@ -186,7 +187,7 @@ public class ComplexGameDto extends PlainGameDto {
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstPlayer, secondPlayer, gameServer, tournament);
+        return 31 * super.hashCode() + Objects.hash(firstPlayer, secondPlayer, gameServer, tournament);
     }
 
 

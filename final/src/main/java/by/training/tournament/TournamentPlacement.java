@@ -34,7 +34,7 @@ public class TournamentPlacement {
     }
 
 
-    public void addPlayerId(PlayerDto player) {
+    public void addPlayer(PlayerDto player) {
         playersOnPosition.add(player);
     }
 

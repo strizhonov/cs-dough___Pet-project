@@ -340,7 +340,7 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
         PlainPlayerDto winner = game.getWinner();
 
         if (winner != null) {
-            winnerPlacement.addPlayerId(playerDao.get(game.getWinner().getId()));
+            winnerPlacement.addPlayer(playerDao.get(game.getWinner().getId()));
             winnerPlacement.setFinished(true);
         }
 
@@ -361,11 +361,11 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
         if (game.getWinner() == null) {
 
             if (game.getFirstPlayer() != null) {
-                placement.addPlayerId(playerDao.get(game.getFirstPlayer().getId()));
+                placement.addPlayer(playerDao.get(game.getFirstPlayer().getId()));
             }
 
             if (game.getSecondPlayer() != null) {
-                placement.addPlayerId(playerDao.get(game.getSecondPlayer().getId()));
+                placement.addPlayer(playerDao.get(game.getSecondPlayer().getId()));
             }
 
         } else {
@@ -373,7 +373,7 @@ public class GameServiceImpl extends BaseBeanService implements GameService {
 
             // == If game is finished, setting looser for placement
             // Winner will be process further
-            placement.addPlayerId(playerDao.get(game.getLooser().getId()));
+            placement.addPlayer(playerDao.get(game.getLooser().getId()));
             placement.setFinished(true);
         }
 

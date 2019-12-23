@@ -59,6 +59,7 @@ public class PlayerDto extends PlainPlayerDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         PlayerDto playerDto = (PlayerDto) o;
         return Objects.equals(tournamentsIds, playerDto.tournamentsIds) &&
                 Objects.equals(gamesIds, playerDto.gamesIds);
@@ -67,7 +68,7 @@ public class PlayerDto extends PlainPlayerDto {
 
     @Override
     public int hashCode() {
-        return Objects.hash(tournamentsIds, gamesIds);
+        return 31 * super.hashCode() + Objects.hash(tournamentsIds, gamesIds);
     }
 
 
