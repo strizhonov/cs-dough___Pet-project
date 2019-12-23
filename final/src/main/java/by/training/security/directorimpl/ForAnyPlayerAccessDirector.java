@@ -49,7 +49,7 @@ public class ForAnyPlayerAccessDirector extends BaseSecurityDirector {
         if (user != null) {
             request.setAttribute(AttributesContainer.MESSAGE.toString(),
                     localizationManager.getValue(MESSAGE_FOR_USER_KEY));
-            return Optional.of(new HttpForwarder(request.getContextPath() + REDIRECT_USER_TO));
+            return Optional.of(new HttpForwarder(REDIRECT_USER_TO));
 
         } else {
             request.setAttribute(AttributesContainer.MESSAGE.toString(),

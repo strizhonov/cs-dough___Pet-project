@@ -34,7 +34,7 @@ public class ForAdminAccessDirector extends BaseSecurityDirector {
 
     @Override
     protected Optional<HttpRouter> getHttpRouter(HttpServletRequest request, HttpServletResponse response) {
-        return Optional.of(new HttpRedirector(REDIRECT_TO));
+        return Optional.of(new HttpRedirector(request.getContextPath() + REDIRECT_TO));
     }
 
 }

@@ -36,7 +36,7 @@ public class ForUserAccessDirector extends BaseSecurityDirector {
 
         request.setAttribute(AttributesContainer.MESSAGE.toString(),
                 localizationManager.getValue(MESSAGE_KEY));
-        return Optional.of(new HttpForwarder(request.getContextPath() + REDIRECT_TO));
+        return Optional.of(new HttpForwarder(REDIRECT_TO));
     }
 
 

@@ -49,7 +49,7 @@ public class ChangeUserLanguageToRuCommand implements ActionCommand {
             userService.update(user);
 
             return Optional.of(new HttpRedirector(request.getContextPath()
-                    + PathsContainer.COMMAND_TO_USER_PAGE));
+                    + PathsContainer.FILE_USER_PROFILE_PAGE));
 
         } catch (ServiceException e) {
             LOGGER.error("Language setting failed.", e);

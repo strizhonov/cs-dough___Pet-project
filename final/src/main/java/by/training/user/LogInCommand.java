@@ -70,7 +70,7 @@ public class LogInCommand implements ActionCommand {
             String lang = userDto.getLanguage().name();
             httpSession.setAttribute(AttributesContainer.LANGUAGE.toString(), new Locale(lang));
 
-            return Optional.of(new HttpForwarder(PathsContainer.COMMAND_TO_USER_PAGE + userDto.getId()));
+            return Optional.of(new HttpForwarder(PathsContainer.FILE_USER_PROFILE_PAGE));
 
         } catch (ServiceException e) {
             LOGGER.error("Unable to retrieve user.", e);
