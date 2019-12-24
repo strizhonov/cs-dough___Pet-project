@@ -23,7 +23,8 @@
                         <h2 class="col-sm-12">${player.nickname}&nbsp<fmt:message key="editing"/></h2>
                     </div>
                     <div class="avatar-block col-sm-5">
-                        <img id="logo" src="${pageContext.request.contextPath}/img/nobody.jpg"
+                        <img id="logo"
+                             src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_PLAYER_PHOTO}${player.id}"
                              alt="">
                         <div>
                             <div id="upload-btn" onclick="getFile()"><fmt:message

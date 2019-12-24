@@ -83,9 +83,7 @@ public class UpdatePlayerCommand implements ActionCommand {
                         PathsContainer.COMMAND_SHOW_PLAYER + player.getId()));
 
             } else {
-
                 throw new ActionCommandExecutionException("Unable to perform player updating.");
-
             }
 
 

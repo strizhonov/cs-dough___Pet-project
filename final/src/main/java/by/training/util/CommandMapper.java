@@ -7,13 +7,17 @@ import by.training.player.PlayerDto;
 import by.training.player.PlayerValidationDto;
 import by.training.resourse.AppSetting;
 import by.training.resourse.AttributesContainer;
+import by.training.resourse.PathsContainer;
 import by.training.tournament.TournamentValidationDto;
 import by.training.user.UserValidationDto;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.IOUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 public class CommandMapper {
@@ -28,14 +32,12 @@ public class CommandMapper {
         FileItem item = items.get(++i);
         long logoSize = item.getSize();
 
-        String type;
-        if (logoSize == 0) {
-            type = AttributesContainer.BLANK.toString();
-        } else {
+        String type = AttributesContainer.BLANK.toString();
+        byte[] logo = null;
+        if (logoSize > 0) {
             type = item.getContentType();
+            logo = item.get();
         }
-
-        byte[] logo = item.get();
 
         String name = IOUtils.toString(items.get(++i).getInputStream(),
                 setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
@@ -49,16 +51,14 @@ public class CommandMapper {
         int i = -1;
 
         FileItem item = items.get(++i);
-        long logoSize = item.getSize();
+        long photoSize = item.getSize();
 
-        String type;
-        if (logoSize == 0) {
-            type = AttributesContainer.BLANK.toString();
-        } else {
+        String type = AttributesContainer.BLANK.toString();
+        byte[] photo = null;
+        if (photoSize > 0) {
             type = item.getContentType();
+            photo = item.get();
         }
-
-        byte[] photo = item.get();
 
         String nickname = IOUtils.toString(items.get(++i).getInputStream(),
                 setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
@@ -69,7 +69,7 @@ public class CommandMapper {
         String surname = IOUtils.toString(items.get(++i).getInputStream(),
                 setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
 
-        return new PlayerValidationDto(logoSize, type, photo, nickname, name, surname);
+        return new PlayerValidationDto(photoSize, type, photo, nickname, name, surname);
 
     }
 
@@ -119,13 +119,19 @@ public class CommandMapper {
 
 
     public static void merge(OrganizerDto organizer, OrganizerValidationDto validationDto) {
-        organizer.setLogo(validationDto.getLogo());
+        byte[] logo = validationDto.getLogo();
+        if (logo != null) {
+            organizer.setLogo(logo);
+        }
         organizer.setName(validationDto.getName());
     }
 
 
     public static void merge(PlayerDto player, PlayerValidationDto validationDto) {
-        player.setPhoto(validationDto.getPhoto());
+        byte[] photo = validationDto.getPhoto();
+        if (photo != null) {
+            player.setPhoto(photo);
+        }
         player.setNickname(validationDto.getNickname());
         player.setName(validationDto.getName());
         player.setSurname(validationDto.getSurname());

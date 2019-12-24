@@ -64,7 +64,7 @@ public class PlayerDataValidator extends ImageValidator implements InputDataVali
     @Override
     public ValidationResult validate(PlayerDto previous, PlayerValidationDto updated) throws ValidationException {
         ValidationResult result = new ValidationResult();
-        if (!Arrays.equals(previous.getPhoto(), updated.getPhoto())) {
+        if (updated.getPhoto() != null) {
 
             result = imageSize(updated.getPhotoSize());
             if (!result.isValid()) {

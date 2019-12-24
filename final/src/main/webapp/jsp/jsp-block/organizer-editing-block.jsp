@@ -26,7 +26,8 @@
                     </div>
                     <div class="row col-sm-12" style="margin: 0; padding: 0;">
                         <div class="org-logo col-sm-4">
-                            <img id="logo" src="${pageContext.request.contextPath}/img/blank-logo.jpg"
+                            <img id="logo"
+                                 src="${pageContext.request.contextPath}${PathsContainer.COMMAND_GET_ORGANIZER_LOGO}${organizer.id}"
                                  alt="">
                             <div>
                                 <div id="upload-btn" onclick="getFile()"><fmt:message key="click.to.upload"/></div>

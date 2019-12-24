@@ -17,15 +17,7 @@ public class TransactionManagerTest {
     @Test
     public void integral() throws SQLException, NoSuchFieldException, IllegalAccessException, InterruptedException {
 
-        AppSetting setting = new AppSetting();
-
-        ConnectionPool connectionPool = ConnectionPool.getInstance();
-        Field settingField = connectionPool.getClass().getDeclaredField("setting");
-        settingField.setAccessible(true);
-        settingField.set(connectionPool, setting);
-
-        connectionPool.init(15);
-
+        ConnectionPool connectionPool = new ConnectionPool(15);
 
         ConnectionProvider proxyProvider = new ConnectionProxyProvider(connectionPool);
         TransactionManager transactionManager = new TransactionManagerImpl(proxyProvider);
@@ -63,7 +55,7 @@ public class TransactionManagerTest {
 
                 Connection getConnectionFromGetting = ((ConnectionProvider) transactionManager).getConnection();
 
-                Assert.assertSame(getConnectionFromGetting, connectionFromStarting);
+                Assert.assertEquals(getConnectionFromGetting, connectionFromStarting);
 
 
                 if (random.nextBoolean()) {

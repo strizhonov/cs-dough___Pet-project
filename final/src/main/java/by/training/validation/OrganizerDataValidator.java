@@ -55,7 +55,7 @@ public class OrganizerDataValidator extends ImageValidator implements InputDataV
     public ValidationResult validate(OrganizerDto previous, OrganizerValidationDto updated) throws ValidationException {
         ValidationResult result = new ValidationResult();
 
-        if (!Arrays.equals(previous.getLogo(), updated.getLogo())) {
+        if (updated.getLogo() != null) {
             result = imageSize(updated.getLogoSize());
             if (result.isValid()) {
                 return result;
