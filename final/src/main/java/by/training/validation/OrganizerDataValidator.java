@@ -1,92 +1,93 @@
 package by.training.validation;
 
-import by.training.core.ApplicationContext;
 import by.training.core.ServiceException;
+import by.training.organizer.OrganizerDto;
 import by.training.organizer.OrganizerService;
 import by.training.organizer.OrganizerValidationDto;
-import by.training.resourse.AppSetting;
 import by.training.resourse.AttributesContainer;
 import by.training.resourse.LocalizationManager;
 import by.training.resourse.ValidationRegexp;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class OrganizerDataValidator implements InputDataValidator<OrganizerValidationDto> {
+public class OrganizerDataValidator extends ImageValidator implements InputDataValidator<OrganizerValidationDto>,
+        UpdatedDataValidator<OrganizerDto, OrganizerValidationDto> {
 
     private static final Logger LOGGER = LogManager.getLogger(OrganizerDataValidator.class);
-    private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
     private final OrganizerService organizerService;
-    private final LocalizationManager localizationManager;
 
 
     public OrganizerDataValidator(OrganizerService organizerService, LocalizationManager localizationManager) {
+        super(localizationManager);
         this.organizerService = organizerService;
-        this.localizationManager = localizationManager;
     }
 
 
     @Override
     public ValidationResult validate(OrganizerValidationDto dto) throws ValidationException {
-        ValidationResult logoSize = logoSize(dto.getLogoSize());
-        if (!logoSize.isValid()) {
-            return logoSize;
+        ValidationResult result = imageSize(dto.getLogoSize());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult imageType = imageType(dto.getLogoType());
-        if (!imageType.isValid()) {
-            return imageType;
+        result = imageType(dto.getLogoType());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult nameCorrectness = nameCorrectness(dto.getName());
-        if (!nameCorrectness.isValid()) {
-            return nameCorrectness;
+        result = nameCorrectness(dto.getName());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult nameUniqueness = nameUniqueness(dto.getName());
-        if (!nameUniqueness.isValid()) {
-            return nameUniqueness;
-        }
+        result = nameUniqueness(dto.getName());
 
-        return new ValidationResult();
+        return result;
+
     }
 
 
-    public ValidationResult logoSize(long size) {
+    @Override
+    public ValidationResult validate(OrganizerDto previous, OrganizerValidationDto updated) throws ValidationException {
         ValidationResult result = new ValidationResult();
 
-        String sAllowedSize = setting.get(AppSetting.SettingName.IMAGE_ALLOWED_SIZE);
-        if (size > Long.parseLong(sAllowedSize)) {
-            result.addIfAbsent(AttributesContainer.IMAGE_SIZE_ERROR.toString(),
-                    localizationManager.getValue(AttributesContainer.IMAGE_SIZE_ERROR.toString()));
+        if (!Arrays.equals(previous.getLogo(), updated.getLogo())) {
+            result = imageSize(updated.getLogoSize());
+            if (result.isValid()) {
+                return result;
+            }
+
+            result = imageType(updated.getLogoType());
+            if (result.isValid()) {
+                return result;
+            }
+
+        }
+
+        String newName = updated.getName();
+        if (!previous.getName().equals(newName)) {
+            result = nameCorrectness(newName);
+            if (result.isValid()) {
+                return result;
+            }
+
+            result = nameUniqueness(newName);
+
         }
 
         return result;
-    }
 
 
-    public ValidationResult imageType(String type) throws ValidationException {
-        if (type == null) {
-            throw new ValidationException("Value to validate is null.");
-        }
-
-        ValidationResult result = new ValidationResult();
-
-        Pattern pattern = Pattern.compile(ValidationRegexp.IMG_REGEXP);
-        Matcher matcher = pattern.matcher(type);
-
-        if (!matcher.find()) {
-            result.add(AttributesContainer.WRONG_IMAGE_TYPE.toString(),
-                    localizationManager.getValue(AttributesContainer.WRONG_IMAGE_TYPE.toString()));
-        }
-        return result;
     }
 
 
     public ValidationResult nameCorrectness(String name) throws ValidationException {
         if (name == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 
@@ -105,6 +106,7 @@ public class OrganizerDataValidator implements InputDataValidator<OrganizerValid
 
     public ValidationResult nameUniqueness(String name) throws ValidationException {
         if (name == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 
@@ -122,5 +124,6 @@ public class OrganizerDataValidator implements InputDataValidator<OrganizerValid
 
         return result;
     }
+
 
 }

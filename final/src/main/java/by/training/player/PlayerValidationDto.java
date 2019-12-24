@@ -1,6 +1,7 @@
 package by.training.player;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class PlayerValidationDto implements Serializable {
@@ -9,6 +10,7 @@ public class PlayerValidationDto implements Serializable {
 
     private long photoSize;
     private String photoType;
+    private byte[] photo;
     private String nickname;
     private String name;
     private String surname;
@@ -18,14 +20,25 @@ public class PlayerValidationDto implements Serializable {
     }
 
 
-    public PlayerValidationDto(long photoSize, String photoType, String nickname, String name, String surname) {
+    public PlayerValidationDto(long photoSize, String photoType, byte[] photo, String nickname, String name,
+                               String surname) {
         this.photoSize = photoSize;
         this.photoType = photoType;
+        if (photo == null) {
+            this.photo = null;
+        } else {
+            this.photo = Arrays.copyOf(photo, photo.length);
+        }
+        this.photo = photo;
         this.nickname = nickname;
         this.name = name;
         this.surname = surname;
     }
 
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
     public long getPhotoSize() {
         return photoSize;
@@ -41,6 +54,22 @@ public class PlayerValidationDto implements Serializable {
 
     public void setPhotoType(String photoType) {
         this.photoType = photoType;
+    }
+
+    public byte[] getPhoto() {
+        if (photo == null) {
+            return null;
+        } else {
+            return Arrays.copyOf(photo, photo.length);
+        }
+    }
+
+    public void setPhoto(byte[] photo) {
+        if (photo == null) {
+            this.photo = null;
+        } else {
+            this.photo = Arrays.copyOf(photo, photo.length);
+        }
     }
 
     public String getNickname() {
@@ -75,6 +104,7 @@ public class PlayerValidationDto implements Serializable {
         PlayerValidationDto that = (PlayerValidationDto) o;
         return photoSize == that.photoSize &&
                 Objects.equals(photoType, that.photoType) &&
+                Arrays.equals(photo, that.photo) &&
                 Objects.equals(nickname, that.nickname) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(surname, that.surname);
@@ -83,7 +113,9 @@ public class PlayerValidationDto implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(photoSize, photoType, nickname, name, surname);
+        int result = Objects.hash(photoSize, photoType, nickname, name, surname);
+        result = 31 * result + Arrays.hashCode(photo);
+        return result;
     }
 
 
@@ -92,6 +124,7 @@ public class PlayerValidationDto implements Serializable {
         return "PlayerValidationDto{" +
                 "photoSize=" + photoSize +
                 ", photoType='" + photoType + '\'' +
+                ", photo=" + Arrays.toString(photo) +
                 ", nickname='" + nickname + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +

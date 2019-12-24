@@ -7,4 +7,5 @@ public interface OrganizerDao extends CrudDao<OrganizerDto> {
 
     OrganizerDto getByName(String name) throws DaoException;
 
+    OrganizerDto getByUserId(long id) throws DaoException;
 }

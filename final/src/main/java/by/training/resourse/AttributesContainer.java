@@ -43,6 +43,7 @@ public enum AttributesContainer {
     ID,
     JPG,
     I18N,
+    IGNORE_VALIDATION,
     IMAGE_SIZE_ERROR,
     LANGUAGE,
     LATEST_GAMES,

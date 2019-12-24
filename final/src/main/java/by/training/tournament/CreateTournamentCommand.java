@@ -41,7 +41,6 @@ import java.util.Optional;
 public class CreateTournamentCommand implements ActionCommand {
 
     private static final Logger LOGGER = LogManager.getLogger(CreateTournamentCommand.class);
-    private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
     private final ActionCommandType type = ActionCommandType.CREATE_TOURNAMENT;
     private final TournamentService tournamentService;
 
@@ -70,7 +69,6 @@ public class CreateTournamentCommand implements ActionCommand {
         try {
 
             List<FileItem> items = ServletUtil.parseRequest(request);
-
             TournamentValidationDto validationDto = CommandMapper.mapTournamentValidationDto(items);
 
             InputDataValidator<TournamentValidationDto> validator

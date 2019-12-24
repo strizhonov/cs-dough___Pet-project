@@ -10,6 +10,8 @@ public interface PlayerService {
 
     PlayerDto find(long id) throws ServiceException;
 
+    PlayerDto findOfUser(long userId) throws ServiceException;
+
     boolean update(PlayerDto genericDto) throws ServiceException;
 
     boolean delete(long id) throws ServiceException;

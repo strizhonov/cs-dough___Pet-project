@@ -92,17 +92,17 @@ public final class ApplicationContext {
         AppSetting setting = new AppSetting();
         register(setting);
 
+        String sPoolSize = setting.get(AppSetting.SettingName.CONNECTION_POOL_SIZE);
 
-        ConnectionPool connectionPool = ConnectionPool.getInstance();
+        ConnectionPool connectionPool;
         try {
-            String sPoolSize = setting.get(AppSetting.SettingName.CONNECTION_POOL_SIZE);
-            connectionPool.init(Integer.parseInt(sPoolSize));
+            connectionPool = new ConnectionPool(Integer.parseInt(sPoolSize));
+
         } catch (SQLException e) {
             LOGGER.error("ConnectionPool initialization failed.", e);
             throw new ApplicationContextException("ConnectionPool initialization failed.", e);
         }
         register(connectionPool);
-
 
         ConnectionProvider connectionProvider = connectionPool.getConnectionProvider();
         register(connectionProvider);

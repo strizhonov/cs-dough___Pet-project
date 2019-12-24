@@ -50,12 +50,8 @@ public class LeaveTournamentCommand implements ActionCommand {
         try {
 
             if (tournamentService.leaveTournament(dto)) {
-
                 return Optional.of(new HttpForwarder(PathsContainer.COMMAND_TO_TOURNAMENT_PAGE + tournamentId));
-
             } else {
-
-
                 return Optional.of(new HttpRedirector(request.getContextPath() + PathsContainer.FILE_ERROR_PAGE));
             }
 

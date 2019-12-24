@@ -43,7 +43,6 @@ public class GetPlayerPhotoCommand implements ActionCommand {
             PlayerDto playerDto = playerService.find(Long.parseLong(id));
             byte[] photo = playerDto.getPhoto();
 
-
             response.setContentType(setting.get(AppSetting.SettingName.IMAGE_FORMAT));
             response.getOutputStream().write(photo);
             response.getOutputStream().flush();

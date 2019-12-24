@@ -46,6 +46,11 @@ public class PlayerDaoImpl implements PlayerDao {
                     "FROM player " +
                     "WHERE player.player_nickname = ?";
 
+    private static final String SELECT_BY_USER_ID =
+            "SELECT player_id, player_name, player_surname, player_nickname, player_photo, total_won, user_account_id " +
+                    "FROM player " +
+                    "WHERE player.user_account_id = ?";
+
     private static final String SELECT_PLAYER_GAMES_IDS =
             "SELECT game_id " +
                     "FROM game " +
@@ -179,6 +184,29 @@ public class PlayerDaoImpl implements PlayerDao {
                 } else {
                     LOGGER.error("Unable to get player with " + nickname + " id, not found.");
                     throw new EntityNotFoundException("Unable to get player with " + nickname + " id, not found.");
+                }
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error("Unable to perform entity retrieving.", e);
+            throw new DaoException("Unable to perform entity retrieving.", e);
+        }
+    }
+
+    @Override
+    public PlayerDto getByUserId(long userId) throws DaoException {
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SELECT_BY_USER_ID)) {
+
+            int i = 0;
+            statement.setLong(++i, userId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    return compile(resultSet);
+                } else {
+                    LOGGER.error("Unable to get player with " + userId + " user id, not found.");
+                    throw new EntityNotFoundException("Unable to get player with " + userId + " user id, not found.");
                 }
             }
 

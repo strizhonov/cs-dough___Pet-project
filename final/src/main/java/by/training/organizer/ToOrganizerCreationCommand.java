@@ -28,7 +28,6 @@ public class ToOrganizerCreationCommand implements ActionCommand {
     public Optional<HttpRouter> direct(HttpServletRequest request, HttpServletResponse response)
             throws ActionCommandExecutionException {
 
-
         return Optional.of(new HttpRedirector(request.getContextPath() + PathsContainer.FILE_ORGANIZER_CREATION));
 
     }

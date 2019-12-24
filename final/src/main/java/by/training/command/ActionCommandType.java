@@ -15,7 +15,6 @@ public enum ActionCommandType {
      * Synchronize your updating with ApplicationContext class
      * and ActionCommand implementation.
      */
-
     CHANGE_LANGUAGE_TO_EN(ANY),
     CHANGE_LANGUAGE_TO_RU(ANY),
     CHANGE_USER_LANGUAGE_TO_EN(USER),
@@ -71,7 +70,6 @@ public enum ActionCommandType {
 
     ActionCommandType(AccessAllowedForType accessType) {
         this.accessType = accessType;
-
     }
 
 

@@ -62,7 +62,7 @@ public class UpdateUsernameCommand implements ActionCommand {
 
             HttpSession httpSession = request.getSession();
             UserDto user = (UserDto) httpSession.getAttribute(AttributesContainer.USER.toString());
-            user.setEmail(username);
+            user.setUsername(username);
             userService.update(user);
 
             return Optional.of(new HttpRedirector(request.getContextPath()

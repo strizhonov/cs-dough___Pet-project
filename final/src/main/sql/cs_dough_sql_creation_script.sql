@@ -201,3 +201,14 @@ DEFAULT CHARACTER SET = utf8;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+-- -----------------------------------------------------
+-- AppWallet (and SuperUser for it)
+-- -----------------------------------------------------
+
+INSERT INTO cs_dough_db.user_account (user_id, username, user_password, password_key, user_email, user_type)
+VALUES (1, 'admin', 'admin', 'admin', 'admin', 'ADMIN');
+
+INSERT INTO wallet (wallet_id, user_id)
+VALUES (36, 1);

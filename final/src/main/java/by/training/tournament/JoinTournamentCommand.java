@@ -53,19 +53,16 @@ public class JoinTournamentCommand implements ActionCommand {
         try {
 
             if (tournamentService.joinTournament(dto)) {
-
                 return Optional.of(new HttpForwarder(PathsContainer.COMMAND_TO_TOURNAMENT_PAGE + tournamentId));
-
             } else {
-
                 return Optional.of(new HttpRedirector(request.getContextPath() + PathsContainer.FILE_ERROR_PAGE));
             }
 
         } catch (NotEnoughFundsException e) {
             LOGGER.error("Not enough funds.", e);
+
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
                     (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
-
 
             request.setAttribute(AttributesContainer.MESSAGE.toString(),
                     manager.getValue(AttributesContainer.NOT_ENOUGH_FUNDS.toString()));

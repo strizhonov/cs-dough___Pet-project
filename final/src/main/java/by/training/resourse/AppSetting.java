@@ -24,7 +24,6 @@ public class AppSetting {
          * Synchronize your updates with setting.properties
          */
 
-        APP_WALLET_HOLDER_ID,
         APP_WALLET_ID,
         CONNECTION_LIFETIME_MS,
         CONNECTION_POOL_SIZE,
@@ -59,6 +58,7 @@ public class AppSetting {
         HOME_PAGE_MAX_GAME_RESULTS,
         IMAGE_ALLOWED_SIZE,
         IMAGE_FORMAT,
+        MAX_WALLET_OPERATION_VALUE,
         STANDARD_CHARSET_NAME,
         TERMINATOR_EXECUTOR_DELAY,
         TERMINATOR_EXECUTOR_PERIOD,

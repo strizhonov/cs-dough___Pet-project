@@ -8,7 +8,7 @@
 <div class="container">
     <div class="row">
         <c:if test="${requestScope.message != null}">
-            <div class="notice">Log in first</div>
+            <div class="notice">${requestScope.message}</div>
         </c:if>
         <div class="main-holder container">
             <div class="col-sm-1">

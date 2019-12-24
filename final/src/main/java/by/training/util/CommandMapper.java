@@ -1,7 +1,9 @@
 package by.training.util;
 
 import by.training.core.ApplicationContext;
+import by.training.organizer.OrganizerDto;
 import by.training.organizer.OrganizerValidationDto;
+import by.training.player.PlayerDto;
 import by.training.player.PlayerValidationDto;
 import by.training.resourse.AppSetting;
 import by.training.resourse.AttributesContainer;
@@ -33,11 +35,13 @@ public class CommandMapper {
             type = item.getContentType();
         }
 
+        byte[] logo = item.get();
+
         String name = IOUtils.toString(items.get(++i).getInputStream(),
                 setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
 
 
-        return new OrganizerValidationDto(logoSize, type, name);
+        return new OrganizerValidationDto(logoSize, type, logo, name);
     }
 
 
@@ -54,6 +58,8 @@ public class CommandMapper {
             type = item.getContentType();
         }
 
+        byte[] photo = item.get();
+
         String nickname = IOUtils.toString(items.get(++i).getInputStream(),
                 setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
 
@@ -63,7 +69,7 @@ public class CommandMapper {
         String surname = IOUtils.toString(items.get(++i).getInputStream(),
                 setting.get(AppSetting.SettingName.STANDARD_CHARSET_NAME));
 
-        return new PlayerValidationDto(logoSize, type, nickname, name, surname);
+        return new PlayerValidationDto(logoSize, type, photo, nickname, name, surname);
 
     }
 
@@ -110,4 +116,20 @@ public class CommandMapper {
         return new UserValidationDto(username, email, password, passConfirmation);
 
     }
+
+
+    public static void merge(OrganizerDto organizer, OrganizerValidationDto validationDto) {
+        organizer.setLogo(validationDto.getLogo());
+        organizer.setName(validationDto.getName());
+    }
+
+
+    public static void merge(PlayerDto player, PlayerValidationDto validationDto) {
+        player.setPhoto(validationDto.getPhoto());
+        player.setNickname(validationDto.getNickname());
+        player.setName(validationDto.getName());
+        player.setSurname(validationDto.getSurname());
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package by.training.organizer;
 
 import by.training.core.ServiceException;
+import by.training.user.UserDto;
 
 public interface OrganizerService {
 
@@ -14,4 +15,5 @@ public interface OrganizerService {
 
     OrganizerDto findByName(String name) throws ServiceException;
 
+    OrganizerDto findOfUser(UserDto user) throws ServiceException;
 }

@@ -46,7 +46,6 @@ public class ListPlayerGamesCommand implements ActionCommand {
         String sId = request.getParameter(AttributesContainer.ID.toString());
         long id = Long.parseLong(sId);
 
-
         try {
 
             PlayerDto player = playerService.find(id);

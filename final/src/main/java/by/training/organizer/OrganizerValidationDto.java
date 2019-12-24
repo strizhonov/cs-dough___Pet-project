@@ -1,6 +1,7 @@
 package by.training.organizer;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class OrganizerValidationDto implements Serializable {
@@ -9,6 +10,7 @@ public class OrganizerValidationDto implements Serializable {
 
     private long logoSize;
     private String logoType;
+    private byte[] logo;
     private String name;
 
 
@@ -16,11 +18,18 @@ public class OrganizerValidationDto implements Serializable {
     }
 
 
-    public OrganizerValidationDto(long logoSize, String logoType, String name) {
+    public OrganizerValidationDto(long logoSize, String logoType, byte[] logo, String name) {
         this.logoSize = logoSize;
         this.logoType = logoType;
+        if (logo == null) {
+            this.logo = null;
+        } else {
+            this.logo = Arrays.copyOf(logo, logo.length);
+        }
+        this.logo = logo;
         this.name = name;
     }
+
 
     public long getLogoSize() {
         return logoSize;
@@ -36,6 +45,22 @@ public class OrganizerValidationDto implements Serializable {
 
     public void setLogoType(String logoType) {
         this.logoType = logoType;
+    }
+
+    public byte[] getLogo() {
+        if (logo == null) {
+            return null;
+        } else {
+            return Arrays.copyOf(logo, logo.length);
+        }
+    }
+
+    public void setLogo(byte[] logo) {
+        if (logo == null) {
+            this.logo = null;
+        } else {
+            this.logo = Arrays.copyOf(logo, logo.length);
+        }
     }
 
     public String getName() {
@@ -54,13 +79,16 @@ public class OrganizerValidationDto implements Serializable {
         OrganizerValidationDto that = (OrganizerValidationDto) o;
         return logoSize == that.logoSize &&
                 Objects.equals(logoType, that.logoType) &&
+                Arrays.equals(logo, that.logo) &&
                 Objects.equals(name, that.name);
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(logoSize, logoType, name);
+        int result = Objects.hash(logoSize, logoType, name);
+        result = 31 * result + Arrays.hashCode(logo);
+        return result;
     }
 
 
@@ -69,6 +97,7 @@ public class OrganizerValidationDto implements Serializable {
         return "OrganizerValidationDto{" +
                 "logoSize=" + logoSize +
                 ", logoType='" + logoType + '\'' +
+                ", logo=" + Arrays.toString(logo) +
                 ", name='" + name + '\'' +
                 '}';
     }

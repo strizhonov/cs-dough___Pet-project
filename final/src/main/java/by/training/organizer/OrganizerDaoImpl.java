@@ -46,6 +46,11 @@ public class OrganizerDaoImpl implements OrganizerDao {
                     "FROM organizer " +
                     "WHERE organizer_name = ?";
 
+    private static final String SELECT_BY_USER_ID =
+            "SELECT organizer_id, organizer_name, organizer_logo, user_account_id " +
+                    "FROM organizer " +
+                    "WHERE user_account_id = ?";
+
     private static final String SELECT_ORGANIZER_TOURNAMENTS_IDS =
             "SELECT tournament_id " +
                     "FROM tournament " +
@@ -176,6 +181,29 @@ public class OrganizerDaoImpl implements OrganizerDao {
                 } else {
                     LOGGER.error("Unable to get organizer with " + name + " name, not found.");
                     throw new EntityNotFoundException("Unable to get organizer with " + name + " name, not found.");
+                }
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error("Unable to perform entity retrieving.", e);
+            throw new DaoException("Unable to perform entity retrieving.", e);
+        }
+    }
+
+    @Override
+    public OrganizerDto getByUserId(long id) throws DaoException {
+        try (Connection connection = provider.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SELECT_BY_USER_ID)) {
+
+            int i = 0;
+            statement.setLong(++i, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    return compile(resultSet);
+                } else {
+                    LOGGER.error("Unable to get organizer with " + id + " user id, not found.");
+                    throw new EntityNotFoundException("Unable to get organizer with " + id + " user id, not found.");
                 }
             }
 

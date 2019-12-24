@@ -7,4 +7,5 @@ public interface PlayerDao extends CrudDao<PlayerDto> {
 
     PlayerDto getByNickname(String nickname) throws DaoException;
 
+    PlayerDto getByUserId(long userId) throws DaoException;
 }

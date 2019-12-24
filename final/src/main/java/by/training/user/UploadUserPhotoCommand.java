@@ -11,6 +11,7 @@ import by.training.servlet.HttpForwarder;
 import by.training.servlet.HttpRedirector;
 import by.training.servlet.HttpRouter;
 import by.training.util.ServletUtil;
+import by.training.validation.ImageValidator;
 import by.training.validation.UserDataValidator;
 import by.training.validation.ValidationException;
 import by.training.validation.ValidationResult;
@@ -62,10 +63,9 @@ public class UploadUserPhotoCommand implements ActionCommand {
                     (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
 
-            UserDataValidator validator = new UserDataValidator(userService, manager);
+            ImageValidator validator = new ImageValidator(manager);
 
-
-            ValidationResult result = validator.avatarSize(avatarSize).and(validator.imageType(type));
+            ValidationResult result = validator.imageSize(avatarSize).and(validator.imageType(type));
             if (!result.isValid()) {
                 request.setAttribute(AttributesContainer.MESSAGE.toString(), manager.getValue(result.getFirstKey()));
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_USER_PROFILE_PAGE));

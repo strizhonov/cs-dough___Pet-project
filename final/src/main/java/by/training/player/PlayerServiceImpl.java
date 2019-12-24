@@ -26,8 +26,7 @@ public class PlayerServiceImpl extends BaseBeanService implements PlayerService 
 
             return playerDao.save(playerDto);
 
-        } catch (Exception e) {
-            transactionManager.rollbackTransaction();
+        } catch (DaoException e) {
             LOGGER.error("Unable to save player.", e);
             throw new ServiceException("Unable to save player.", e);
         }
@@ -40,6 +39,21 @@ public class PlayerServiceImpl extends BaseBeanService implements PlayerService 
         try {
 
             return playerDao.get(id);
+
+        } catch (EntityNotFoundException e) {
+            LOGGER.warn("Player not found.", e);
+            return null;
+        } catch (DaoException e) {
+            LOGGER.error("Unable to get player.", e);
+            throw new ServiceException("Unable to get player.", e);
+        }
+    }
+
+    @Override
+    public PlayerDto findOfUser(long userId) throws ServiceException {
+        try {
+
+            return playerDao.getByUserId(userId);
 
         } catch (EntityNotFoundException e) {
             LOGGER.warn("Player not found.", e);

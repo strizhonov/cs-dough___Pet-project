@@ -46,7 +46,6 @@ public class GetTournamentLogoCommand implements ActionCommand {
             TournamentDto tournament = service.find(Long.parseLong(id));
             byte[] logo = tournament.getLogo();
 
-
             response.setContentType(setting.get(AppSetting.SettingName.IMAGE_FORMAT));
             response.getOutputStream().write(logo);
             response.getOutputStream().flush();

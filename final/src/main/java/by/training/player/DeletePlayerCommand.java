@@ -58,7 +58,6 @@ public class DeletePlayerCommand implements ActionCommand {
                 LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
                         (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
 
-
                 request.setAttribute(AttributesContainer.MESSAGE.toString(),
                         manager.getValue(AttributesContainer.PLAYER_DELETING_ERROR.toString()));
 

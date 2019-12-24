@@ -13,23 +13,19 @@ import by.training.servlet.HttpRouter;
 import by.training.user.UserDto;
 import by.training.util.CommandMapper;
 import by.training.util.ServletUtil;
-import by.training.validation.InputDataValidator;
 import by.training.validation.OrganizerDataValidator;
+import by.training.validation.UpdatedDataValidator;
 import by.training.validation.ValidationException;
 import by.training.validation.ValidationResult;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -55,41 +51,40 @@ public class UpdateOrganizerCommand implements ActionCommand {
     @Override
     public Optional<HttpRouter> direct(HttpServletRequest request, HttpServletResponse response)
             throws ActionCommandExecutionException {
+
+
+        HttpSession session = request.getSession();
+        UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
+
         try {
 
+            OrganizerDto organizer = organizerService.findOfUser(user);
+
             List<FileItem> items = ServletUtil.parseRequest(request);
-
             OrganizerValidationDto validationDto = CommandMapper.mapOrganizerValidationDto(items);
-
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
                     (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
-
-
-            InputDataValidator<OrganizerValidationDto> validator
+            UpdatedDataValidator<OrganizerDto, OrganizerValidationDto> validator
                     = new OrganizerDataValidator(organizerService, manager);
 
 
-            ValidationResult result = validator.validate(validationDto);
+            ValidationResult result = validator.validate(organizer, validationDto);
             if (!result.isValid()) {
                 request.setAttribute(AttributesContainer.MESSAGE.toString(), manager.getValue(result.getFirstKey()));
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_ORGANIZER_EDITING));
             }
 
-            HttpSession session = request.getSession();
-            UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
 
+            CommandMapper.merge(organizer, validationDto);
 
-            OrganizerDto genericDto = compile(validationDto, items, request, user);
-            if (organizerService.update(genericDto)) {
+            if (organizerService.update(organizer)) {
 
                 return Optional.of(new HttpRedirector(request.getContextPath()
-                        + PathsContainer.COMMAND_SHOW_ORGANIZER + genericDto.getId()));
+                        + PathsContainer.COMMAND_SHOW_ORGANIZER + organizer.getId()));
 
             } else {
-
                 throw new ActionCommandExecutionException("Unable to perform organizer updating.");
-
             }
 
 
@@ -100,25 +95,4 @@ public class UpdateOrganizerCommand implements ActionCommand {
 
     }
 
-
-    private OrganizerDto compile(OrganizerValidationDto validationDto, List<FileItem> items, HttpServletRequest request,
-                                 UserDto user) throws IOException {
-
-        byte[] logo = items.get(0).get();
-        if (logo == null || logo.length == 0) {
-            File file = new File(request.getServletContext().getRealPath(PathsContainer.FILE_BLANK_LOGO));
-            InputStream is = new FileInputStream(file);
-            logo = IOUtils.toByteArray(is);
-        }
-
-        String sId = request.getParameter(AttributesContainer.ID.toString());
-
-        return OrganizerDto.Builder.anOrganizerDto()
-                .id(Long.parseLong(sId))
-                .name(validationDto.getName())
-                .logo(logo)
-                .userId(user.getId())
-                .build();
-
-    }
 }

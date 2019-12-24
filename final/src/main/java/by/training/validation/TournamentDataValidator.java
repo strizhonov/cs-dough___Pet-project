@@ -1,8 +1,6 @@
 package by.training.validation;
 
-import by.training.core.ApplicationContext;
 import by.training.core.ServiceException;
-import by.training.resourse.AppSetting;
 import by.training.resourse.AttributesContainer;
 import by.training.resourse.LocalizationManager;
 import by.training.resourse.ValidationRegexp;
@@ -14,98 +12,62 @@ import org.apache.logging.log4j.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TournamentDataValidator implements InputDataValidator<TournamentValidationDto> {
+public class TournamentDataValidator extends ImageValidator implements InputDataValidator<TournamentValidationDto> {
 
     private static final Logger LOGGER = LogManager.getLogger(TournamentDataValidator.class);
-    private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
     private TournamentService tournamentService;
-    private final LocalizationManager localizationManager;
-
 
     public TournamentDataValidator(TournamentService tournamentService, LocalizationManager localizationManager) {
+        super(localizationManager);
         this.tournamentService = tournamentService;
-        this.localizationManager = localizationManager;
     }
 
 
     public ValidationResult validate(TournamentValidationDto dto) throws ValidationException {
-        ValidationResult logoSize = logoSize(dto.getLogoSize());
-        if (!logoSize.isValid()) {
-            return logoSize;
+        ValidationResult result = imageSize(dto.getLogoSize());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult imageType = imageType(dto.getLogoType());
-        if (!imageType.isValid()) {
-            return imageType;
+        result = imageType(dto.getLogoType());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult nameCorrectness = nameCorrectness(dto.getName());
-        if (!nameCorrectness.isValid()) {
-            return nameCorrectness;
+        result = nameCorrectness(dto.getName());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult nameUniqueness = nameUniqueness(dto.getName());
-        if (!nameUniqueness.isValid()) {
-            return nameUniqueness;
+        result = nameUniqueness(dto.getName());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult reward = rewardRate(dto.getOrganizerRewardPercentage());
-        if (!reward.isValid()) {
-            return reward;
+        result = rewardRate(dto.getOrganizerRewardPercentage());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult bonus = bonus(dto.getFromOrganizerBonus());
-        if (!bonus.isValid()) {
-            return bonus;
+        result = bonus(dto.getFromOrganizerBonus());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult buyIn = buyIn(dto.getBuyIn());
-        if (!buyIn.isValid()) {
-            return buyIn;
+        result = buyIn(dto.getBuyIn());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult playersNumber = playersNumber(dto.getPlayersNumber());
-        if (!playersNumber.isValid()) {
-            return playersNumber;
-        }
+        result = playersNumber(dto.getPlayersNumber());
 
-        return new ValidationResult();
-    }
-
-
-    public ValidationResult logoSize(long size) {
-        ValidationResult result = new ValidationResult();
-
-        String sAllowedSize = setting.get(AppSetting.SettingName.IMAGE_ALLOWED_SIZE);
-        if (size > Long.parseLong(sAllowedSize)) {
-            result.addIfAbsent(AttributesContainer.IMAGE_SIZE_ERROR.toString(),
-                    localizationManager.getValue(AttributesContainer.IMAGE_SIZE_ERROR.toString()));
-        }
-
-        return result;
-    }
-
-
-    public ValidationResult imageType(String type) throws ValidationException {
-        if (type == null) {
-            throw new ValidationException("Value to validate is null.");
-        }
-
-        ValidationResult result = new ValidationResult();
-
-        Pattern pattern = Pattern.compile(ValidationRegexp.IMG_REGEXP);
-        Matcher matcher = pattern.matcher(type);
-
-        if (!matcher.find()) {
-            result.add(AttributesContainer.WRONG_IMAGE_TYPE.toString(),
-                    localizationManager.getValue(AttributesContainer.WRONG_IMAGE_TYPE.toString()));
-        }
         return result;
     }
 
 
     public ValidationResult nameCorrectness(String name) throws ValidationException {
         if (name == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 
@@ -142,6 +104,7 @@ public class TournamentDataValidator implements InputDataValidator<TournamentVal
 
     public ValidationResult rewardRate(String sReward) throws ValidationException {
         if (sReward == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 
@@ -165,6 +128,7 @@ public class TournamentDataValidator implements InputDataValidator<TournamentVal
 
     public ValidationResult bonus(String bonus) throws ValidationException {
         if (bonus == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 
@@ -187,6 +151,7 @@ public class TournamentDataValidator implements InputDataValidator<TournamentVal
 
     public ValidationResult buyIn(String buyIn) throws ValidationException {
         if (buyIn == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 
@@ -208,6 +173,7 @@ public class TournamentDataValidator implements InputDataValidator<TournamentVal
 
     public ValidationResult playersNumber(String playersNumber) throws ValidationException {
         if (playersNumber == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 

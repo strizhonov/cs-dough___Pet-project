@@ -1,102 +1,119 @@
 package by.training.validation;
 
-import by.training.core.ApplicationContext;
 import by.training.core.ServiceException;
+import by.training.player.PlayerDto;
 import by.training.player.PlayerService;
 import by.training.player.PlayerValidationDto;
-import by.training.resourse.AppSetting;
 import by.training.resourse.AttributesContainer;
 import by.training.resourse.LocalizationManager;
 import by.training.resourse.ValidationRegexp;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PlayerDataValidator implements InputDataValidator<PlayerValidationDto> {
+public class PlayerDataValidator extends ImageValidator implements InputDataValidator<PlayerValidationDto>,
+        UpdatedDataValidator<PlayerDto, PlayerValidationDto> {
 
     private static final Logger LOGGER = LogManager.getLogger(PlayerDataValidator.class);
-    private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
     private final PlayerService playerService;
-    private final LocalizationManager localizationManager;
 
 
     public PlayerDataValidator(PlayerService playerService, LocalizationManager localizationManager) {
+        super(localizationManager);
         this.playerService = playerService;
-        this.localizationManager = localizationManager;
     }
 
 
+    @Override
     public ValidationResult validate(PlayerValidationDto dto) throws ValidationException {
-        ValidationResult photoSize = photoSize(dto.getPhotoSize());
-        if (!photoSize.isValid()) {
-            return photoSize;
+        ValidationResult result = imageSize(dto.getPhotoSize());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult imageType = imageType(dto.getPhotoType());
-        if (!imageType.isValid()) {
-            return imageType;
+        result = imageType(dto.getPhotoType());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult nicknameCorrectness = nicknameCorrectness(dto.getNickname());
-        if (!nicknameCorrectness.isValid()) {
-            return nicknameCorrectness;
+        result = nicknameCorrectness(dto.getNickname());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult nicknameUniqueness = nicknameUniqueness(dto.getNickname());
-        if (!nicknameUniqueness.isValid()) {
-            return nicknameUniqueness;
+        result = nicknameUniqueness(dto.getNickname());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult nameCorrectness = nameCorrectness(dto.getName());
-        if (!nameCorrectness.isValid()) {
-            return nameCorrectness;
+        result = nameCorrectness(dto.getName());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult surnameCorrectness = surnameCorrectness(dto.getSurname());
-        if (!surnameCorrectness.isValid()) {
-            return surnameCorrectness;
-        }
-
-        return new ValidationResult();
-    }
-
-
-    public ValidationResult photoSize(long size) {
-        ValidationResult result = new ValidationResult();
-
-        String sAllowedSize = setting.get(AppSetting.SettingName.IMAGE_ALLOWED_SIZE);
-
-        if (size > Long.parseLong(sAllowedSize)) {
-            result.addIfAbsent(AttributesContainer.IMAGE_SIZE_ERROR.toString(),
-                    localizationManager.getValue(AttributesContainer.IMAGE_SIZE_ERROR.toString()));
-        }
+        result = surnameCorrectness(dto.getSurname());
 
         return result;
+
     }
 
 
-    public ValidationResult imageType(String type) throws ValidationException {
-        if (type == null) {
-            throw new ValidationException("Value to validate is null.");
-        }
-
+    @Override
+    public ValidationResult validate(PlayerDto previous, PlayerValidationDto updated) throws ValidationException {
         ValidationResult result = new ValidationResult();
+        if (!Arrays.equals(previous.getPhoto(), updated.getPhoto())) {
 
-        Pattern pattern = Pattern.compile(ValidationRegexp.IMG_REGEXP);
-        Matcher matcher = pattern.matcher(type);
+            result = imageSize(updated.getPhotoSize());
+            if (!result.isValid()) {
+                return result;
+            }
 
-        if (!matcher.find()) {
-            result.add(AttributesContainer.WRONG_IMAGE_TYPE.toString(),
-                    localizationManager.getValue(AttributesContainer.WRONG_IMAGE_TYPE.toString()));
+            result = imageType(updated.getPhotoType());
+            if (!result.isValid()) {
+                return result;
+            }
+
         }
+
+
+        if (!previous.getNickname().equals(updated.getNickname())) {
+
+            result = nicknameCorrectness(updated.getNickname());
+            if (!result.isValid()) {
+                return result;
+            }
+
+            result = nicknameUniqueness(updated.getNickname());
+            if (!result.isValid()) {
+                return result;
+            }
+        }
+
+
+        if (!previous.getName().equals(updated.getName())) {
+
+            result = nameCorrectness(updated.getName());
+            if (!result.isValid()) {
+                return result;
+            }
+
+        }
+
+
+        if (!previous.getSurname().equals(updated.getSurname())) {
+            result = surnameCorrectness(updated.getSurname());
+        }
+
         return result;
     }
 
 
     public ValidationResult nicknameCorrectness(String nickname) throws ValidationException {
         if (nickname == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 
@@ -116,6 +133,7 @@ public class PlayerDataValidator implements InputDataValidator<PlayerValidationD
 
     public ValidationResult nicknameUniqueness(String nickname) throws ValidationException {
         if (nickname == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 
@@ -137,6 +155,7 @@ public class PlayerDataValidator implements InputDataValidator<PlayerValidationD
 
     public ValidationResult nameCorrectness(String name) throws ValidationException {
         if (name == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 
@@ -155,6 +174,7 @@ public class PlayerDataValidator implements InputDataValidator<PlayerValidationD
 
     public ValidationResult surnameCorrectness(String surname) throws ValidationException {
         if (surname == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 

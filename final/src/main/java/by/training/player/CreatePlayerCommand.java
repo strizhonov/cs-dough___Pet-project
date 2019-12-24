@@ -3,9 +3,7 @@ package by.training.player;
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandType;
-import by.training.core.ApplicationContext;
 import by.training.core.ServiceException;
-import by.training.resourse.AppSetting;
 import by.training.resourse.AttributesContainer;
 import by.training.resourse.LocalizationManager;
 import by.training.resourse.PathsContainer;
@@ -39,7 +37,6 @@ import java.util.Optional;
 public class CreatePlayerCommand implements ActionCommand {
 
     private static final Logger LOGGER = LogManager.getLogger(CreatePlayerCommand.class);
-    private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
     private final ActionCommandType type = ActionCommandType.CREATE_PLAYER;
     private final PlayerService playerService;
 
@@ -62,24 +59,15 @@ public class CreatePlayerCommand implements ActionCommand {
         try {
 
             List<FileItem> items = ServletUtil.parseRequest(request);
-
             PlayerValidationDto validationDto = CommandMapper.mapPlayerValidationDto(items);
-
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
                     (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
-
-
-            InputDataValidator<PlayerValidationDto> validator
-                    = new PlayerDataValidator(playerService, manager);
-
+            InputDataValidator<PlayerValidationDto> validator = new PlayerDataValidator(playerService, manager);
 
             ValidationResult result = validator.validate(validationDto);
             if (!result.isValid()) {
-
-                request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                        manager.getValue(result.getFirstKey()));
-
+                request.setAttribute(AttributesContainer.MESSAGE.toString(), manager.getValue(result.getFirstKey()));
                 return Optional.of(new HttpForwarder(PathsContainer.FILE_PLAYER_CREATION));
             }
 
@@ -87,7 +75,7 @@ public class CreatePlayerCommand implements ActionCommand {
             UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
 
 
-            PlayerDto genericDto = compile(validationDto, items, request, user);
+            PlayerDto genericDto = compile(validationDto, request, user);
             long playerId = playerService.create(genericDto);
 
 
@@ -107,10 +95,10 @@ public class CreatePlayerCommand implements ActionCommand {
     }
 
 
-    private PlayerDto compile(PlayerValidationDto validationDto, List<FileItem> items, HttpServletRequest request,
+    private PlayerDto compile(PlayerValidationDto validationDto, HttpServletRequest request,
                               UserDto user) throws IOException {
 
-        byte[] photo = items.get(0).get();
+        byte[] photo = validationDto.getPhoto();
         if (photo == null || photo.length == 0) {
             File file = new File(request.getServletContext().getRealPath(PathsContainer.FILE_NOBODY));
             InputStream is = new FileInputStream(file);

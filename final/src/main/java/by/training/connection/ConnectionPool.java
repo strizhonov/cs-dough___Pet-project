@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -23,7 +22,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ConnectionPool implements AutoCloseable {
 
     private static final Logger LOGGER = LogManager.getLogger(ConnectionPool.class);
-    private final AtomicBoolean initialized = new AtomicBoolean();
     private final List<Connection> available = new ArrayList<>();
     private final Map<Connection, Date> borrowed = new HashMap<>();
     private final Lock lock = new ReentrantLock();
@@ -31,29 +29,14 @@ public class ConnectionPool implements AutoCloseable {
     private final ConnectionProvider connectionProvider = new ConnectionProxyProvider(this);
     private final ScheduledExecutorService terminatorExecutorService = Executors.newSingleThreadScheduledExecutor();
     private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
-    private int poolSize;
+    private final int poolSize;
 
 
-    private ConnectionPool() {
-
-    }
-
-
-    public static ConnectionPool getInstance() {
-        return InstanceHolder.INSTANCE;
-    }
-
-
-    public void init(int poolSize) throws SQLException {
-        if (!initialized.get()) {
-            this.poolSize = poolSize;
-
-            register();
-            initConnections(poolSize);
-            initConnectionTerminator();
-
-            initialized.set(true);
-        }
+    public ConnectionPool(int poolSize) throws SQLException {
+        this.poolSize = poolSize;
+        register();
+        initConnections(poolSize);
+        initConnectionTerminator();
     }
 
 
@@ -176,11 +159,6 @@ public class ConnectionPool implements AutoCloseable {
         String password = setting.get(AppSetting.SettingName.DB_PASSWORD);
 
         return DriverManager.getConnection(url, user, password);
-    }
-
-
-    private static class InstanceHolder {
-        private static final ConnectionPool INSTANCE = new ConnectionPool();
     }
 
 

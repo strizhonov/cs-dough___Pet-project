@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 public class UserDataValidator implements InputDataValidator<UserValidationDto> {
 
     private static final Logger LOGGER = LogManager.getLogger(UserDataValidator.class);
-    private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
     private final UserService userService;
     private final LocalizationManager localizationManager;
 
@@ -30,42 +29,41 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
 
     @Override
     public ValidationResult validate(UserValidationDto dto) throws ValidationException {
-        ValidationResult usernameCorrectness = usernameCorrectness(dto.getUsername());
-        if (!usernameCorrectness.isValid()) {
-            return usernameCorrectness;
+        ValidationResult result = usernameCorrectness(dto.getUsername());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult usernameUniqueness = usernameUniqueness(dto.getUsername());
-        if (!usernameUniqueness.isValid()) {
-            return usernameUniqueness;
+        result = usernameUniqueness(dto.getUsername());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult emailCorrectness = emailCorrectness(dto.getEmail());
-        if (!emailCorrectness.isValid()) {
-            return emailCorrectness;
+        result = emailCorrectness(dto.getEmail());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult emailUniqueness = emailUniqueness(dto.getEmail());
-        if (!emailUniqueness.isValid()) {
-            return emailUniqueness;
+        result = emailUniqueness(dto.getEmail());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult passwordCorrectness = passwordCorrectness(dto.getPassword());
-        if (!passwordCorrectness.isValid()) {
-            return passwordCorrectness;
+        result = passwordCorrectness(dto.getPassword());
+        if (!result.isValid()) {
+            return result;
         }
 
-        ValidationResult passwordsEquality = passwordsEquality(dto.getPassword(), dto.getPasswordConfirmation());
-        if (!passwordsEquality.isValid()) {
-            return passwordsEquality;
-        }
+        result = passwordsEquality(dto.getPassword(), dto.getPasswordConfirmation());
 
-        return new ValidationResult();
+        return result;
+
     }
 
 
     public ValidationResult usernameCorrectness(String username) throws ValidationException {
         if (username == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 
@@ -84,6 +82,7 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
 
     public ValidationResult usernameUniqueness(String username) throws ValidationException {
         if (username == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 
@@ -105,6 +104,7 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
 
     public ValidationResult emailCorrectness(String email) throws ValidationException {
         if (email == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 
@@ -123,6 +123,7 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
 
     public ValidationResult emailUniqueness(String email) throws ValidationException {
         if (email == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 
@@ -145,6 +146,7 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
 
     public ValidationResult passwordCorrectness(String password) throws ValidationException {
         if (password == null) {
+            LOGGER.error("Value to validate is null.");
             throw new ValidationException("Value to validate is null.");
         }
 
@@ -176,34 +178,4 @@ public class UserDataValidator implements InputDataValidator<UserValidationDto> 
         return result;
     }
 
-
-    public ValidationResult avatarSize(long size) {
-        ValidationResult result = new ValidationResult();
-
-        String sAllowedSize = setting.get(AppSetting.SettingName.IMAGE_ALLOWED_SIZE);
-        if (size > Long.parseLong(sAllowedSize)) {
-            result.addIfAbsent(AttributesContainer.IMAGE_SIZE_ERROR.toString(),
-                    localizationManager.getValue(AttributesContainer.IMAGE_SIZE_ERROR.toString()));
-        }
-
-        return result;
-    }
-
-
-    public ValidationResult imageType(String type) throws ValidationException {
-        if (type == null) {
-            throw new ValidationException("Value to validate is null.");
-        }
-
-        ValidationResult result = new ValidationResult();
-
-        Pattern pattern = Pattern.compile(ValidationRegexp.IMG_REGEXP);
-        Matcher matcher = pattern.matcher(type);
-
-        if (!matcher.find()) {
-            result.add(AttributesContainer.WRONG_IMAGE_TYPE.toString(),
-                    localizationManager.getValue(AttributesContainer.WRONG_IMAGE_TYPE.toString()));
-        }
-        return result;
-    }
 }

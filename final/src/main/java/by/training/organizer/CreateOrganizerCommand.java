@@ -3,9 +3,7 @@ package by.training.organizer;
 import by.training.command.ActionCommand;
 import by.training.command.ActionCommandExecutionException;
 import by.training.command.ActionCommandType;
-import by.training.core.ApplicationContext;
 import by.training.core.ServiceException;
-import by.training.resourse.AppSetting;
 import by.training.resourse.AttributesContainer;
 import by.training.resourse.LocalizationManager;
 import by.training.resourse.PathsContainer;
@@ -40,7 +38,6 @@ public class CreateOrganizerCommand implements ActionCommand {
 
 
     private static final Logger LOGGER = LogManager.getLogger(CreateOrganizerCommand.class);
-    private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
     private final ActionCommandType type = ActionCommandType.CREATE_ORGANIZER;
     private final OrganizerService organizerService;
 
@@ -62,17 +59,12 @@ public class CreateOrganizerCommand implements ActionCommand {
         try {
 
             List<FileItem> items = ServletUtil.parseRequest(request);
-
             OrganizerValidationDto validationDto = CommandMapper.mapOrganizerValidationDto(items);
-
 
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
                     (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
-
-
             InputDataValidator<OrganizerValidationDto> validator
                     = new OrganizerDataValidator(organizerService, manager);
-
 
             ValidationResult result = validator.validate(validationDto);
             if (!result.isValid()) {
@@ -84,7 +76,7 @@ public class CreateOrganizerCommand implements ActionCommand {
             UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
 
 
-            OrganizerDto genericDto = compile(validationDto, items, request, user);
+            OrganizerDto genericDto = compile(validationDto, request, user);
             long organizerId = organizerService.create(genericDto);
 
 
@@ -103,10 +95,10 @@ public class CreateOrganizerCommand implements ActionCommand {
     }
 
 
-    private OrganizerDto compile(OrganizerValidationDto validationDto, List<FileItem> items, HttpServletRequest request,
+    private OrganizerDto compile(OrganizerValidationDto validationDto, HttpServletRequest request,
                                  UserDto user) throws IOException {
 
-        byte[] logo = items.get(0).get();
+        byte[] logo = validationDto.getLogo();
         if (logo == null || logo.length == 0) {
             File file = new File(request.getServletContext().getRealPath(PathsContainer.FILE_BLANK_LOGO));
             InputStream is = new FileInputStream(file);

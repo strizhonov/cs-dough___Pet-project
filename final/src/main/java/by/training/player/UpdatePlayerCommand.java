@@ -15,10 +15,7 @@ import by.training.servlet.HttpRouter;
 import by.training.user.UserDto;
 import by.training.util.CommandMapper;
 import by.training.util.ServletUtil;
-import by.training.validation.InputDataValidator;
-import by.training.validation.PlayerDataValidator;
-import by.training.validation.ValidationException;
-import by.training.validation.ValidationResult;
+import by.training.validation.*;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.IOUtils;
@@ -40,13 +37,11 @@ public class UpdatePlayerCommand implements ActionCommand {
 
     private final ActionCommandType type = ActionCommandType.UPDATE_PLAYER;
     private static final Logger LOGGER = LogManager.getLogger(CreatePlayerCommand.class);
-    private final AppSetting setting = (AppSetting) ApplicationContext.getInstance().get(AppSetting.class);
     private final PlayerService playerService;
 
 
     public UpdatePlayerCommand(PlayerService playerService) {
         this.playerService = playerService;
-
     }
 
 
@@ -62,36 +57,30 @@ public class UpdatePlayerCommand implements ActionCommand {
 
         try {
 
-            List<FileItem> items = ServletUtil.parseRequest(request);
-
-            PlayerValidationDto validationDto = CommandMapper.mapPlayerValidationDto(items);
-
-
             LocalizationManager manager = new LocalizationManager(AttributesContainer.I18N.toString(),
                     (Locale) request.getSession().getAttribute(AttributesContainer.LANGUAGE.toString()));
-
-
-            InputDataValidator<PlayerValidationDto> validator
+            UpdatedDataValidator<PlayerDto, PlayerValidationDto> validator
                     = new PlayerDataValidator(playerService, manager);
-
-
-            ValidationResult result = validator.validate(validationDto);
-            if (!result.isValid()) {
-                request.setAttribute(AttributesContainer.MESSAGE.toString(),
-                        manager.getValue(result.getFirstKey()));
-                return Optional.of(new HttpForwarder(PathsContainer.FILE_PLAYER_EDITING));
-            }
 
             HttpSession session = request.getSession();
             UserDto user = (UserDto) session.getAttribute(AttributesContainer.USER.toString());
+            PlayerDto player = playerService.findOfUser(user.getId());
+
+            List<FileItem> items = ServletUtil.parseRequest(request);
+            PlayerValidationDto validationDto = CommandMapper.mapPlayerValidationDto(items);
+
+            ValidationResult result = validator.validate(player, validationDto);
+            if (!result.isValid()) {
+                request.setAttribute(AttributesContainer.MESSAGE.toString(), manager.getValue(result.getFirstKey()));
+                return Optional.of(new HttpForwarder(PathsContainer.FILE_PLAYER_EDITING));
+            }
 
 
-
-            PlayerDto genericDto = convert(validationDto, items, request, user);
-            if (playerService.update(genericDto)) {
+            CommandMapper.merge(player, validationDto);
+            if (playerService.update(player)) {
 
                 return Optional.of(new HttpRedirector(request.getContextPath() +
-                        PathsContainer.COMMAND_SHOW_PLAYER + genericDto.getId()));
+                        PathsContainer.COMMAND_SHOW_PLAYER + player.getId()));
 
             } else {
 
@@ -105,31 +94,9 @@ public class UpdatePlayerCommand implements ActionCommand {
             throw new ActionCommandExecutionException("Unable to perform player creation.", e);
         }
 
-
     }
 
 
-    private PlayerDto convert(PlayerValidationDto validationDto, List<FileItem> items, HttpServletRequest request,
-                              UserDto user) throws IOException {
-
-        byte[] photo = items.get(0).get();
-        if (photo == null || photo.length == 0) {
-            File file = new File(request.getServletContext().getRealPath(PathsContainer.FILE_NOBODY));
-            InputStream is = new FileInputStream(file);
-            photo = IOUtils.toByteArray(is);
-        }
-
-
-        return new PlayerDto.Builder()
-                .id(user.getPlayerAccountId())
-                .photo(photo)
-                .name(validationDto.getName())
-                .surname(validationDto.getSurname())
-                .nickname(validationDto.getNickname())
-                .userId(user.getId())
-                .build();
-
-    }
 
 
 }

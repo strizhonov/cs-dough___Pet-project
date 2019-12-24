@@ -2,6 +2,7 @@ package by.training.organizer;
 
 import by.training.connection.TransactionManager;
 import by.training.core.*;
+import by.training.user.UserDto;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -77,10 +78,10 @@ public class OrganizerServiceImpl extends BaseBeanService implements OrganizerSe
 
     @Override
     public OrganizerDto findByName(String name) throws ServiceException {
-
         try {
 
             return organizerDao.getByName(name);
+
         } catch (EntityNotFoundException e) {
             LOGGER.error("Organizer with id " + name + " not found.", e);
             return null;
@@ -90,6 +91,22 @@ public class OrganizerServiceImpl extends BaseBeanService implements OrganizerSe
             throw new ServiceException("Organizer deleting failed.", e);
         }
 
+    }
+
+    @Override
+    public OrganizerDto findOfUser(UserDto user) throws ServiceException {
+        try {
+
+            return organizerDao.getByUserId(user.getId());
+
+        } catch (EntityNotFoundException e) {
+            LOGGER.error("Organizer not found.", e);
+            return null;
+
+        } catch (DaoException e) {
+            LOGGER.error("Organizer deleting failed.", e);
+            throw new ServiceException("Organizer deleting failed.", e);
+        }
     }
 
 

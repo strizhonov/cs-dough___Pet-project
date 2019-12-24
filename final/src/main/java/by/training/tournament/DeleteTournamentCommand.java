@@ -44,6 +44,7 @@ public class DeleteTournamentCommand implements ActionCommand {
 
         String sId = request.getParameter(AttributesContainer.ID.toString());
         try {
+
             tournamentService.delete(Long.parseLong(sId));
 
             return Optional.of(new HttpForwarder(PathsContainer.COMMAND_SHOW_ORGANIZER + user.getOrganizerId()));
