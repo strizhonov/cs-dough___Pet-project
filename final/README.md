@@ -17,6 +17,6 @@ either creating a tournament or winning it.
 
 
 ###
-You can try CS-DOUGH on your own using database creation script at src/main/sql.
+You can try CS-DOUGH on your own using database creation script at ./sql.
 
 
