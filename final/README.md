@@ -6,8 +6,8 @@ either creating a tournament or winning it.
 
 ### Main Features:
 * Storing data with MySQL database.
-* EN|RU localization.
-* Using of twitch.tv API for random match online view.
+* EN-RU localization.
+* Twitch.tv API was used for random match online view. 
 * Usage of JSP pages was implemented with JSTL and EL, there is no scriptlets in the project.
 * UI was created with bootstrap library and some js, jquery scripts.
 * Web filter implements cross site scripting protection.
