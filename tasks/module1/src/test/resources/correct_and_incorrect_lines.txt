@@ -1,6 +1,0 @@
-type:CARROT,has_bitterness:true,peeled:true,weight:2.5,calories:133,
-type:Cucumber,cucumber_type:burpless,edible_seeds:true,weight:-6,calories:177,
-type:CUCUMBER,cucumber_type:BURPLESS,edible_seeds:false,weight:6,calories:200,
-gfdsgfsdg:hkjhkj....,rgjr,jhgj,fhj:hfjk,
-type:TOMATO,sweet:true,edible_seeds:true,weight:8,calories:100
-type:LEEK,length:20,sluggish_leaves_percentage:10,weight:0.1,calories:7
