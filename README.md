@@ -20,7 +20,7 @@ a tournament or winning it.<br/>
 -----------------
 ### How to start the project:<br/>
 - Requirements:<br/>
-    * PostgreSQL 9+.<br/>
+    * MySQL 5+.<br/>
     * Java 8+.<br/>
     * Maven 3+.<br/>
     * Apache Tomcat 7+.<br/>
