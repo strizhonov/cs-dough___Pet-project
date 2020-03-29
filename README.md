@@ -14,8 +14,7 @@ in-app-money either creating a tournament or winning it.<br/>
 * Web filter implements cross site scripting protection.<br/>
 * "F5"-protection enabled.<br/>
 * Input data validation present both on the client and server side.<br/>
-
-###How to start the project:<br/>
+### How to start the project:<br/>
 - Requirements:<br/>
     * PostgreSQL 9+.<br/>
     * Java 8+.<br/>
