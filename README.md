@@ -1,7 +1,7 @@
 Training project. CS-DOUGH<br/>
 -------------------
 CS-DOUGH web application is CS:GO 1v1 tournaments platform. Users can participate or organize their own tournaments here. 
-There is money system in the app to make tournaments more competitive. User is able to earn in-app-money either creating 
+There is money system in the app to make tournaments more competitive. It's possible to earn in-app-money either creating 
 a tournament or winning it.<br/>
 *******************
 ### Technologies Used:<br/>
@@ -25,8 +25,9 @@ a tournament or winning it.<br/>
     * Maven 3+.<br/>
     * Apache Tomcat 7+.<br/>
 - Steps to start:<br/>
-    * Set up database with script inside ./sql/cs_dough_sql_creation_script.sql. To make it in an appropriate way, you 
-    should sync Database Settings block in ./src/main/resources/settings.properties with your novel database credentials.<br/>
+    * Set up database with `./sql/cs_dough_sql_creation_script.sql`. To make it in an appropriate way, you 
+     should sync Database Settings block in `./src/main/resources/settings.properties` with your novel database's
+     credentials.<br/>
     * Start tomcat server.<br/>
     * Run `maven clean install`.<br/>
     * Deploy war package on started tomcat server.<br/>
