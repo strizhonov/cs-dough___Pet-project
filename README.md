@@ -2,7 +2,7 @@
 CS-DOUGH web application is CS:GO 1v1 tournaments platform. Users can participate or organize their 
 own tournaments here. There is money system in the app to make tournaments more competitive. User is able to earn 
 in-app-money either creating a tournament or winning it.<br/>
------------
+---------------------
 ### Technologies Used:<br/>
 * Storing data with MySQL database.<br/>
 * Logging with Log4j.<br/>
