@@ -20,17 +20,10 @@ a tournament or winning it.<br/>
 -----------------
 ### How to start the project:<br/>
 - Requirements:<br/>
-    * MySQL 5+.<br/>
-    * Java 8+.<br/>
-    * Maven 3+.<br/>
-    * Apache Tomcat 7+.<br/>
+    * Docker 18.06.0+<br/>
+    * Maven 3+<br/>
 - Steps to start:<br/>
-    * Set up database with `./sql/cs_dough_sql_creation_script.sql`. To make it in an appropriate way, you 
-     should sync Database Settings block in `./src/main/resources/settings.properties` with your novel database's
-     credentials.<br/>
-    * Start tomcat server.<br/>
     * Run `maven clean install`.<br/>
-    * Deploy war package on started tomcat server.<br/>
-    * Index path is `[server path]/index.jsp`.<br/>
+    * Run `docker-compose up`.<br/>
 
 
