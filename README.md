@@ -25,5 +25,19 @@ a tournament or winning it.<br/>
 - Steps to start:<br/>
     * Run `maven clean install`.<br/>
     * Run `docker-compose up`.<br/>
-
-
+------------------
+### Preview:<br/>
+#### Main page:<br/>
+![alt text](https://github.com/strizhonov/cs-dough/blob/master/sitepreview/home.jpg?raw=true)<br/>
+#### Profile:<br/>
+![alt text](https://github.com/strizhonov/cs-dough/blob/master/sitepreview/profile.jpg?raw=true)<br/>
+#### All players:<br/>
+![alt text](https://github.com/strizhonov/cs-dough/blob/master/sitepreview/players-list.jpg?raw=true)<br/>
+#### All tournaments:<br/>
+![alt text](https://github.com/strizhonov/cs-dough/blob/master/sitepreview/tournaments-list.jpg?raw=true)<br/>
+#### Tournament description:<br/>
+![alt text](https://github.com/strizhonov/cs-dough/blob/master/sitepreview/tournament-page.jpg?raw=true)<br/>
+#### Tournament bracket:<br/>
+![alt text](https://github.com/strizhonov/cs-dough/blob/master/sitepreview/tournament-bracket.jpg?raw=true)<br/>
+#### Game page:<br/>
+![alt text](https://github.com/strizhonov/cs-dough/blob/master/sitepreview/game-page.jpg?raw=true)<br/>
